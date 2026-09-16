@@ -54,7 +54,7 @@
         width: 100% !important;
         max-width: 100% !important;
       }
-      .modal-close-btn, .btn-qr-download, #modal-gmaps-link {
+      .btn-qr-download, #modal-gmaps-link, .cert-footer-actions {
         display: none !important;
       }
     }
@@ -73,7 +73,6 @@
         </div>
         <div style="display: flex; align-items: center; gap: 0.75rem;">
           <span class="badge-tag needs_review" id="modal-status-badge">NEEDS REVIEW</span>
-          <button class="modal-close-btn" id="btn-close-modal" title="Print Certificate" onclick="window.print()">&times;</button>
         </div>
       </div>
 
@@ -247,6 +246,24 @@
           </div>
         </div>
 
+        <!-- Certificate Print & Verification Action Footer -->
+        <div class="cert-footer-actions" style="margin-top: 2rem; display: flex; flex-direction: column; align-items: center; gap: 0.85rem; border-top: 1px solid var(--surface-border); padding-top: 1.5rem;">
+          <div style="display: flex; gap: 0.85rem; width: 100%; max-width: 560px; justify-content: center; flex-wrap: wrap;">
+            <button type="button" id="btn-print-certificate" onclick="window.print()" style="flex: 1; min-width: 240px; display: flex; align-items: center; justify-content: center; gap: 0.6rem; background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%); color: #ffffff; border: none; padding: 0.95rem 1.75rem; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 16px rgba(2, 132, 199, 0.4); transition: transform 0.15s ease, box-shadow 0.15s ease;">
+              <span style="font-size: 1.25rem;">🖨️</span>
+              <span>Print Official Certificate (PDF)</span>
+            </button>
+            <a id="btn-cert-gmaps-bottom" href="#" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; justify-content: center; gap: 0.45rem; background: var(--tertiary-navy); color: var(--accent-cyan); border: 1px solid var(--surface-border); padding: 0.95rem 1.4rem; border-radius: 10px; font-weight: 600; font-size: 0.9rem; text-decoration: none; cursor: pointer; transition: background 0.15s ease;">
+              <span>📍</span>
+              <span>Google Maps GPS</span>
+            </a>
+          </div>
+          <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; max-width: 540px; margin: 0; line-height: 1.45;">
+            Digital 7/12 RoR & Drone Cadastral Inspection Certificate &bull; Land Records Department, Government of Maharashtra.<br/>
+            Click <strong>Print Official Certificate</strong> to save or download an A4-optimized digital record.
+          </p>
+        </div>
+
       </div>
     </div>
   </div>
@@ -374,6 +391,10 @@
         const gmapsLink = document.getElementById('modal-gmaps-link');
         if (gmapsLink) {
           gmapsLink.href = `https://www.google.com/maps/search/?api=1&query=${cLat.toFixed(6)},${cLng.toFixed(6)}`;
+        }
+        const gmapsBottom = document.getElementById('btn-cert-gmaps-bottom');
+        if (gmapsBottom) {
+          gmapsBottom.href = `https://www.google.com/maps/search/?api=1&query=${cLat.toFixed(6)},${cLng.toFixed(6)}`;
         }
 
         // Render QR Code inside the card
