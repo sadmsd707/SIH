@@ -4804,14 +4804,24 @@ async function fetchAndRenderKPratBoundary() {
   const surveyEl = document.getElementById('cmp-survey-no');
   const gatEl = document.getElementById('cmp-gat-no');
   const ownerEl = document.getElementById('cmp-owner-name');
+  const acresEl = document.getElementById('cmp-area-acres');
+  const gunthaEl = document.getElementById('cmp-area-guntha');
+
   const district = districtEl?.value?.trim() || 'Ahmednagar';
   const taluka = talukaEl?.value?.trim() || 'Karjat';
   const village = villageEl?.value?.trim() || 'Benwadi (बेनवडी)';
-  let surveyNo = surveyEl?.value?.trim();
+  const surveyNo = surveyEl?.value?.trim();
+
   if (!surveyNo) {
-    surveyNo = '231';
-    if (surveyEl) surveyEl.value = '231';
+    if (typeof showVillageToast === 'function') {
+      showVillageToast('⚠️ Please enter a Survey / Gat No. or click one of the presets above (e.g. Benwadi Gat 231)');
+    } else {
+      alert('⚠️ Please enter a Survey / Gat No. in Step 1 or click one of the presets above (e.g. Benwadi Gat 231)');
+    }
+    if (surveyEl) surveyEl.focus();
+    return;
   }
+
   const gatNo = gatEl?.value?.trim() || surveyNo;
   const ownerName = ownerEl?.value?.trim() || 'नोंदणीकृत खातेदार';
   const acresVal = parseFloat(acresEl?.value) || 0;
@@ -5705,6 +5715,38 @@ function loadSampleGeoJson(sampleNum) {
     if (ownEl) ownEl.value = 'पंढरीनाथ शंकर देशमूख व इतर';
     if (acEl) acEl.value = '18.28';
     if (gnEl) gnEl.value = '11';
+
+    fetchAndRenderKPratBoundary().then(() => {
+      executeDualBoundaryComparison(sample);
+    });
+    return;
+  }
+
+  // If loading sample 1, 2, or 3 (Kalamb Gat 78/1 resurveys), ensure Step 1 is populated with Kalamb 78/1 if empty or different
+  if ((sampleNum === 1 || sampleNum === 2 || sampleNum === 3) && (!activeKPratReference || document.getElementById('cmp-survey-no')?.value !== '78/1')) {
+    const distEl = document.getElementById('cmp-district');
+    const talukaEl = document.getElementById('cmp-taluka');
+    const villEl = document.getElementById('cmp-village');
+    const survEl = document.getElementById('cmp-survey-no');
+    const ownEl = document.getElementById('cmp-owner-name');
+    const acEl = document.getElementById('cmp-area-acres');
+    const gnEl = document.getElementById('cmp-area-guntha');
+
+    if (distEl) distEl.value = 'Pune';
+    if (talukaEl) {
+      talukaEl.innerHTML = `
+        <option value="Indapur" selected>Indapur (इंदापूर)</option>
+        <option value="Haveli">Haveli (हवेली)</option>
+        <option value="Baramati">Baramati (बारामती)</option>
+        <option value="Barshi">Barshi (बार्शी)</option>
+      `;
+      talukaEl.value = 'Indapur';
+    }
+    if (villEl) villEl.value = 'Kalamb (कळंब)';
+    if (survEl) survEl.value = '78/1';
+    if (ownEl) ownEl.value = 'तानाजी रावसाहेब मोरे (Tanaji R. More)';
+    if (acEl) acEl.value = '3.39';
+    if (gnEl) gnEl.value = '16';
 
     fetchAndRenderKPratBoundary().then(() => {
       executeDualBoundaryComparison(sample);
