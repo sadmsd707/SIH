@@ -1,6 +1,6 @@
 {
   "type": "FeatureCollection",
-  "name": "Benwadi_Gat_462_Cadastre",
+  "name": "Benwadi_Gat_462_Drone_Resurvey",
   "crs": {
     "type": "name",
     "properties": {
@@ -29,40 +29,75 @@
         "area_guntha": 31.53,
         "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
         "source": "MahaBhuNaksha Official Live Cadastre",
-        "status": "verified",
-        "confidence_score": 98.8,
+        "status": "needs_review",
+        "confidence_score": 84.9,
         "old_survey_area_acres": 0.79,
         "old_survey_area_sqm": 3189.48,
-        "new_survey_area_acres": 0.79,
-        "new_survey_area_sqm": 3189.48
+        "new_survey_area_acres": 0.81,
+        "new_survey_area_sqm": 3272.4,
+        "area_diff_pct": 2.6,
+        "mean_shift_m": 1.9,
+        "iou_overlap_pct": 93.4,
+        "review_reason": "Drone RTK photogrammetry detects a 2.6% area discrepancy (83 m²) with a mean bund shift of 1.9m along the farm boundary. Verification recommended.",
+        "bhunaksha_geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                74.9885774,
+                18.4916042
+              ],
+              [
+                74.988301,
+                18.4916349
+              ],
+              [
+                74.9885493,
+                18.4924882
+              ],
+              [
+                74.9885982,
+                18.4925419
+              ],
+              [
+                74.9888746,
+                18.4926046
+              ],
+              [
+                74.9885774,
+                18.4916042
+              ]
+            ]
+          ]
+        }
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              74.9885774,
-              18.4916042
+              74.9885758,
+              18.4915798
             ],
             [
-              74.988301,
-              18.4916349
+              74.9882958,
+              18.4916109
             ],
             [
-              74.9885493,
-              18.4924882
+              74.9885473,
+              18.4924752
             ],
             [
-              74.9885982,
-              18.4925419
+              74.9885969,
+              18.4925296
             ],
             [
-              74.9888746,
-              18.4926046
+              74.9888768,
+              18.4925931
             ],
             [
-              74.9885774,
-              18.4916042
+              74.9885758,
+              18.4915798
             ]
           ]
         ]

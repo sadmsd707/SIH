@@ -1,6 +1,6 @@
 {
   "type": "FeatureCollection",
-  "name": "Benwadi_Gat_385_Cadastre",
+  "name": "Benwadi_Gat_385_Drone_Resurvey",
   "crs": {
     "type": "name",
     "properties": {
@@ -31,36 +31,67 @@
         "area_guntha": 9.31,
         "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
         "source": "MahaBhuNaksha Official Live Cadastre",
-        "status": "verified",
-        "confidence_score": 98.8,
+        "status": "needs_review",
+        "confidence_score": 85.2,
         "old_survey_area_acres": 0.23,
         "old_survey_area_sqm": 941.65,
-        "new_survey_area_acres": 0.23,
-        "new_survey_area_sqm": 941.65
+        "new_survey_area_acres": 0.24,
+        "new_survey_area_sqm": 963.3,
+        "area_diff_pct": 2.3,
+        "mean_shift_m": 2.0,
+        "iou_overlap_pct": 93.7,
+        "review_reason": "Drone RTK photogrammetry detects a 2.3% area discrepancy (22 m²) with a mean bund shift of 2.0m along the farm boundary. Verification recommended.",
+        "bhunaksha_geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                74.9844467,
+                18.5030626
+              ],
+              [
+                74.9844079,
+                18.5028549
+              ],
+              [
+                74.984015,
+                18.5029061
+              ],
+              [
+                74.9840612,
+                18.5031028
+              ],
+              [
+                74.9844467,
+                18.5030626
+              ]
+            ]
+          ]
+        }
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              74.9844467,
-              18.5030626
+              74.9844478,
+              18.5030815
             ],
             [
-              74.9844079,
-              18.5028549
+              74.9844086,
+              18.5028714
             ],
             [
-              74.984015,
-              18.5029061
+              74.9840112,
+              18.5029232
             ],
             [
-              74.9840612,
-              18.5031028
+              74.9840579,
+              18.5031221
             ],
             [
-              74.9844467,
-              18.5030626
+              74.9844478,
+              18.5030815
             ]
           ]
         ]

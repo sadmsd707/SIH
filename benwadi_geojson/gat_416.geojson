@@ -1,6 +1,6 @@
 {
   "type": "FeatureCollection",
-  "name": "Benwadi_Gat_416_Cadastre",
+  "name": "Benwadi_Gat_416_Drone_Resurvey",
   "crs": {
     "type": "name",
     "properties": {
@@ -40,52 +40,99 @@
         "area_guntha": 1049.11,
         "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
         "source": "MahaBhuNaksha Official Live Cadastre",
-        "status": "verified",
-        "confidence_score": 98.8,
+        "status": "needs_review",
+        "confidence_score": 85.4,
         "old_survey_area_acres": 26.23,
         "old_survey_area_sqm": 106138.23,
-        "new_survey_area_acres": 26.23,
-        "new_survey_area_sqm": 106138.23
+        "new_survey_area_acres": 26.81,
+        "new_survey_area_sqm": 108473.3,
+        "area_diff_pct": 2.2,
+        "mean_shift_m": 1.7,
+        "iou_overlap_pct": 93.8,
+        "review_reason": "Drone RTK photogrammetry detects a 2.2% area discrepancy (2335 m²) with a mean bund shift of 1.7m along the farm boundary. Verification recommended.",
+        "bhunaksha_geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                75.0024145,
+                18.4968777
+              ],
+              [
+                75.0014321,
+                18.4947015
+              ],
+              [
+                75.0006425,
+                18.4930275
+              ],
+              [
+                74.999259,
+                18.4936309
+              ],
+              [
+                74.9992686,
+                18.4947239
+              ],
+              [
+                74.9992411,
+                18.4963058
+              ],
+              [
+                74.9992592,
+                18.496446
+              ],
+              [
+                74.9993443,
+                18.4973504
+              ],
+              [
+                75.0024145,
+                18.4968777
+              ]
+            ]
+          ]
+        }
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              75.0024145,
-              18.4968777
+              75.0024507,
+              18.4969052
             ],
             [
-              75.0014321,
-              18.4947015
+              75.0014576,
+              18.4947052
             ],
             [
-              75.0006425,
-              18.4930275
+              75.0006594,
+              18.4930129
             ],
             [
-              74.999259,
-              18.4936309
+              74.9992607,
+              18.4936229
             ],
             [
-              74.9992686,
-              18.4947239
+              74.9992704,
+              18.4947279
             ],
             [
-              74.9992411,
-              18.4963058
+              74.9992426,
+              18.4963271
             ],
             [
-              74.9992592,
-              18.496446
+              74.9992609,
+              18.4964688
             ],
             [
-              74.9993443,
-              18.4973504
+              74.9993469,
+              18.4973831
             ],
             [
-              75.0024145,
-              18.4968777
+              75.0024507,
+              18.4969052
             ]
           ]
         ]

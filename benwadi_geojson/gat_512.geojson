@@ -1,6 +1,6 @@
 {
   "type": "FeatureCollection",
-  "name": "Benwadi_Gat_512_Cadastre",
+  "name": "Benwadi_Gat_512_Drone_Resurvey",
   "crs": {
     "type": "name",
     "properties": {
@@ -29,64 +29,123 @@
         "area_guntha": 31.8,
         "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
         "source": "MahaBhuNaksha Official Live Cadastre",
-        "status": "verified",
-        "confidence_score": 98.8,
+        "status": "needs_review",
+        "confidence_score": 84.9,
         "old_survey_area_acres": 0.8,
         "old_survey_area_sqm": 3217.59,
-        "new_survey_area_acres": 0.8,
-        "new_survey_area_sqm": 3217.59
+        "new_survey_area_acres": 0.82,
+        "new_survey_area_sqm": 3301.2,
+        "area_diff_pct": 2.6,
+        "mean_shift_m": 1.7,
+        "iou_overlap_pct": 93.4,
+        "review_reason": "Drone RTK photogrammetry detects a 2.6% area discrepancy (84 m²) with a mean bund shift of 1.7m along the farm boundary. Verification recommended.",
+        "bhunaksha_geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                74.9834174,
+                18.4948307
+              ],
+              [
+                74.9833908,
+                18.4946469
+              ],
+              [
+                74.9830946,
+                18.4946797
+              ],
+              [
+                74.9825873,
+                18.4947268
+              ],
+              [
+                74.9821344,
+                18.4947765
+              ],
+              [
+                74.9818906,
+                18.4947991
+              ],
+              [
+                74.9819061,
+                18.4949782
+              ],
+              [
+                74.9822746,
+                18.4949442
+              ],
+              [
+                74.9824996,
+                18.4949181
+              ],
+              [
+                74.9826062,
+                18.4949078
+              ],
+              [
+                74.9831049,
+                18.4948627
+              ],
+              [
+                74.9834174,
+                18.4948307
+              ]
+            ]
+          ]
+        }
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              74.9834174,
-              18.4948307
+              74.9834144,
+              18.494822
             ],
             [
-              74.9833908,
-              18.4946469
+              74.9833874,
+              18.4946358
             ],
             [
-              74.9830946,
-              18.4946797
+              74.9830874,
+              18.4946691
             ],
             [
-              74.9825873,
-              18.4947268
+              74.9825736,
+              18.4947168
             ],
             [
-              74.9821344,
-              18.4947765
+              74.9821148,
+              18.4947671
             ],
             [
-              74.9818906,
-              18.4947991
+              74.9818679,
+              18.49479
             ],
             [
-              74.9819061,
-              18.4949782
+              74.9818836,
+              18.4949714
             ],
             [
-              74.9822746,
-              18.4949442
+              74.9822568,
+              18.494937
             ],
             [
-              74.9824996,
-              18.4949181
+              74.9824847,
+              18.4949105
             ],
             [
-              74.9826062,
-              18.4949078
+              74.9825927,
+              18.4949001
             ],
             [
-              74.9831049,
-              18.4948627
+              74.9830978,
+              18.4948544
             ],
             [
-              74.9834174,
-              18.4948307
+              74.9834144,
+              18.494822
             ]
           ]
         ]

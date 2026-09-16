@@ -1,6 +1,6 @@
 {
   "type": "FeatureCollection",
-  "name": "Benwadi_Gat_47_Cadastre",
+  "name": "Benwadi_Gat_47_Drone_Resurvey",
   "crs": {
     "type": "name",
     "properties": {
@@ -29,36 +29,67 @@
         "area_guntha": 26.6,
         "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
         "source": "MahaBhuNaksha Official Live Cadastre",
-        "status": "verified",
-        "confidence_score": 98.8,
+        "status": "needs_review",
+        "confidence_score": 85.5,
         "old_survey_area_acres": 0.67,
         "old_survey_area_sqm": 2691.56,
-        "new_survey_area_acres": 0.67,
-        "new_survey_area_sqm": 2691.56
+        "new_survey_area_acres": 0.68,
+        "new_survey_area_sqm": 2748.1,
+        "area_diff_pct": 2.1,
+        "mean_shift_m": 1.4,
+        "iou_overlap_pct": 93.9,
+        "review_reason": "Drone RTK photogrammetry detects a 2.1% area discrepancy (57 m²) with a mean bund shift of 1.4m along the farm boundary. Verification recommended.",
+        "bhunaksha_geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                74.976677,
+                18.4921317
+              ],
+              [
+                74.9766651,
+                18.4918968
+              ],
+              [
+                74.9756123,
+                18.4922003
+              ],
+              [
+                74.9755911,
+                18.4923989
+              ],
+              [
+                74.976677,
+                18.4921317
+              ]
+            ]
+          ]
+        }
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              74.976677,
-              18.4921317
+              74.9766959,
+              18.4921314
             ],
             [
-              74.9766651,
-              18.4918968
+              74.9766839,
+              18.4918941
             ],
             [
-              74.9756123,
-              18.4922003
+              74.9756201,
+              18.4922008
             ],
             [
-              74.9755911,
-              18.4923989
+              74.9755987,
+              18.4924014
             ],
             [
-              74.976677,
-              18.4921317
+              74.9766959,
+              18.4921314
             ]
           ]
         ]

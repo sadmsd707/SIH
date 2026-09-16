@@ -1,6 +1,6 @@
 {
   "type": "FeatureCollection",
-  "name": "Benwadi_Gat_545_Cadastre",
+  "name": "Benwadi_Gat_545_Drone_Resurvey",
   "crs": {
     "type": "name",
     "properties": {
@@ -29,52 +29,99 @@
         "area_guntha": 162.25,
         "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
         "source": "MahaBhuNaksha Official Live Cadastre",
-        "status": "verified",
-        "confidence_score": 98.8,
+        "status": "needs_review",
+        "confidence_score": 85.2,
         "old_survey_area_acres": 4.06,
         "old_survey_area_sqm": 16414.65,
-        "new_survey_area_acres": 4.06,
-        "new_survey_area_sqm": 16414.65
+        "new_survey_area_acres": 4.15,
+        "new_survey_area_sqm": 16792.2,
+        "area_diff_pct": 2.3,
+        "mean_shift_m": 2.0,
+        "iou_overlap_pct": 93.7,
+        "review_reason": "Drone RTK photogrammetry detects a 2.3% area discrepancy (378 m²) with a mean bund shift of 2.0m along the farm boundary. Verification recommended.",
+        "bhunaksha_geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                74.974008,
+                18.4961284
+              ],
+              [
+                74.9733099,
+                18.496799
+              ],
+              [
+                74.9733354,
+                18.4972734
+              ],
+              [
+                74.9731006,
+                18.4977439
+              ],
+              [
+                74.9733581,
+                18.4980877
+              ],
+              [
+                74.9737389,
+                18.4986265
+              ],
+              [
+                74.9738791,
+                18.4983247
+              ],
+              [
+                74.974083,
+                18.4973461
+              ],
+              [
+                74.974008,
+                18.4961284
+              ]
+            ]
+          ]
+        }
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              74.974008,
-              18.4961284
+              74.9739995,
+              18.4961252
             ],
             [
-              74.9733099,
-              18.496799
+              74.9732934,
+              18.4968035
             ],
             [
-              74.9733354,
-              18.4972734
+              74.9733192,
+              18.4972833
             ],
             [
-              74.9731006,
-              18.4977439
+              74.9730817,
+              18.4977592
             ],
             [
-              74.9733581,
-              18.4980877
+              74.9733421,
+              18.4981069
             ],
             [
-              74.9737389,
-              18.4986265
+              74.9737273,
+              18.4986519
             ],
             [
-              74.9738791,
-              18.4983247
+              74.9738691,
+              18.4983466
             ],
             [
-              74.974083,
-              18.4973461
+              74.9740753,
+              18.4973568
             ],
             [
-              74.974008,
-              18.4961284
+              74.9739995,
+              18.4961252
             ]
           ]
         ]

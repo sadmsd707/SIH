@@ -1,6 +1,6 @@
 {
   "type": "FeatureCollection",
-  "name": "Benwadi_Gat_89_Cadastre",
+  "name": "Benwadi_Gat_89_Drone_Resurvey",
   "crs": {
     "type": "name",
     "properties": {
@@ -32,36 +32,67 @@
         "area_guntha": 13.54,
         "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
         "source": "MahaBhuNaksha Official Live Cadastre",
-        "status": "verified",
-        "confidence_score": 98.8,
+        "status": "needs_review",
+        "confidence_score": 84.5,
         "old_survey_area_acres": 0.34,
         "old_survey_area_sqm": 1369.88,
-        "new_survey_area_acres": 0.34,
-        "new_survey_area_sqm": 1369.88
+        "new_survey_area_acres": 0.35,
+        "new_survey_area_sqm": 1409.6,
+        "area_diff_pct": 2.9,
+        "mean_shift_m": 1.6,
+        "iou_overlap_pct": 93.1,
+        "review_reason": "Drone RTK photogrammetry detects a 2.9% area discrepancy (40 m²) with a mean bund shift of 1.6m along the farm boundary. Verification recommended.",
+        "bhunaksha_geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                74.9801933,
+                18.490199
+              ],
+              [
+                74.9800364,
+                18.4897135
+              ],
+              [
+                74.9798025,
+                18.4897899
+              ],
+              [
+                74.9799384,
+                18.4902112
+              ],
+              [
+                74.9801933,
+                18.490199
+              ]
+            ]
+          ]
+        }
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
             [
-              74.9801933,
-              18.490199
+              74.9802098,
+              18.4902085
             ],
             [
-              74.9800364,
-              18.4897135
+              74.9800507,
+              18.489716
             ],
             [
-              74.9798025,
-              18.4897899
+              74.9798134,
+              18.4897935
             ],
             [
-              74.9799384,
-              18.4902112
+              74.9799513,
+              18.4902209
             ],
             [
-              74.9801933,
-              18.490199
+              74.9802098,
+              18.4902085
             ]
           ]
         ]
