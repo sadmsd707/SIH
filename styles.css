@@ -1103,32 +1103,47 @@ body {
 .insp-qr-target-surface {
   width: 108px;
   height: 108px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
   background: #ffffff;
   overflow: hidden;
   position: relative;
 }
 
+/* Canvas should be the only visible element — QRCode.js also creates a hidden img */
 .insp-qr-target-surface canvas {
   display: block !important;
   width: 108px !important;
   height: 108px !important;
-  margin: 0 auto !important;
 }
 
+/* Hide ALL img elements inside the QR target — they are duplicates from QRCode.js */
 .insp-qr-target-surface img {
-  display: block;
+  display: none !important;
+}
+
+/* If there is NO canvas (fallback API mode), show the img */
+.insp-qr-target-surface img:only-child {
+  display: block !important;
   width: 108px !important;
   height: 108px !important;
-  margin: 0 auto !important;
 }
 
-/* Hide duplicate img when canvas is rendered by QRCode.js */
-.insp-qr-target-surface canvas ~ img,
-#modal-qr-target canvas ~ img {
+/* Modal QR target — same rules */
+#modal-qr-target {
+  overflow: hidden;
+}
+#modal-qr-target canvas {
+  display: block !important;
+  width: 140px !important;
+  height: 140px !important;
+}
+#modal-qr-target img {
   display: none !important;
+}
+#modal-qr-target img:only-child {
+  display: block !important;
+  width: 140px !important;
+  height: 140px !important;
 }
 
 .insp-qr-details {
