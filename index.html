@@ -154,65 +154,111 @@
         <!-- Mode C: Dual-Boundary Comparison Station (Upload GeoJSON vs Form Coordinates) -->
         <div id="form-compare-mode" class="compare-station-container">
           <div class="compare-grid-layout">
-            <!-- Left Column: Form Reference Coordinates -->
+            <!-- Left Column: Mahabhulekh 7/12 & BhuNaksha K-Prat Resolver -->
             <div class="compare-col-box">
               <div class="compare-col-header">
                 <div>
                   <span class="compare-step-badge">STEP 1</span>
-                  <strong>Form Reference Coordinates (Field / 7/12 Boundary)</strong>
+                  <strong>Mahabhulekh 7/12 & BhuNaksha K-Prat (क-प्रत)</strong>
                 </div>
-                <button type="button" class="preset-load-btn" id="btn-load-user-coords" title="Load your 4 coordinates">
-                  📍 Load 4 User Coords
+                <button type="button" class="preset-load-btn" id="btn-load-712-preset" title="Load sample Mahabhulekh 7/12 details">
+                  📜 Sample 7/12
                 </button>
               </div>
-              <p class="compare-col-subtitle">Input 4 boundary perimeter vertices (WGS84) or use the pre-filled coordinates:</p>
+              <p class="compare-col-subtitle">Enter official 7/12 record details — the portal will automatically resolve and fetch the K-Prat plot boundary onto the map:</p>
 
-              <div class="compare-coords-inputs-grid">
-                <div class="compare-coord-field">
-                  <label>Corner 1 (SE):</label>
-                  <div class="coord-inline-pair">
-                    <input type="number" id="cmp-lat-1" step="0.000001" placeholder="Lat" value="18.488044">
-                    <input type="number" id="cmp-lng-1" step="0.000001" placeholder="Lng" value="74.962731">
-                  </div>
-                </div>
-                <div class="compare-coord-field">
-                  <label>Corner 2 (SW):</label>
-                  <div class="coord-inline-pair">
-                    <input type="number" id="cmp-lat-2" step="0.000001" placeholder="Lat" value="18.488245">
-                    <input type="number" id="cmp-lng-2" step="0.000001" placeholder="Lng" value="74.961100">
-                  </div>
-                </div>
-                <div class="compare-coord-field">
-                  <label>Corner 3 (NW - 18°29'22.8"N 74°57'41.0"E):</label>
-                  <div class="coord-inline-pair">
-                    <input type="number" id="cmp-lat-3" step="0.000001" placeholder="Lat" value="18.489667">
-                    <input type="number" id="cmp-lng-3" step="0.000001" placeholder="Lng" value="74.961389">
-                  </div>
-                </div>
-                <div class="compare-coord-field">
-                  <label>Corner 4 (NE):</label>
-                  <div class="coord-inline-pair">
-                    <input type="number" id="cmp-lat-4" step="0.000001" placeholder="Lat" value="18.489330">
-                    <input type="number" id="cmp-lng-4" step="0.000001" placeholder="Lng" value="74.963083">
-                  </div>
-                </div>
-              </div>
-
-              <!-- Cadastral Metadata -->
-              <div class="compare-meta-grid">
+              <!-- Mahabhulekh 7/12 Revenue Inputs Grid -->
+              <div class="compare-meta-grid" style="grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); margin-bottom: 0.75rem;">
                 <div class="meta-input-item">
-                  <label>Survey / Gat No.</label>
+                  <label>District (जिल्हा)</label>
+                  <select id="cmp-district" class="search-select" style="background: var(--tertiary-navy); color: var(--text-main); border: 1px solid var(--surface-border); border-radius: 4px; padding: 0.35rem 0.5rem; font-size: 0.8rem;">
+                    <option value="Pune" selected>Pune (पुणे)</option>
+                    <option value="Solapur">Solapur (सोलापूर)</option>
+                    <option value="Ahmednagar">Ahmednagar (अहमदनगर)</option>
+                    <option value="Satara">Satara (सातारा)</option>
+                  </select>
+                </div>
+                <div class="meta-input-item">
+                  <label>Taluka (तालुका)</label>
+                  <select id="cmp-taluka" class="search-select" style="background: var(--tertiary-navy); color: var(--text-main); border: 1px solid var(--surface-border); border-radius: 4px; padding: 0.35rem 0.5rem; font-size: 0.8rem;">
+                    <option value="Indapur" selected>Indapur (इंदापूर)</option>
+                    <option value="Haveli">Haveli (हवेली)</option>
+                    <option value="Baramati">Baramati (बारामती)</option>
+                    <option value="Barshi">Barshi (बार्शी)</option>
+                  </select>
+                </div>
+                <div class="meta-input-item">
+                  <label>Village (गाव)</label>
+                  <input type="text" id="cmp-village" value="Kalamb (कळंब)" placeholder="e.g. Kalamb">
+                </div>
+                <div class="meta-input-item">
+                  <label>Survey / Gat No. (गट)</label>
                   <input type="text" id="cmp-survey-no" value="78/1" placeholder="e.g. 78/1">
                 </div>
-                <div class="meta-input-item">
-                  <label>Registered Landholder</label>
+                <div class="meta-input-item" style="grid-column: span 2;">
+                  <label>Registered Landholder (खातेदाराचे नाव)</label>
                   <input type="text" id="cmp-owner-name" value="तानाजी रावसाहेब मोरे (Tanaji R. More)" placeholder="Owner Name">
                 </div>
                 <div class="meta-input-item">
-                  <label>Village & Taluka</label>
-                  <input type="text" id="cmp-village" value="कळंब (Kalamb), Indapur" placeholder="Village">
+                  <label>7/12 Area (Acres)</label>
+                  <input type="number" id="cmp-area-acres" step="0.01" value="3.39" placeholder="e.g. 3.39">
+                </div>
+                <div class="meta-input-item">
+                  <label>Area (Guntha)</label>
+                  <input type="number" id="cmp-area-guntha" step="1" value="16" placeholder="e.g. 16">
                 </div>
               </div>
+
+              <!-- Primary Fetch Button -->
+              <button type="button" class="btn-primary-action" id="btn-fetch-kprat" style="width: 100%; justify-content: center; padding: 0.65rem 1rem; margin-bottom: 0.75rem; background: linear-gradient(135deg, #1E40AF, #2563EB); border-color: #3B82F6;">
+                <span>🏛️</span> Fetch & Render BhuNaksha K-Prat (क-प्रत) on Map
+              </button>
+
+              <!-- Live K-Prat Status Card -->
+              <div id="kprat-status-card" class="kprat-status-card standby" style="background: var(--tertiary-navy); border: 1px solid var(--surface-border); border-radius: 6px; padding: 0.6rem 0.8rem; margin-bottom: 0.6rem;">
+                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                  <span id="kprat-status-icon" style="font-size: 1.25rem;">⏳</span>
+                  <div>
+                    <strong id="kprat-status-title" style="font-size: 0.82rem; color: var(--text-main); display: block;">K-Prat Cadastral Map: Standby</strong>
+                    <div id="kprat-status-desc" style="font-size: 0.72rem; color: var(--text-muted);">Click "Fetch & Render BhuNaksha K-Prat" to resolve official reference boundary.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Collapsible Raw Coordinates (For Technical Cadastral Inspection) -->
+              <details class="kprat-coords-details" style="margin-top: 0.4rem;">
+                <summary style="font-size: 0.72rem; color: var(--text-muted); cursor: pointer; user-select: none;">📐 Technical: Inspect / Adjust 4-Corner Vertices (WGS84)</summary>
+                <div class="compare-coords-inputs-grid" style="margin-top: 0.5rem;">
+                  <div class="compare-coord-field">
+                    <label>Corner 1 (SE):</label>
+                    <div class="coord-inline-pair">
+                      <input type="number" id="cmp-lat-1" step="0.000001" placeholder="Lat" value="18.488044">
+                      <input type="number" id="cmp-lng-1" step="0.000001" placeholder="Lng" value="74.962731">
+                    </div>
+                  </div>
+                  <div class="compare-coord-field">
+                    <label>Corner 2 (SW):</label>
+                    <div class="coord-inline-pair">
+                      <input type="number" id="cmp-lat-2" step="0.000001" placeholder="Lat" value="18.488245">
+                      <input type="number" id="cmp-lng-2" step="0.000001" placeholder="Lng" value="74.961100">
+                    </div>
+                  </div>
+                  <div class="compare-coord-field">
+                    <label>Corner 3 (NW):</label>
+                    <div class="coord-inline-pair">
+                      <input type="number" id="cmp-lat-3" step="0.000001" placeholder="Lat" value="18.489667">
+                      <input type="number" id="cmp-lng-3" step="0.000001" placeholder="Lng" value="74.961389">
+                    </div>
+                  </div>
+                  <div class="compare-coord-field">
+                    <label>Corner 4 (NE):</label>
+                    <div class="coord-inline-pair">
+                      <input type="number" id="cmp-lat-4" step="0.000001" placeholder="Lat" value="18.489330">
+                      <input type="number" id="cmp-lng-4" step="0.000001" placeholder="Lng" value="74.963083">
+                    </div>
+                  </div>
+                </div>
+              </details>
             </div>
 
             <!-- Right Column: Upload GeoJSON File or Choose 1-Click Samples -->
@@ -244,7 +290,7 @@
           <!-- Action Bar -->
           <div class="compare-actions-bar">
             <button type="button" class="btn-primary-action compare-submit-btn" id="btn-execute-comparison">
-              <span>⚡</span> Compare Form Coordinates vs Uploaded GeoJSON & View on Map
+              <span>⚡</span> Compare BhuNaksha K-Prat vs Uploaded Drone Resurvey & View Live on Map
             </button>
           </div>
 
