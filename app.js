@@ -4425,6 +4425,15 @@ function setupComparisonStationHandlers() {
   }
 }
 
+// Ensure external government portal links open cleanly without leaking referrers
+document.addEventListener('click', (e) => {
+  const link = e.target.closest('.portal-link-btn');
+  if (link && link.href) {
+    link.rel = 'noopener noreferrer';
+    link.target = '_blank';
+  }
+});
+
 window.executeDualBoundaryComparison = executeDualBoundaryComparison;
 window.loadSampleGeoJson = loadSampleGeoJson;
 
