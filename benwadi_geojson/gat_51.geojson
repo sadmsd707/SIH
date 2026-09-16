@@ -1,0 +1,77 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_51_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-51",
+        "survey_no": "51",
+        "gat_no": "51",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "कावेरी दादासाहेब गदादे, पल्लवी बबन शेलार, प्रतिभा नितीन फरांडे, प्रशांत दादासाहेब गदादे, विशाल दादासाहेब गदादे, सूनंदा महादेव गायकवाड",
+        "all_owners": [
+          "कावेरी दादासाहेब गदादे, पल्लवी बबन शेलार, प्रतिभा नितीन फरांडे, प्रशांत दादासाहेब गदादे, विशाल दादासाहेब गदादे",
+          "सूनंदा महादेव गायकवाड"
+        ],
+        "khata_no": "780, 837",
+        "area_sqm": 3073.59,
+        "area_acres": 0.76,
+        "area_guntha": 30.38,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 0.76,
+        "old_survey_area_sqm": 3073.59,
+        "new_survey_area_acres": 0.76,
+        "new_survey_area_sqm": 3073.59
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9766057,
+              18.4913138
+            ],
+            [
+              74.9765699,
+              18.4910666
+            ],
+            [
+              74.9755151,
+              18.4914284
+            ],
+            [
+              74.9755419,
+              18.4915431
+            ],
+            [
+              74.975258,
+              18.4916232
+            ],
+            [
+              74.9753247,
+              18.4916853
+            ],
+            [
+              74.9766057,
+              18.4913138
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

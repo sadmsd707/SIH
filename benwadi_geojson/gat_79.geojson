@@ -1,0 +1,88 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_79_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-79",
+        "survey_no": "79",
+        "gat_no": "79",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "सर्जेराव शिवराम खूडे",
+        "all_owners": [
+          "सर्जेराव शिवराम खूडे"
+        ],
+        "khata_no": "328",
+        "area_sqm": 2415.72,
+        "area_acres": 0.6,
+        "area_guntha": 23.88,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 0.6,
+        "old_survey_area_sqm": 2415.72,
+        "new_survey_area_acres": 0.6,
+        "new_survey_area_sqm": 2415.72
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9774391,
+              18.4894083
+            ],
+            [
+              74.9774687,
+              18.4893951
+            ],
+            [
+              74.9775671,
+              18.489344
+            ],
+            [
+              74.9773369,
+              18.4887867
+            ],
+            [
+              74.9772754,
+              18.4888245
+            ],
+            [
+              74.9770688,
+              18.4889515
+            ],
+            [
+              74.9771272,
+              18.4891741
+            ],
+            [
+              74.9771695,
+              18.489347
+            ],
+            [
+              74.977212,
+              18.48952
+            ],
+            [
+              74.9774391,
+              18.4894083
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

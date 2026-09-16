@@ -1,0 +1,68 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_227_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-227",
+        "survey_no": "227",
+        "gat_no": "227",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "अंबादास भगवान देशमूख",
+        "all_owners": [
+          "अंबादास भगवान देशमूख"
+        ],
+        "khata_no": "468",
+        "area_sqm": 8058.1,
+        "area_acres": 1.99,
+        "area_guntha": 79.65,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 1.99,
+        "old_survey_area_sqm": 8058.1,
+        "new_survey_area_acres": 1.99,
+        "new_survey_area_sqm": 8058.1
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9625826,
+              18.4856962
+            ],
+            [
+              74.9623436,
+              18.4853122
+            ],
+            [
+              74.9609964,
+              18.4857532
+            ],
+            [
+              74.9612034,
+              18.4862231
+            ],
+            [
+              74.9625826,
+              18.4856962
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

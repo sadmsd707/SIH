@@ -1,0 +1,85 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_176_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-176",
+        "survey_no": "176",
+        "gat_no": "176",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "निलावती बापू गदादे, बापू विठोबा गदादे",
+        "all_owners": [
+          "निलावती बापू गदादे",
+          "बापू विठोबा गदादे"
+        ],
+        "khata_no": "908, 165",
+        "area_sqm": 22968.55,
+        "area_acres": 5.68,
+        "area_guntha": 227.03,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 5.68,
+        "old_survey_area_sqm": 22968.55,
+        "new_survey_area_acres": 5.68,
+        "new_survey_area_sqm": 22968.55
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.96251,
+              18.4802478
+            ],
+            [
+              74.9621492,
+              18.4789783
+            ],
+            [
+              74.9619013,
+              18.4781114
+            ],
+            [
+              74.9614115,
+              18.4783398
+            ],
+            [
+              74.9618632,
+              18.480077
+            ],
+            [
+              74.9616919,
+              18.4801274
+            ],
+            [
+              74.9620767,
+              18.4813441
+            ],
+            [
+              74.9627751,
+              18.4811642
+            ],
+            [
+              74.96251,
+              18.4802478
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

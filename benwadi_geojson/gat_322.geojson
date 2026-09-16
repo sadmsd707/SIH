@@ -1,0 +1,81 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_322_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-322",
+        "survey_no": "322",
+        "gat_no": "322",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "अरून देवराव देशमुख, सुनिता हनुमंत देशमुख",
+        "all_owners": [
+          "अरून देवराव देशमुख",
+          "सुनिता हनुमंत देशमुख",
+          "योगिता संभाजी देशमुख, अमृता  संभाजी  देशमुख, वृषाल  संभाजी  देशमुख",
+          "कोमल संजय देशमुख   अ.पा.क श्रीरंग  रावसो जगताप",
+          "संग्राम उर्फ  कृष्णा संजय देशमुख   अ.पा.क श्रीरंग  रावसो जगताप",
+          "सिध्दी संजय देशमुख  अ.पा.क श्रीरंग  रावसो जगताप"
+        ],
+        "khata_no": "2500, 2528, 2781, 2901, 2902, 2904",
+        "area_sqm": 22789.59,
+        "area_acres": 5.63,
+        "area_guntha": 225.26,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 5.63,
+        "old_survey_area_sqm": 22789.59,
+        "new_survey_area_acres": 5.63,
+        "new_survey_area_sqm": 22789.59
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.965519,
+              18.5040778
+            ],
+            [
+              74.9652967,
+              18.5041048
+            ],
+            [
+              74.9645672,
+              18.5041536
+            ],
+            [
+              74.9647748,
+              18.5059493
+            ],
+            [
+              74.9656968,
+              18.5065667
+            ],
+            [
+              74.9655667,
+              18.5047368
+            ],
+            [
+              74.965519,
+              18.5040778
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

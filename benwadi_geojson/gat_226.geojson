@@ -1,0 +1,106 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_226_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-226",
+        "survey_no": "226",
+        "gat_no": "226",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "अंकूश बाबासाहेब देशमुख, कलावती बाळासाहेब देशमूख",
+        "all_owners": [
+          "अंकूश बाबासाहेब देशमुख",
+          "कलावती बाळासाहेब देशमूख",
+          "बबन बाबासाहेब देशमूख",
+          "लहू बाबासाहेब देशमूख",
+          "मंगल  बबन  देशमुख",
+          "कलावती बाळासाहेब देशमूख",
+          "बबन बाबासाहेब देशमूख"
+        ],
+        "khata_no": "10, 27, 934, 935, 2555, 27, 934",
+        "area_sqm": 26780.62,
+        "area_acres": 6.62,
+        "area_guntha": 264.71,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 6.62,
+        "old_survey_area_sqm": 26780.62,
+        "new_survey_area_acres": 6.62,
+        "new_survey_area_sqm": 26780.62
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9615689,
+              18.4870559
+            ],
+            [
+              74.9614049,
+              18.4866933
+            ],
+            [
+              74.9612034,
+              18.4862231
+            ],
+            [
+              74.9609964,
+              18.4857532
+            ],
+            [
+              74.9623436,
+              18.4853122
+            ],
+            [
+              74.9619386,
+              18.4847218
+            ],
+            [
+              74.9607721,
+              18.4851353
+            ],
+            [
+              74.9602869,
+              18.4839811
+            ],
+            [
+              74.9600198,
+              18.4840158
+            ],
+            [
+              74.9600385,
+              18.4841214
+            ],
+            [
+              74.9604532,
+              18.4854716
+            ],
+            [
+              74.9609298,
+              18.4870705
+            ],
+            [
+              74.9615689,
+              18.4870559
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

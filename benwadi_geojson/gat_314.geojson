@@ -1,0 +1,105 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_314_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-314",
+        "survey_no": "314",
+        "gat_no": "314",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "आशाबाई सुरेश धुमाळ, दत्तू बाबू धांडे",
+        "all_owners": [
+          "आशाबाई सुरेश धुमाळ",
+          "दत्तू बाबू धांडे"
+        ],
+        "khata_no": "1026, 93",
+        "area_sqm": 36269.61,
+        "area_acres": 8.96,
+        "area_guntha": 358.5,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 8.96,
+        "old_survey_area_sqm": 36269.61,
+        "new_survey_area_acres": 8.96,
+        "new_survey_area_sqm": 36269.61
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9673714,
+              18.5052471
+            ],
+            [
+              74.9678746,
+              18.50508
+            ],
+            [
+              74.9689589,
+              18.5047042
+            ],
+            [
+              74.9692131,
+              18.5046144
+            ],
+            [
+              74.9695685,
+              18.5044997
+            ],
+            [
+              74.9701876,
+              18.5042785
+            ],
+            [
+              74.9702835,
+              18.5041752
+            ],
+            [
+              74.9691683,
+              18.5041439
+            ],
+            [
+              74.9686299,
+              18.5041204
+            ],
+            [
+              74.9671388,
+              18.5040552
+            ],
+            [
+              74.9662925,
+              18.5040274
+            ],
+            [
+              74.9661573,
+              18.504023
+            ],
+            [
+              74.9666928,
+              18.5055048
+            ],
+            [
+              74.9673714,
+              18.5052471
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

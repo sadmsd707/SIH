@@ -1,0 +1,72 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_196_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-196",
+        "survey_no": "196",
+        "gat_no": "196",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "योगेश झुंबर गदादे, सुनील परशुराम गदादे",
+        "all_owners": [
+          "योगेश झुंबर गदादे, सुनील परशुराम गदादे"
+        ],
+        "khata_no": "3423",
+        "area_sqm": 1690.61,
+        "area_acres": 0.42,
+        "area_guntha": 16.71,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 0.42,
+        "old_survey_area_sqm": 1690.61,
+        "new_survey_area_acres": 0.42,
+        "new_survey_area_sqm": 1690.61
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9606946,
+              18.4834056
+            ],
+            [
+              74.9609649,
+              18.4832621
+            ],
+            [
+              74.9607686,
+              18.4829525
+            ],
+            [
+              74.9604154,
+              18.4831194
+            ],
+            [
+              74.960626,
+              18.4834426
+            ],
+            [
+              74.9606946,
+              18.4834056
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

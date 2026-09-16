@@ -1,0 +1,69 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_24_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-24",
+        "survey_no": "24",
+        "gat_no": "24",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "बाबासाहेब बयाजी दवणे, कैलास पांडुरंग दवणे, गिरजाबाई पांडुरंग दवणे, चंद्रभागा पोपट गांगर्डे, नंदाबाई श्रीरंग निकत, कांताबाई विठ्ठल घोलप, राणी सुभाष सुद्रिक, रुपाली रोहिदास शेळके, उद्धव पांडुरंग दवणे, परसराम मारुती खेडकर",
+        "all_owners": [
+          "बाबासाहेब बयाजी दवणे",
+          "कैलास पांडुरंग दवणे, गिरजाबाई पांडुरंग दवणे, चंद्रभागा पोपट गांगर्डे, नंदाबाई श्रीरंग निकत, कांताबाई विठ्ठल घोलप, राणी सुभाष सुद्रिक, रुपाली रोहिदास शेळके, उद्धव पांडुरंग दवणे, परसराम मारुती खेडकर"
+        ],
+        "khata_no": "155, 711",
+        "area_sqm": 534.26,
+        "area_acres": 0.13,
+        "area_guntha": 5.28,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 0.13,
+        "old_survey_area_sqm": 534.26,
+        "new_survey_area_acres": 0.13,
+        "new_survey_area_sqm": 534.26
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9905006,
+              18.4888596
+            ],
+            [
+              74.9904347,
+              18.4886635
+            ],
+            [
+              74.9902466,
+              18.4886804
+            ],
+            [
+              74.9902915,
+              18.4889227
+            ],
+            [
+              74.9905006,
+              18.4888596
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_541_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-541",
+        "survey_no": "541",
+        "gat_no": "541",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "रियाज  छगन  सय्यद, सय्यद कमरुद्दीन सय्यद, रियाज  छगन  सय्यद, सय्यद कमरुद्दीन सय्यद",
+        "all_owners": [
+          "रियाज  छगन  सय्यद, सय्यद कमरुद्दीन सय्यद",
+          "रियाज  छगन  सय्यद, सय्यद कमरुद्दीन सय्यद",
+          "सत्तार अजमीर सय्यद",
+          "अश्माबी राजू शेख, अफ्रोज अकबर सय्यद, असिफ रसुल सय्यद, मिनाबी रसुल सय्यद",
+          "नजीर अहमद सय्यद"
+        ],
+        "khata_no": "2338, 2338, 2276, 2420, 3342",
+        "area_sqm": 18902.23,
+        "area_acres": 4.67,
+        "area_guntha": 186.84,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 4.67,
+        "old_survey_area_sqm": 18902.23,
+        "new_survey_area_acres": 4.67,
+        "new_survey_area_sqm": 18902.23
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9637213,
+              18.4845167
+            ],
+            [
+              74.9638852,
+              18.4842937
+            ],
+            [
+              74.9634777,
+              18.4838559
+            ],
+            [
+              74.9632593,
+              18.4836104
+            ],
+            [
+              74.9630905,
+              18.4834708
+            ],
+            [
+              74.962722,
+              18.483512
+            ],
+            [
+              74.961814,
+              18.4836349
+            ],
+            [
+              74.9619627,
+              18.4839997
+            ],
+            [
+              74.9620101,
+              18.4840256
+            ],
+            [
+              74.9627918,
+              18.4846959
+            ],
+            [
+              74.9630647,
+              18.4849342
+            ],
+            [
+              74.96354,
+              18.4843811
+            ],
+            [
+              74.9637213,
+              18.4845167
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

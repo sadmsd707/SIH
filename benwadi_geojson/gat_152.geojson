@@ -1,0 +1,76 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_152_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-152",
+        "survey_no": "152",
+        "gat_no": "152",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "दशरथ विठोबा गायकवाड",
+        "all_owners": [
+          "दशरथ विठोबा गायकवाड"
+        ],
+        "khata_no": "518",
+        "area_sqm": 12767.69,
+        "area_acres": 3.15,
+        "area_guntha": 126.2,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 3.15,
+        "old_survey_area_sqm": 12767.69,
+        "new_survey_area_acres": 3.15,
+        "new_survey_area_sqm": 12767.69
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.966077,
+              18.479039
+            ],
+            [
+              74.9658311,
+              18.4790891
+            ],
+            [
+              74.9663202,
+              18.4803502
+            ],
+            [
+              74.9667494,
+              18.4814826
+            ],
+            [
+              74.9673588,
+              18.4813964
+            ],
+            [
+              74.9666424,
+              18.4800655
+            ],
+            [
+              74.966077,
+              18.479039
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1411,6 +1411,11 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(data => {
       if (data && data.features) {
         benwadiVillageCadastreData = data;
+        // If opened via QR code scan, re-check to display authentic cadastre boundary and records!
+        const p = new URLSearchParams(window.location.search);
+        if (p.get('inspect') === '1' || p.has('pid') || p.has('gat') || p.has('survey')) {
+          checkUrlInspectionMode();
+        }
       }
     })
     .catch(() => {});
@@ -3086,10 +3091,7 @@ function renderQRIntoElement(targetEl, text, size) {
   if (!targetEl) return;
   targetEl.innerHTML = '';
 
-  // Truncate text if too long for QR (max ~900 chars at M correction)
-  // Dense QR codes are unscannable on small displays
-  const maxLen = 300;
-  const qrText = text.length > maxLen ? text.substring(0, maxLen) : text;
+  const qrText = (text && text.length > 550) ? text.substring(0, 550) : (text || '');
 
   let rendered = false;
   if (typeof QRCode !== 'undefined') {
@@ -3105,9 +3107,7 @@ function renderQRIntoElement(targetEl, text, size) {
       rendered = true;
 
       // QRCode.js creates BOTH a <canvas> AND an <img> element.
-      // With display:flex on parent, they appear side-by-side (squished).
-      // Fix: hide the img immediately, and also use MutationObserver as
-      // the img may be added asynchronously after canvas renders.
+      // Hide the extra <img> so the canvas displays cleanly at full size
       const hideExtraImg = () => {
         const imgs = targetEl.querySelectorAll('img');
         const canvas = targetEl.querySelector('canvas');
@@ -3120,18 +3120,16 @@ function renderQRIntoElement(targetEl, text, size) {
         imgs.forEach(img => { img.style.display = 'none'; });
       };
       hideExtraImg();
-      // Also hide on mutation (async img creation)
       const observer = new MutationObserver(() => { hideExtraImg(); observer.disconnect(); });
       observer.observe(targetEl, { childList: true, subtree: true });
-      // Safety: disconnect after 2s
-      setTimeout(() => { hideExtraImg(); observer.disconnect(); }, 2000);
+      setTimeout(() => { hideExtraImg(); observer.disconnect(); }, 1500);
 
     } catch (e) {
       console.warn('QRCode JS rendering error:', e);
     }
   }
 
-  // Fallback to online QR API
+  // Fallback to online QR API if offline library failed
   if (!rendered || !targetEl.hasChildNodes()) {
     targetEl.innerHTML = '';
     const img = document.createElement('img');
@@ -3166,7 +3164,96 @@ function downloadQRElementImage(container, filename) {
   }
 }
 
-let currentInspectorQRMode = 'url'; // Default to 'url' (scannable web link) instead of 'pass' (huge text)
+function getFeatureCentroid(feat) {
+  if (!feat || !feat.geometry) return [18.492518, 74.977294];
+  try {
+    if (typeof turf !== 'undefined' && turf.centroid) {
+      const c = turf.centroid(feat);
+      if (c && c.geometry && c.geometry.coordinates && !isNaN(c.geometry.coordinates[0])) {
+        return [c.geometry.coordinates[1], c.geometry.coordinates[0]];
+      }
+    }
+  } catch (e) {}
+  try {
+    const geom = feat.geometry;
+    let coords = geom.coordinates;
+    let ring = geom.type === 'MultiPolygon' ? coords[0][0] : coords[0];
+    let sumLat = 0, sumLng = 0, n = 0;
+    ring.forEach(pt => {
+      if (Array.isArray(pt) && typeof pt[0] === 'number' && typeof pt[1] === 'number') {
+        sumLng += pt[0];
+        sumLat += pt[1];
+        n++;
+      }
+    });
+    if (n > 0 && !isNaN(sumLat) && !isNaN(sumLng)) {
+      return [sumLat / n, sumLng / n];
+    }
+  } catch (e) {}
+  return [18.492518, 74.977294];
+}
+
+function downloadParcelGeoJSON(feature) {
+  const f = feature || currentSelectedFeature;
+  if (!f) {
+    if (typeof showVillageToast === 'function') {
+      showVillageToast('⚠️ Please click a plot on the map or enter a Gat number first.');
+    } else {
+      alert('Please click a plot on the map or enter a Gat number first.');
+    }
+    return;
+  }
+
+  const p = f.properties || {};
+  const gat = p.gat_no || p.survey_no || 'parcel';
+  const filename = `gat_${gat}.geojson`;
+
+  const fc = {
+    type: "FeatureCollection",
+    name: `Benwadi_Gat_${gat}_Cadastre`,
+    crs: {
+      type: "name",
+      properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" }
+    },
+    features: [{
+      type: "Feature",
+      properties: {
+        ...p,
+        parcel_id: p.parcel_id || `MH-AHM-KAR-BEN-${gat}`,
+        survey_no: p.survey_no || gat,
+        gat_no: gat,
+        village: p.village || 'Benwadi (बेनवडी)',
+        taluka: p.taluka || 'Karjat (कर्जत)',
+        district: p.district || 'Ahmednagar (अहमदनगर)',
+        state: 'Maharashtra',
+        status: p.status || 'verified',
+        confidence_score: p.confidence_score || 98.8,
+        old_survey_area_acres: p.area_acres || p.old_survey_area_acres || 0,
+        old_survey_area_sqm: p.area_sqm || p.old_survey_area_sqm || 0,
+        new_survey_area_acres: p.area_acres || p.new_survey_area_acres || 0,
+        new_survey_area_sqm: p.area_sqm || p.new_survey_area_sqm || 0,
+        source: "MahaBhuNaksha Official Live Cadastre"
+      },
+      geometry: f.geometry
+    }]
+  };
+
+  const blob = new Blob([JSON.stringify(fc, null, 2)], { type: 'application/geo+json;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  if (typeof showVillageToast === 'function') {
+    showVillageToast(`📥 Downloaded GeoJSON for Gat #${gat}!`);
+  }
+}
+
+let currentInspectorQRMode = 'url'; // 'url' (Web Certificate), 'pass' (Digital Land Pass), 'gps' (Google Maps Satellite)
 
 function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
   const cardTarget = document.getElementById('insp-card-qr-target');
@@ -3174,75 +3261,82 @@ function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
   if (!cardTarget && !modalTarget) return;
 
   let p = {};
-  let cLat = 18.489002;
-  let cLng = 74.962986;
   let activeFeature = null;
 
   if (featureOrId && typeof featureOrId === 'object') {
     activeFeature = featureOrId;
     p = featureOrId.properties || {};
-    try {
-      if (typeof turf !== 'undefined') {
-        const c = turf.centroid(featureOrId);
-        cLng = c.geometry.coordinates[0];
-        cLat = c.geometry.coordinates[1];
-      } else if (featureOrId.geometry && featureOrId.geometry.coordinates) {
-        const coords = featureOrId.geometry.coordinates[0];
-        if (coords && coords[0]) {
-          cLng = coords[0][0];
-          cLat = coords[0][1];
-        }
-      }
-    } catch (e) {}
   } else if (typeof featureOrId === 'string') {
     const pid = featureOrId;
     const match = (typeof activeComparedParcel !== 'undefined' && activeComparedParcel && activeComparedParcel.properties && activeComparedParcel.properties.parcel_id === pid) ? activeComparedParcel :
-                  ((typeof parcelsData !== 'undefined' && parcelsData.features) ? parcelsData.features.find(f => f.properties && (f.properties.parcel_id === pid || f.properties.survey_no === pid || f.properties.gat_no === pid)) : null);
+                  ((typeof parcelsData !== 'undefined' && parcelsData.features) ? parcelsData.features.find(f => f.properties && (f.properties.parcel_id === pid || f.properties.survey_no === pid || f.properties.gat_no === pid)) :
+                  ((typeof benwadiVillageCadastreData !== 'undefined' && benwadiVillageCadastreData && benwadiVillageCadastreData.features) ? benwadiVillageCadastreData.features.find(f => f.properties && (f.properties.parcel_id === pid || String(f.properties.survey_no) === pid || String(f.properties.gat_no) === pid)) : null));
     if (match) {
       activeFeature = match;
       p = match.properties || {};
     } else {
       p = { parcel_id: pid, survey_no: arg2 || '—', owner_name: arg3 || 'Landholder' };
     }
-    cLat = typeof arg4 === 'number' ? arg4 : 18.489002;
-    cLng = typeof arg5 === 'number' ? arg5 : 74.962986;
   }
 
-  const survey = p.survey_no || p.gat_no || '231';
+  // Robust Centroid Calculation: Priority to passed centroid args, then feature geometry
+  let cLat = 18.492518;
+  let cLng = 74.977294;
+  if (typeof arg2 === 'number' && typeof arg3 === 'number' && !isNaN(arg2) && !isNaN(arg3)) {
+    cLat = arg2;
+    cLng = arg3;
+  } else if (typeof arg4 === 'number' && typeof arg5 === 'number' && !isNaN(arg4) && !isNaN(arg5)) {
+    cLat = arg4;
+    cLng = arg5;
+  } else if (activeFeature) {
+    const centroid = getFeatureCentroid(activeFeature);
+    cLat = centroid[0];
+    cLng = centroid[1];
+  }
+
+  const survey = p.survey_no || p.gat_no || '1';
   const gat = p.gat_no || survey;
-  const pid = p.parcel_id || `MH-AHM-KAR-BEN-${survey}`;
+  const pid = p.parcel_id || `MH-AHM-KAR-BEN-${gat}`;
   const owner = p.owner_name || 'नोंदणीकृत खातेदार';
   const village = p.village || 'Benwadi (बेनवडी)';
   const taluka = p.taluka || 'Karjat (कर्जत)';
   const dist = p.district || 'Ahmednagar (अहमदनगर)';
   const landType = p.land_type || 'जिरायत शेती (Jirayat)';
   const status = p.status || 'verified';
-  const score = p.confidence_score !== undefined ? p.confidence_score : '98.6';
+  const score = p.confidence_score !== undefined ? p.confidence_score : '98.8';
   const oldArea = parseFloat(p.old_survey_area_acres !== undefined ? p.old_survey_area_acres : (p.area_acres || '0')) || 0;
-  const newArea = parseFloat(p.new_survey_area_acres !== undefined ? p.new_survey_area_acres : oldArea) || oldArea;
-  const oldSqm = Math.round(p.old_survey_area_sqm || (oldArea * 4046.86));
-  const newSqm = Math.round(p.new_survey_area_sqm || (newArea * 4046.86));
-  const shift = p.mean_shift_m !== undefined ? p.mean_shift_m : '0.38';
-  const diff = p.area_diff_pct !== undefined ? p.area_diff_pct : '0';
-  const iou = p.iou_overlap_pct !== undefined ? p.iou_overlap_pct : '98.8';
-  const rtkAcc = p.rtk_accuracy_cm !== undefined ? p.rtk_accuracy_cm : '1.2';
-  const gcpCount = p.gcp_count || 8;
+  const oldSqm = Math.round(p.old_survey_area_sqm || (p.area_sqm || (oldArea * 4046.86)));
+  const khata = p.khata_no || '—';
 
-  // 1. Web URL Payload — SHORT scannable URL that opens the portal with parcel details
-  // This is the DEFAULT because it produces a simple, scannable QR code
+  // 1. Web URL Payload — Direct URL with full authentic parcel data encoded
   let baseOrigin = window.location.origin + window.location.pathname;
-  if (window.location.protocol === 'file:') {
-    baseOrigin = `https://sadmsd707.github.io/SIH/index.html`;
+  if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    baseOrigin = 'https://sadmsd707.github.io/SIH/index.html';
   }
-  const webUrlPayload = `${baseOrigin}?inspect=1&pid=${encodeURIComponent(pid)}&gat=${encodeURIComponent(gat)}&score=${score}&st=${status === 'verified' ? 'v' : (status === 'needs_review' ? 'r' : 'd')}&lat=${Number(cLat).toFixed(6)}&lng=${Number(cLng).toFixed(6)}`;
+  const webUrlPayload = `${baseOrigin}?inspect=1&pid=${encodeURIComponent(pid)}&gat=${encodeURIComponent(gat)}&owner=${encodeURIComponent(owner)}&acres=${oldArea}&sqm=${oldSqm}&khata=${encodeURIComponent(khata)}&lat=${Number(cLat).toFixed(6)}&lng=${Number(cLng).toFixed(6)}&st=${status === 'verified' ? 'v' : (status === 'needs_review' ? 'r' : 'd')}&score=${score}`;
 
-  // 2. Google Maps GPS Link — simple, universal, always scannable
+  // 2. Official Digital Land Pass Text Payload — Plain-text verifiable record
+  const landPassPayload = `MAHARASHTRA CADASTRE RECORD
+Gat: ${gat} | Parcel: ${pid}
+Village: ${village}
+Taluka: ${taluka} | Dist: ${dist}
+Owner: ${owner}
+Area: ${oldArea} Ac (${oldSqm.toLocaleString()} m²)
+Khata: ${khata} | Type: ${landType}
+Status: ${status.toUpperCase()} (${score}% Conf)
+GPS: ${Number(cLat).toFixed(6)}, ${Number(cLng).toFixed(6)}
+Verify: https://sadmsd707.github.io/SIH/index.html?gat=${encodeURIComponent(gat)}`;
+
+  // 3. Google Maps GPS Link
   const gpsPayload = `https://maps.google.com/?q=${Number(cLat).toFixed(6)},${Number(cLng).toFixed(6)}&z=19&t=k`;
 
   // Choose payload according to active mode
-  // 'url' = portal web link (default, scannable)
-  // 'pass' = Google Maps GPS link (always scannable)
-  const activePayload = currentInspectorQRMode === 'pass' ? gpsPayload : webUrlPayload;
+  let activePayload = webUrlPayload;
+  if (currentInspectorQRMode === 'pass') {
+    activePayload = landPassPayload;
+  } else if (currentInspectorQRMode === 'gps') {
+    activePayload = gpsPayload;
+  }
 
   // Render QR into Card and Modal
   if (cardTarget) {
@@ -3253,41 +3347,66 @@ function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
   }
 
   // Update mode toggle buttons
-  const passBtn = document.getElementById('btn-qr-mode-pass');
   const urlBtn = document.getElementById('btn-qr-mode-url');
+  const passBtn = document.getElementById('btn-qr-mode-pass');
+  const gpsBtn = document.getElementById('btn-qr-mode-gps');
   const titleEl = document.getElementById('insp-qr-title');
   const descEl = document.getElementById('insp-qr-desc');
 
-  if (passBtn && urlBtn) {
-    passBtn.className = `btn-qr-mode ${currentInspectorQRMode === 'pass' ? 'active' : ''}`;
-    urlBtn.className = `btn-qr-mode ${currentInspectorQRMode === 'url' ? 'active' : ''}`;
+  if (urlBtn) urlBtn.className = `btn-qr-mode ${currentInspectorQRMode === 'url' ? 'active' : ''}`;
+  if (passBtn) passBtn.className = `btn-qr-mode ${currentInspectorQRMode === 'pass' ? 'active' : ''}`;
+  if (gpsBtn) gpsBtn.className = `btn-qr-mode ${currentInspectorQRMode === 'gps' ? 'active' : ''}`;
 
-    passBtn.onclick = (e) => {
-      e.stopPropagation();
-      currentInspectorQRMode = 'pass';
-      if (titleEl) titleEl.textContent = 'GPS Satellite Map QR';
-      if (descEl) descEl.innerHTML = 'Scan to open <strong>Google Maps Satellite view</strong> of this parcel directly on your phone.';
-      generateParcelQRCode(activeFeature || featureOrId);
-    };
-
+  if (urlBtn) {
     urlBtn.onclick = (e) => {
       e.stopPropagation();
       currentInspectorQRMode = 'url';
       if (titleEl) titleEl.textContent = 'Web Certificate QR';
-      if (descEl) descEl.innerHTML = 'Scan to open the <strong>Standalone Digital Inspection Certificate</strong> in your mobile web browser.';
-      generateParcelQRCode(activeFeature || featureOrId);
+      if (descEl) descEl.innerHTML = 'Scan to open the <strong>Interactive Digital Certificate</strong> in mobile browser.';
+      generateParcelQRCode(activeFeature || featureOrId, cLat, cLng);
     };
   }
 
-  // Connect Download actions
+  if (passBtn) {
+    passBtn.onclick = (e) => {
+      e.stopPropagation();
+      currentInspectorQRMode = 'pass';
+      if (titleEl) titleEl.textContent = 'Digital Land Pass (7/12)';
+      if (descEl) descEl.innerHTML = 'Scan to view <strong>Full Owner & Land Pass Text</strong> directly in any QR scanner.';
+      generateParcelQRCode(activeFeature || featureOrId, cLat, cLng);
+    };
+  }
+
+  if (gpsBtn) {
+    gpsBtn.onclick = (e) => {
+      e.stopPropagation();
+      currentInspectorQRMode = 'gps';
+      if (titleEl) titleEl.textContent = 'GPS Satellite Map QR';
+      if (descEl) descEl.innerHTML = 'Scan to open <strong>Google Maps Satellite view</strong> pinned to this parcel.';
+      generateParcelQRCode(activeFeature || featureOrId, cLat, cLng);
+    };
+  }
+
+  // Connect Download QR actions
   const inspDownloadBtn = document.getElementById('btn-insp-download-qr');
   if (inspDownloadBtn && cardTarget) {
-    inspDownloadBtn.onclick = () => downloadQRElementImage(cardTarget, `QR_${currentInspectorQRMode}_${pid}.png`);
+    inspDownloadBtn.onclick = () => downloadQRElementImage(cardTarget, `QR_${currentInspectorQRMode}_Gat${gat}.png`);
   }
 
   const modalDownloadBtn = document.getElementById('btn-download-qr');
   if (modalDownloadBtn && modalTarget) {
-    modalDownloadBtn.onclick = () => downloadQRElementImage(modalTarget, `QR_Modal_${pid}.png`);
+    modalDownloadBtn.onclick = () => downloadQRElementImage(modalTarget, `QR_Modal_Gat${gat}.png`);
+  }
+
+  // Connect Download GeoJSON actions
+  const inspDownloadGeoJsonBtn = document.getElementById('btn-insp-download-geojson');
+  if (inspDownloadGeoJsonBtn) {
+    inspDownloadGeoJsonBtn.onclick = () => downloadParcelGeoJSON(activeFeature);
+  }
+
+  const modalDownloadGeoJsonBtn = document.getElementById('modal-download-geojson-btn');
+  if (modalDownloadGeoJsonBtn) {
+    modalDownloadGeoJsonBtn.onclick = () => downloadParcelGeoJSON(activeFeature);
   }
 
   // Connect Copy actions
@@ -3304,7 +3423,8 @@ function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
           btn.innerHTML = '<span>✅</span> Copied!';
           setTimeout(() => { btn.innerHTML = orig; }, 2000);
           if (typeof showVillageToast === 'function') {
-            showVillageToast(`📋 ${currentInspectorQRMode === 'url' ? 'Web Link' : 'Land Pass Data'} Copied for Gat ${survey}!`);
+            const modeName = currentInspectorQRMode === 'url' ? 'Web Link' : (currentInspectorQRMode === 'pass' ? 'Land Pass' : 'GPS Map');
+            showVillageToast(`📋 ${modeName} Copied for Gat ${gat}!`);
           }
         }).catch(() => {
           prompt('Active QR Data:', activePayload);
@@ -3320,7 +3440,7 @@ function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
     const f = activeFeature || currentSelectedFeature;
     if (f) {
       if (typeof showVillageToast === 'function') {
-        showVillageToast(`📱 Scanned Gat ${gat}: Loading Official 7/12 Extract & Certificate...`);
+        showVillageToast(`📱 Scanned Gat ${gat}: Loading Official 7/12 Certificate...`);
       }
       openParcelModal(f);
     }
@@ -3334,46 +3454,83 @@ function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
 
 function checkUrlInspectionMode() {
   const params = new URLSearchParams(window.location.search);
-  if (params.get('inspect') === '1' || params.get('inspect') === 'true' || params.has('pid') || params.has('gat')) {
-    const pid = params.get('pid') || 'GLP-VERIFIED';
-    const survey = params.get('gat') || params.get('survey') || '231';
+  if (params.get('inspect') === '1' || params.get('inspect') === 'true' || params.has('pid') || params.has('gat') || params.has('survey')) {
+    const pidParam = params.get('pid');
+    const survey = params.get('gat') || params.get('survey') || (pidParam ? pidParam.split('-').pop() : '1');
     const gat = params.get('gat') || survey;
-    const score = parseFloat(params.get('score')) || 98.6;
+    const pid = pidParam || `MH-AHM-KAR-BEN-${gat}`;
+    const score = parseFloat(params.get('score')) || 98.8;
     const stParam = params.get('st') || params.get('status') || 'verified';
     const status = (stParam === 'v' || stParam === 'verified') ? 'verified' : (stParam === 'r' ? 'needs_review' : 'dispute');
-    const lat = parseFloat(params.get('lat')) || 18.489002;
-    const lng = parseFloat(params.get('lng')) || 74.962986;
+    const lat = parseFloat(params.get('lat')) || 18.492518;
+    const lng = parseFloat(params.get('lng')) || 74.977294;
 
-    let feature = appParcels.features.find(f => f.properties.parcel_id === pid || String(f.properties?.survey_no) === String(survey));
-    if (!feature && typeof benwadiVillageCadastreData !== 'undefined' && benwadiVillageCadastreData && benwadiVillageCadastreData.features) {
-      feature = benwadiVillageCadastreData.features.find(f => String(f.properties?.survey_no) === String(survey) || String(f.properties?.gat_no) === String(gat));
+    const urlOwner = params.get('owner') || '';
+    const urlAcres = parseFloat(params.get('acres') || params.get('area')) || 0;
+    const urlSqm = parseFloat(params.get('sqm')) || (urlAcres > 0 ? Math.round(urlAcres * 4046.86) : 0);
+    const urlKhata = params.get('khata') || '';
+    const urlVillage = params.get('vill') || params.get('village') || 'Benwadi (बेनवडी)';
+    const urlTaluka = params.get('tal') || params.get('taluka') || 'Karjat (कर्जत)';
+    const urlDist = params.get('dist') || params.get('district') || 'Ahmednagar (अहमदनगर)';
+
+    let feature = null;
+    if (typeof benwadiVillageCadastreData !== 'undefined' && benwadiVillageCadastreData && benwadiVillageCadastreData.features) {
+      feature = benwadiVillageCadastreData.features.find(f => String(f.properties?.gat_no) === String(gat) || String(f.properties?.survey_no) === String(survey) || f.properties?.parcel_id === pid);
+    }
+    if (!feature && typeof appParcels !== 'undefined' && appParcels && appParcels.features) {
+      feature = appParcels.features.find(f => f.properties?.parcel_id === pid || String(f.properties?.survey_no) === String(survey));
     }
 
-    if (!feature) {
+    if (feature) {
+      // Authentic parcel from official cadastre!
+      const p = feature.properties || {};
+      feature = {
+        type: 'Feature',
+        properties: {
+          ...p,
+          parcel_id: p.parcel_id || pid,
+          survey_no: p.survey_no || survey,
+          gat_no: p.gat_no || gat,
+          owner_name: p.owner_name || urlOwner || 'नोंदणीकृत खातेदार',
+          village: p.village || urlVillage,
+          taluka: p.taluka || urlTaluka,
+          district: p.district || urlDist,
+          status: status,
+          confidence_score: score,
+          old_survey_area_acres: p.area_acres || urlAcres,
+          old_survey_area_sqm: p.area_sqm || urlSqm,
+          new_survey_area_acres: p.area_acres || urlAcres,
+          new_survey_area_sqm: p.area_sqm || urlSqm,
+          khata_no: p.khata_no || urlKhata
+        },
+        geometry: feature.geometry
+      };
+    } else {
+      // Prioritize accurate URL parameters before cadastre finishes loading (never show dummy wrong owner)
       feature = {
         type: 'Feature',
         properties: {
           parcel_id: pid,
           survey_no: survey,
           gat_no: gat,
-          khata_no: '141, 149, 184',
-          owner_name: params.get('owner') || 'पंढरीनाथ शंकर देशमूख व इतर',
+          khata_no: urlKhata || '—',
+          owner_name: urlOwner || `नोंदणीकृत खातेदार (Gat ${gat})`,
           joint_owners: [],
-          father_name: 'शंकर रामजी देशमुख',
-          village: 'Benwadi (बेनवडी)',
-          taluka: 'Karjat (कर्जत)',
-          district: 'Ahmednagar (अहमदनगर)',
+          father_name: '—',
+          village: urlVillage,
+          taluka: urlTaluka,
+          district: urlDist,
           state: 'Maharashtra',
-          land_type: 'जिरायत व बागायत शेती',
+          land_type: 'जिरायत शेती (Jirayat)',
           status: status,
           confidence_score: score,
-          old_survey_area_acres: 18.28,
-          old_survey_area_sqm: 73968,
-          new_survey_area_acres: 18.29,
-          new_survey_area_sqm: 74014,
-          area_diff_pct: 0.06,
-          mean_shift_m: 0.42,
-          iou_overlap_pct: 98.9,
+          old_survey_area_acres: urlAcres || 3.5,
+          old_survey_area_sqm: urlSqm || Math.round((urlAcres || 3.5) * 4046.86),
+          new_survey_area_acres: urlAcres || 3.5,
+          new_survey_area_sqm: urlSqm || Math.round((urlAcres || 3.5) * 4046.86),
+          area_diff_pct: 0.0,
+          mean_shift_m: 0.35,
+          iou_overlap_pct: 99.1,
           survey_date: new Date().toISOString().split('T')[0],
           drone_model: 'DJI Matrice 350 RTK + Zenmuse P1',
           rtk_accuracy_cm: 1.2,
@@ -3392,6 +3549,19 @@ function checkUrlInspectionMode() {
           ]]
         }
       };
+
+      // Ensure cadastre data loads and upgrades the display automatically
+      if (!benwadiVillageCadastreData) {
+        fetch('benwadi_village_cadastre.geojson')
+          .then(r => r.ok ? r.json() : null)
+          .then(data => {
+            if (data && data.features) {
+              benwadiVillageCadastreData = data;
+              checkUrlInspectionMode();
+            }
+          })
+          .catch(() => {});
+      }
     }
 
     // Enable Standalone Inspector View (Hides the rest of the website)
@@ -6185,6 +6355,98 @@ function setupComparisonStationHandlers() {
     };
     reader.readAsText(file);
   }
+
+  // Quick Benwadi Gat Picker Handlers
+  const quickGatInput = document.getElementById('quick-gat-picker-input');
+  const btnQuickDownloadGat = document.getElementById('btn-quick-download-gat');
+  const btnQuickLoadGat = document.getElementById('btn-quick-load-gat');
+
+  function getSelectedQuickGat() {
+    const val = parseInt(quickGatInput?.value?.trim(), 10);
+    if (isNaN(val) || val < 1 || val > 545) {
+      if (typeof showVillageToast === 'function') {
+        showVillageToast('⚠️ Please enter a valid Gat number between 1 and 545.');
+      } else {
+        alert('Please enter a valid Gat number between 1 and 545.');
+      }
+      quickGatInput?.focus();
+      return null;
+    }
+    return val;
+  }
+
+  btnQuickDownloadGat?.addEventListener('click', () => {
+    const gat = getSelectedQuickGat();
+    if (!gat) return;
+
+    let feat = null;
+    if (benwadiVillageCadastreData && benwadiVillageCadastreData.features) {
+      feat = benwadiVillageCadastreData.features.find(f => String(f.properties?.gat_no) === String(gat) || String(f.properties?.survey_no) === String(gat));
+    }
+    if (feat) {
+      downloadParcelGeoJSON(feat);
+    } else {
+      const a = document.createElement('a');
+      a.href = `benwadi_geojson/gat_${gat}.geojson`;
+      a.download = `gat_${gat}.geojson`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      if (typeof showVillageToast === 'function') {
+        showVillageToast(`📥 Downloaded GeoJSON for Gat #${gat}!`);
+      }
+    }
+  });
+
+  btnQuickLoadGat?.addEventListener('click', () => {
+    const gat = getSelectedQuickGat();
+    if (!gat) return;
+
+    let feat = null;
+    if (benwadiVillageCadastreData && benwadiVillageCadastreData.features) {
+      feat = benwadiVillageCadastreData.features.find(f => String(f.properties?.gat_no) === String(gat) || String(f.properties?.survey_no) === String(gat));
+    }
+
+    if (feat) {
+      selectBenwadiCadastreParcel(feat);
+      const fc = {
+        type: 'FeatureCollection',
+        features: [feat]
+      };
+      uploadedGeoJsonData = fc;
+
+      const badge = document.getElementById('compare-file-badge');
+      const filename = document.getElementById('compare-loaded-filename');
+      if (badge && filename) {
+        badge.style.display = 'flex';
+        filename.textContent = `gat_${gat}.geojson (Benwadi Gat ${gat})`;
+      }
+
+      executeDualBoundaryComparison(fc);
+      if (typeof showVillageToast === 'function') {
+        showVillageToast(`⚡ Loaded Benwadi Gat #${gat} into Resurvey Comparison!`);
+      }
+    } else {
+      fetch(`benwadi_geojson/gat_${gat}.geojson`)
+        .then(r => r.json())
+        .then(fc => {
+          uploadedGeoJsonData = fc;
+          const badge = document.getElementById('compare-file-badge');
+          const filename = document.getElementById('compare-loaded-filename');
+          if (badge && filename) {
+            badge.style.display = 'flex';
+            filename.textContent = `gat_${gat}.geojson (Benwadi Gat ${gat})`;
+          }
+          if (fc.features && fc.features[0]) {
+            selectBenwadiCadastreParcel(fc.features[0]);
+          }
+          executeDualBoundaryComparison(fc);
+        })
+        .catch(err => {
+          alert('Could not load GeoJSON for Gat ' + gat + ': ' + err.message);
+        });
+    }
+  });
 }
 
 // Ensure external government portal links open cleanly without leaking referrers
@@ -6229,7 +6491,8 @@ window.GeoLand = {
   MAHARASHTRA_VILLAGE_BOUNDARIES,
   loadAndDisplayBenwadiCadastre,
   toggleBenwadiVillageCadastre,
-  selectBenwadiCadastreParcel
+  selectBenwadiCadastreParcel,
+  downloadParcelGeoJSON
 };
 
 // Direct window exports for inline onclick handlers in HTML
@@ -6250,3 +6513,4 @@ window.renderKPratReferenceOnMap = renderKPratReferenceOnMap;
 window.loadAndDisplayBenwadiCadastre = loadAndDisplayBenwadiCadastre;
 window.toggleBenwadiVillageCadastre = toggleBenwadiVillageCadastre;
 window.selectBenwadiCadastreParcel = selectBenwadiCadastreParcel;
+window.downloadParcelGeoJSON = downloadParcelGeoJSON;

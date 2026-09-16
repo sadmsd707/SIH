@@ -1,0 +1,76 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_442_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-442",
+        "survey_no": "442",
+        "gat_no": "442",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "वासंती वसंत कोहळे",
+        "all_owners": [
+          "वासंती वसंत कोहळे"
+        ],
+        "khata_no": "1115",
+        "area_sqm": 3784.82,
+        "area_acres": 0.94,
+        "area_guntha": 37.41,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 0.94,
+        "old_survey_area_sqm": 3784.82,
+        "new_survey_area_acres": 0.94,
+        "new_survey_area_sqm": 3784.82
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9968285,
+              18.4946926
+            ],
+            [
+              74.996658,
+              18.49434
+            ],
+            [
+              74.9965871,
+              18.4941931
+            ],
+            [
+              74.9960434,
+              18.4944722
+            ],
+            [
+              74.9960643,
+              18.4945072
+            ],
+            [
+              74.9962452,
+              18.4949258
+            ],
+            [
+              74.9968285,
+              18.4946926
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

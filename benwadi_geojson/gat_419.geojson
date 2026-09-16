@@ -1,0 +1,112 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_419_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-419",
+        "survey_no": "419",
+        "gat_no": "419",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "राजु खंडू भिताडे, बापु लहु गदांदे",
+        "all_owners": [
+          "राजु खंडू भिताडे",
+          "बापु लहु गदांदे",
+          "संतोष लहु गदांदे",
+          "विष्णु बबन गदांदे",
+          "दत्तात्रय बबन गदांदे",
+          "विजय वसंत गायकवाड",
+          "श्रीमंत वसंत गायकवाड",
+          "हेमंत विष्णू कोहळे",
+          "ज्योती हेमंत कोहळे"
+        ],
+        "khata_no": "1055, 2341, 2342, 2343, 2344, 2345, 565, 882, 883",
+        "area_sqm": 58423.71,
+        "area_acres": 14.44,
+        "area_guntha": 577.48,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 14.44,
+        "old_survey_area_sqm": 58423.71,
+        "new_survey_area_acres": 14.44,
+        "new_survey_area_sqm": 58423.71
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              75.0004267,
+              18.4927273
+            ],
+            [
+              74.9997292,
+              18.4917027
+            ],
+            [
+              74.9987293,
+              18.4919516
+            ],
+            [
+              74.9977227,
+              18.49222
+            ],
+            [
+              74.9975916,
+              18.4919921
+            ],
+            [
+              74.9969357,
+              18.490762
+            ],
+            [
+              74.996773,
+              18.4904539
+            ],
+            [
+              74.9961652,
+              18.4906827
+            ],
+            [
+              74.9961994,
+              18.4907437
+            ],
+            [
+              74.9967652,
+              18.4922725
+            ],
+            [
+              74.9971696,
+              18.4933325
+            ],
+            [
+              74.997216,
+              18.493475
+            ],
+            [
+              74.9980565,
+              18.4932615
+            ],
+            [
+              75.0004267,
+              18.4927273
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

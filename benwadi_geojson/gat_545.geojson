@@ -1,0 +1,84 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_545_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-545",
+        "survey_no": "545",
+        "gat_no": "545",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "श्री.हरीनारायन स्वामी महाराज मठ",
+        "all_owners": [
+          "श्री.हरीनारायन स्वामी महाराज मठ"
+        ],
+        "khata_no": "205",
+        "area_sqm": 16414.65,
+        "area_acres": 4.06,
+        "area_guntha": 162.25,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 4.06,
+        "old_survey_area_sqm": 16414.65,
+        "new_survey_area_acres": 4.06,
+        "new_survey_area_sqm": 16414.65
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.974008,
+              18.4961284
+            ],
+            [
+              74.9733099,
+              18.496799
+            ],
+            [
+              74.9733354,
+              18.4972734
+            ],
+            [
+              74.9731006,
+              18.4977439
+            ],
+            [
+              74.9733581,
+              18.4980877
+            ],
+            [
+              74.9737389,
+              18.4986265
+            ],
+            [
+              74.9738791,
+              18.4983247
+            ],
+            [
+              74.974083,
+              18.4973461
+            ],
+            [
+              74.974008,
+              18.4961284
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

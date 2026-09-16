@@ -1,0 +1,69 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_268_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-268",
+        "survey_no": "268",
+        "gat_no": "268",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "दादा आप्पा कवडे, शारदा कल्याण धुमाळ, हनुमान सखाराम भोसले, आश्रू भाऊसाहेब धुमाळ, दादा भिवा कांबळे",
+        "all_owners": [
+          "दादा आप्पा कवडे, शारदा कल्याण धुमाळ, हनुमान सखाराम भोसले, आश्रू भाऊसाहेब धुमाळ",
+          "दादा भिवा कांबळे"
+        ],
+        "khata_no": "2882, 584",
+        "area_sqm": 4796.47,
+        "area_acres": 1.19,
+        "area_guntha": 47.41,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 1.19,
+        "old_survey_area_sqm": 4796.47,
+        "new_survey_area_acres": 1.19,
+        "new_survey_area_sqm": 4796.47
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9668965,
+              18.4940512
+            ],
+            [
+              74.966804,
+              18.4936131
+            ],
+            [
+              74.9659879,
+              18.4938329
+            ],
+            [
+              74.9659371,
+              18.4943087
+            ],
+            [
+              74.9668965,
+              18.4940512
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_253_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-253",
+        "survey_no": "253",
+        "gat_no": "253",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "आशोक धोंडीराम शेंडे, राजेंद्र धोंडीराम शेंडे",
+        "all_owners": [
+          "आशोक धोंडीराम शेंडे",
+          "राजेंद्र धोंडीराम शेंडे",
+          "नेहा राजेंद्र शेंडे",
+          "ओंकार अशोक शेंडे"
+        ],
+        "khata_no": "15, 2593, 2594, 2595",
+        "area_sqm": 48683.91,
+        "area_acres": 12.03,
+        "area_guntha": 481.21,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 12.03,
+        "old_survey_area_sqm": 48683.91,
+        "new_survey_area_acres": 12.03,
+        "new_survey_area_sqm": 48683.91
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9718046,
+              18.4991216
+            ],
+            [
+              74.9716476,
+              18.498918
+            ],
+            [
+              74.9711753,
+              18.498297
+            ],
+            [
+              74.9706029,
+              18.4975375
+            ],
+            [
+              74.9694713,
+              18.4960375
+            ],
+            [
+              74.9688392,
+              18.4963769
+            ],
+            [
+              74.9693894,
+              18.4974428
+            ],
+            [
+              74.9696778,
+              18.4980117
+            ],
+            [
+              74.9701761,
+              18.4989858
+            ],
+            [
+              74.9705695,
+              18.4997219
+            ],
+            [
+              74.9707033,
+              18.4999875
+            ],
+            [
+              74.9716959,
+              18.4992067
+            ],
+            [
+              74.9718046,
+              18.4991216
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

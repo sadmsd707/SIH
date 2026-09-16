@@ -1,0 +1,70 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_331_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-331",
+        "survey_no": "331",
+        "gat_no": "331",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "जालिंदर पोपट कवडे, सुभाष पोपट कवडे, संपत अंबादास कवडे",
+        "all_owners": [
+          "जालिंदर पोपट कवडे, सुभाष पोपट कवडे",
+          "संपत अंबादास कवडे",
+          "उध्दव अंबादास कवडे"
+        ],
+        "khata_no": "407, 591, 592",
+        "area_sqm": 612.86,
+        "area_acres": 0.15,
+        "area_guntha": 6.06,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 0.15,
+        "old_survey_area_sqm": 612.86,
+        "new_survey_area_acres": 0.15,
+        "new_survey_area_sqm": 612.86
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9698267,
+              18.5069543
+            ],
+            [
+              74.9697985,
+              18.5067256
+            ],
+            [
+              74.9695603,
+              18.506784
+            ],
+            [
+              74.9695928,
+              18.5069881
+            ],
+            [
+              74.9698267,
+              18.5069543
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

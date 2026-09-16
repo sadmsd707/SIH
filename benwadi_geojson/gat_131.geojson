@@ -1,0 +1,81 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_131_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-131",
+        "survey_no": "131",
+        "gat_no": "131",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "जाईबाई उर्फ जयाबाई गोरख कापरे, सतिश तुकाराम वाकडे",
+        "all_owners": [
+          "जाईबाई उर्फ जयाबाई गोरख कापरे",
+          "सतिश तुकाराम वाकडे",
+          "शिवकन्या कल्याण गदादे",
+          "रंजना कैलास क्षीरसागर",
+          "पल्लवी साईनाथ क्षीरसागर",
+          "पर्वती  देवराव \t गदादे, दौलत  देवराव \t\t\t गदादे, भाऊसाहेब दौलत गदादे"
+        ],
+        "khata_no": "2957, 2958, 3283, 3487, 3488, 2601",
+        "area_sqm": 67949.77,
+        "area_acres": 16.79,
+        "area_guntha": 671.64,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 16.79,
+        "old_survey_area_sqm": 67949.77,
+        "new_survey_area_acres": 16.79,
+        "new_survey_area_sqm": 67949.77
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9766046,
+              18.4832362
+            ],
+            [
+              74.9763936,
+              18.4815755
+            ],
+            [
+              74.9733209,
+              18.4814159
+            ],
+            [
+              74.9737176,
+              18.4824532
+            ],
+            [
+              74.9739182,
+              18.4829879
+            ],
+            [
+              74.9742772,
+              18.4839498
+            ],
+            [
+              74.9766046,
+              18.4832362
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

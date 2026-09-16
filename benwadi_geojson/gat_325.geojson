@@ -1,0 +1,88 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_325_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-325",
+        "survey_no": "325",
+        "gat_no": "325",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "प्रशांत बापूसाहेब गायकवाड, विजय बापूसाहेब गायकवाड, सुमन बापूसाहेब गायकवाड, श्रीकांत बापूसाहेब गायकवाड",
+        "all_owners": [
+          "प्रशांत बापूसाहेब गायकवाड, विजय बापूसाहेब गायकवाड, सुमन बापूसाहेब गायकवाड, श्रीकांत बापूसाहेब गायकवाड"
+        ],
+        "khata_no": "168",
+        "area_sqm": 6986.29,
+        "area_acres": 1.73,
+        "area_guntha": 69.05,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 1.73,
+        "old_survey_area_sqm": 6986.29,
+        "new_survey_area_acres": 1.73,
+        "new_survey_area_sqm": 6986.29
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9641401,
+              18.5066581
+            ],
+            [
+              74.9637362,
+              18.5067541
+            ],
+            [
+              74.9636964,
+              18.5065799
+            ],
+            [
+              74.9635566,
+              18.5060631
+            ],
+            [
+              74.9634984,
+              18.506092
+            ],
+            [
+              74.9632275,
+              18.5062098
+            ],
+            [
+              74.9633533,
+              18.5070804
+            ],
+            [
+              74.9638009,
+              18.5071558
+            ],
+            [
+              74.9642177,
+              18.5071988
+            ],
+            [
+              74.9641401,
+              18.5066581
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

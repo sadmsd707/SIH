@@ -322,12 +322,20 @@
                 </div>
               </div>
 
-              <!-- 📂 Sample GeoJSON File Downloads -->
+              <!-- 📂 Sample GeoJSON File Downloads & All 544 Benwadi Parcels -->
               <div style="margin-top: 0.8rem; background: rgba(2, 12, 27, 0.45); border: 1px solid rgba(56, 189, 248, 0.18); border-radius: 8px; padding: 0.7rem 0.9rem;">
-                <div style="font-size: 0.7rem; color: var(--accent-cyan); font-weight: 700; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
-                  <span>📂</span> Download Sample GeoJSON Files (Real Benwadi Cadastre Data)
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
+                  <div style="font-size: 0.72rem; color: var(--accent-cyan); font-weight: 700; display: flex; align-items: center; gap: 0.4rem;">
+                    <span>📂</span> Benwadi Village GeoJSON Library (All 544 Gat Numbers)
+                  </div>
+                  <a href="benwadi_all_gat_geojsons.zip" download="benwadi_all_gat_geojsons.zip"
+                     style="display: inline-flex; align-items: center; gap: 0.3rem; background: rgba(56, 189, 248, 0.15); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); border-radius: 6px; padding: 0.25rem 0.6rem; font-size: 0.68rem; text-decoration: none; font-weight: 700; transition: all 0.2s;"
+                     onmouseover="this.style.background='rgba(56, 189, 248, 0.3)'" onmouseout="this.style.background='rgba(56, 189, 248, 0.15)'">
+                    📦 Download All 544 GeoJSONs (.ZIP)
+                  </a>
                 </div>
-                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+
+                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
                   <a href="sample_benwadi_gat231_verified_resurvey.geojson" download="sample_benwadi_gat231_verified_resurvey.geojson"
                      style="display: inline-flex; align-items: center; gap: 0.3rem; background: rgba(16,185,129,0.1); border: 1px solid #10B981; color: #10B981; border-radius: 6px; padding: 0.3rem 0.6rem; font-size: 0.68rem; text-decoration: none; font-weight: 700; transition: all 0.2s;"
                      onmouseover="this.style.background='rgba(16,185,129,0.25)'" onmouseout="this.style.background='rgba(16,185,129,0.1)'">
@@ -344,7 +352,20 @@
                     ⬇️ Gat 229 Dispute
                   </a>
                 </div>
-                <div style="font-size: 0.63rem; color: var(--text-muted); margin-top: 0.35rem;">Coordinates extracted from MahaBhuNaksha API · Dist: Ahmednagar · Taluka: Karjat · Village: Benwadi</div>
+
+                <!-- Instant Gat Picker for Any of the 544 Benwadi Plots -->
+                <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; background: rgba(10, 25, 47, 0.6); padding: 0.45rem 0.65rem; border-radius: 6px; border: 1px dashed rgba(56, 189, 248, 0.25);">
+                  <span style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">Pick any Gat (1 - 545):</span>
+                  <input type="number" id="quick-gat-picker-input" min="1" max="545" placeholder="Gat #" style="width: 80px; padding: 0.25rem 0.4rem; font-size: 0.72rem; border-radius: 4px; border: 1px solid var(--surface-border); background: var(--surface-card); color: var(--text-main);">
+                  <button type="button" id="btn-quick-download-gat" style="padding: 0.25rem 0.55rem; font-size: 0.68rem; border-radius: 4px; background: rgba(56, 189, 248, 0.2); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); cursor: pointer; font-weight: 600;">
+                    ⬇️ Download
+                  </button>
+                  <button type="button" id="btn-quick-load-gat" style="padding: 0.25rem 0.55rem; font-size: 0.68rem; border-radius: 4px; background: rgba(16, 185, 129, 0.2); border: 1px solid #10B981; color: #10B981; cursor: pointer; font-weight: 600;">
+                    ⚡ Load into Resurvey
+                  </button>
+                </div>
+
+                <div style="font-size: 0.63rem; color: var(--text-muted); margin-top: 0.35rem;">544 individual GeoJSON files generated from MahaBhuNaksha cadastre · Dist: Ahmednagar · Taluka: Karjat · Village: Benwadi</div>
               </div>
 
 
@@ -712,11 +733,14 @@
                   <span class="pulse-dot"></span> ACTIVE PARCEL QR
                 </span>
                 <div class="insp-qr-mode-switch">
-                  <button type="button" class="btn-qr-mode" id="btn-qr-mode-pass" title="Google Maps Satellite GPS link - always scannable">
-                    📍 GPS Map
-                  </button>
-                  <button type="button" class="btn-qr-mode active" id="btn-qr-mode-url" title="Direct Web Link to online certificate">
+                  <button type="button" class="btn-qr-mode active" id="btn-qr-mode-url" title="Interactive online certificate on GeoLand Portal">
                     🌐 Web Link
+                  </button>
+                  <button type="button" class="btn-qr-mode" id="btn-qr-mode-pass" title="Official plain-text 7/12 land pass extract">
+                    📋 Land Pass
+                  </button>
+                  <button type="button" class="btn-qr-mode" id="btn-qr-mode-gps" title="Google Maps Satellite GPS link">
+                    📍 GPS Map
                   </button>
                 </div>
               </div>
@@ -737,7 +761,7 @@
                       <span>📋</span> Copy
                     </button>
                     <button type="button" class="btn-insp-qr-action" id="btn-insp-download-qr" title="Download QR image">
-                      <span>📥</span> Download
+                      <span>📥</span> Download QR
                     </button>
                   </div>
                 </div>
@@ -745,9 +769,12 @@
             </div>
 
             <!-- Inspector Action -->
-            <div class="inspector-actions">
+            <div class="inspector-actions" style="display: flex; flex-direction: column; gap: 0.4rem;">
               <button class="btn-open-full-parcel" id="btn-open-inspector-modal">
                 <span>📋</span> View Full 7/12 Extract, Diff & QR
+              </button>
+              <button type="button" class="btn-primary-action" id="btn-insp-download-geojson" style="background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.4); color: var(--accent-cyan); padding: 0.45rem; font-size: 0.78rem; justify-content: center; width: 100%; border-radius: 6px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;" title="Download authentic GeoJSON boundary for this parcel">
+                <span>📥</span> Download Gat GeoJSON (.geojson)
               </button>
             </div>
           </div>
@@ -1301,6 +1328,9 @@
             </button>
             <button class="btn-qr-download" id="btn-copy-qr-link" style="margin-top: 0.4rem; background: transparent; border: 1px solid var(--surface-border); color: var(--accent-cyan);">
               <span>📋</span> Copy Verification Link
+            </button>
+            <button class="btn-qr-download" id="modal-download-geojson-btn" style="margin-top: 0.4rem; background: rgba(16, 185, 129, 0.15); border: 1px solid #10B981; color: #10B981;">
+              <span>📥</span> Download Gat GeoJSON
             </button>
           </div>
         </div>

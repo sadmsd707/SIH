@@ -1,0 +1,120 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_58_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-58",
+        "survey_no": "58",
+        "gat_no": "58",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "मोफत गुरे चारणीकडे",
+        "all_owners": [
+          "मोफत गुरे चारणीकडे"
+        ],
+        "khata_no": "1008",
+        "area_sqm": 67997.01,
+        "area_acres": 16.8,
+        "area_guntha": 672.11,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 16.8,
+        "old_survey_area_sqm": 67997.01,
+        "new_survey_area_acres": 16.8,
+        "new_survey_area_sqm": 67997.01
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9743733,
+              18.4934175
+            ],
+            [
+              74.9742335,
+              18.4933166
+            ],
+            [
+              74.9736804,
+              18.4930352
+            ],
+            [
+              74.973604,
+              18.4920165
+            ],
+            [
+              74.9732627,
+              18.4920229
+            ],
+            [
+              74.9732406,
+              18.4916925
+            ],
+            [
+              74.9727965,
+              18.4919881
+            ],
+            [
+              74.9717798,
+              18.4909793
+            ],
+            [
+              74.9710151,
+              18.4902555
+            ],
+            [
+              74.9701361,
+              18.4905554
+            ],
+            [
+              74.9712208,
+              18.4916783
+            ],
+            [
+              74.9713364,
+              18.4918519
+            ],
+            [
+              74.9717203,
+              18.4925309
+            ],
+            [
+              74.9719015,
+              18.4928902
+            ],
+            [
+              74.9721771,
+              18.4933536
+            ],
+            [
+              74.9727394,
+              18.4943625
+            ],
+            [
+              74.9734755,
+              18.4939283
+            ],
+            [
+              74.9743733,
+              18.4934175
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

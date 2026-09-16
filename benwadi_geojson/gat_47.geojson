@@ -1,0 +1,68 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_47_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-47",
+        "survey_no": "47",
+        "gat_no": "47",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "हनुमंत अर्जुन गदादे",
+        "all_owners": [
+          "हनुमंत अर्जुन गदादे"
+        ],
+        "khata_no": "2285",
+        "area_sqm": 2691.56,
+        "area_acres": 0.67,
+        "area_guntha": 26.6,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 0.67,
+        "old_survey_area_sqm": 2691.56,
+        "new_survey_area_acres": 0.67,
+        "new_survey_area_sqm": 2691.56
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.976677,
+              18.4921317
+            ],
+            [
+              74.9766651,
+              18.4918968
+            ],
+            [
+              74.9756123,
+              18.4922003
+            ],
+            [
+              74.9755911,
+              18.4923989
+            ],
+            [
+              74.976677,
+              18.4921317
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

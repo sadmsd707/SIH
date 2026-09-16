@@ -1,0 +1,78 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_269_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-269",
+        "survey_no": "269",
+        "gat_no": "269",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "गणेश पोपट गदादे, सिंधुबाई नवनाथ फरांडे",
+        "all_owners": [
+          "गणेश पोपट गदादे",
+          "सिंधुबाई नवनाथ फरांडे",
+          "विठाबाई दत्तात्रय कारंडे"
+        ],
+        "khata_no": "1121, 2639, 2724",
+        "area_sqm": 9951.55,
+        "area_acres": 2.46,
+        "area_guntha": 98.36,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 2.46,
+        "old_survey_area_sqm": 9951.55,
+        "new_survey_area_acres": 2.46,
+        "new_survey_area_sqm": 9951.55
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9670229,
+              18.4947323
+            ],
+            [
+              74.9668965,
+              18.4940512
+            ],
+            [
+              74.9659371,
+              18.4943087
+            ],
+            [
+              74.9658691,
+              18.4947801
+            ],
+            [
+              74.9655764,
+              18.4950065
+            ],
+            [
+              74.965626,
+              18.4951563
+            ],
+            [
+              74.9670229,
+              18.4947323
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_60_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-60",
+        "survey_no": "60",
+        "gat_no": "60",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "व्यंकटेश नारायण गदादे, हरीचंद्र रामकृष्ण गदादे",
+        "all_owners": [
+          "व्यंकटेश नारायण गदादे",
+          "हरीचंद्र रामकृष्ण गदादे"
+        ],
+        "khata_no": "3359, 2926",
+        "area_sqm": 39598.9,
+        "area_acres": 9.79,
+        "area_guntha": 391.41,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 9.79,
+        "old_survey_area_sqm": 39598.9,
+        "new_survey_area_acres": 9.79,
+        "new_survey_area_sqm": 39598.9
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9749722,
+              18.4902285
+            ],
+            [
+              74.9748464,
+              18.4898838
+            ],
+            [
+              74.9748067,
+              18.4897751
+            ],
+            [
+              74.9742762,
+              18.4897123
+            ],
+            [
+              74.9725715,
+              18.489515
+            ],
+            [
+              74.9709645,
+              18.4893508
+            ],
+            [
+              74.9710117,
+              18.4902039
+            ],
+            [
+              74.9729688,
+              18.4904581
+            ],
+            [
+              74.9739585,
+              18.4905839
+            ],
+            [
+              74.9746595,
+              18.4906784
+            ],
+            [
+              74.9745616,
+              18.4904839
+            ],
+            [
+              74.9749722,
+              18.4902285
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

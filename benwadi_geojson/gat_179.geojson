@@ -1,0 +1,94 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_179_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-179",
+        "survey_no": "179",
+        "gat_no": "179",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "नानासाहेब दादासाहेब गदादे, नितिन दादा गदादे",
+        "all_owners": [
+          "नानासाहेब दादासाहेब गदादे",
+          "नितिन दादा गदादे",
+          "सतीश ज्ञानदेव गदादे"
+        ],
+        "khata_no": "3120, 3121, 3122",
+        "area_sqm": 20044.7,
+        "area_acres": 4.95,
+        "area_guntha": 198.13,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 4.95,
+        "old_survey_area_sqm": 20044.7,
+        "new_survey_area_acres": 4.95,
+        "new_survey_area_sqm": 20044.7
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9660112,
+              18.4815334
+            ],
+            [
+              74.9655937,
+              18.4803841
+            ],
+            [
+              74.9653628,
+              18.4797704
+            ],
+            [
+              74.9652848,
+              18.4794902
+            ],
+            [
+              74.9651898,
+              18.4792436
+            ],
+            [
+              74.9645651,
+              18.47948
+            ],
+            [
+              74.9646834,
+              18.4799776
+            ],
+            [
+              74.9647585,
+              18.4803099
+            ],
+            [
+              74.9649239,
+              18.4807176
+            ],
+            [
+              74.9651712,
+              18.4815636
+            ],
+            [
+              74.9660112,
+              18.4815334
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_400_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-400",
+        "survey_no": "400",
+        "gat_no": "400",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "रविंद्र बाळासाहेब गायकवाड, संतोष वसंत गायकवाड",
+        "all_owners": [
+          "रविंद्र बाळासाहेब गायकवाड",
+          "संतोष वसंत गायकवाड"
+        ],
+        "khata_no": "246, 326",
+        "area_sqm": 48551.07,
+        "area_acres": 12.0,
+        "area_guntha": 479.9,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 12.0,
+        "old_survey_area_sqm": 48551.07,
+        "new_survey_area_acres": 12.0,
+        "new_survey_area_sqm": 48551.07
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9981807,
+              18.5040241
+            ],
+            [
+              74.9970591,
+              18.5042692
+            ],
+            [
+              74.9950665,
+              18.5047061
+            ],
+            [
+              74.9949924,
+              18.5047413
+            ],
+            [
+              74.9951572,
+              18.5054853
+            ],
+            [
+              74.9974359,
+              18.5055912
+            ],
+            [
+              74.9987651,
+              18.5056564
+            ],
+            [
+              74.9986354,
+              18.5052974
+            ],
+            [
+              74.9982084,
+              18.5041368
+            ],
+            [
+              74.9981807,
+              18.5040241
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_68_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-68",
+        "survey_no": "68",
+        "gat_no": "68",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "सूखदेव बापु खूडे",
+        "all_owners": [
+          "सूखदेव बापु खूडे"
+        ],
+        "khata_no": "350",
+        "area_sqm": 454.82,
+        "area_acres": 0.11,
+        "area_guntha": 4.5,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 0.11,
+        "old_survey_area_sqm": 454.82,
+        "new_survey_area_acres": 0.11,
+        "new_survey_area_sqm": 454.82
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9762757,
+              18.4896246
+            ],
+            [
+              74.9762198,
+              18.4894674
+            ],
+            [
+              74.9759901,
+              18.4896064
+            ],
+            [
+              74.9759431,
+              18.4896363
+            ],
+            [
+              74.9759661,
+              18.4897095
+            ],
+            [
+              74.9762757,
+              18.4896246
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

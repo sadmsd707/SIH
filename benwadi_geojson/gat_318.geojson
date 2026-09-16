@@ -1,0 +1,73 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_318_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-318",
+        "survey_no": "318",
+        "gat_no": "318",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "छगन नामदेव गदादे, संपत नामदेव गदादे",
+        "all_owners": [
+          "छगन नामदेव गदादे",
+          "संपत नामदेव गदादे"
+        ],
+        "khata_no": "815, 814",
+        "area_sqm": 8359.02,
+        "area_acres": 2.07,
+        "area_guntha": 82.62,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 2.07,
+        "old_survey_area_sqm": 8359.02,
+        "new_survey_area_acres": 2.07,
+        "new_survey_area_sqm": 8359.02
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.967757,
+              18.5060951
+            ],
+            [
+              74.9673714,
+              18.5052471
+            ],
+            [
+              74.9666928,
+              18.5055048
+            ],
+            [
+              74.9670209,
+              18.5063795
+            ],
+            [
+              74.9673883,
+              18.5062642
+            ],
+            [
+              74.967757,
+              18.5060951
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

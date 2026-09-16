@@ -1,0 +1,79 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat_177_Cadastre",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-177",
+        "survey_no": "177",
+        "gat_no": "177",
+        "village": "Benwadi (बेनवडी)",
+        "taluka": "Karjat (कर्जत)",
+        "district": "Ahmednagar (अहमदनगर)",
+        "state": "Maharashtra",
+        "gis_code": "RVM2613272600130334420000",
+        "owner_name": "बापू विठोबा गदादे, आजिनाथ विठोबा गदादे",
+        "all_owners": [
+          "बापू विठोबा गदादे",
+          "आजिनाथ विठोबा गदादे",
+          "माणिक विठोबा गदादे",
+          "शिवाजी विठोबा गदादे"
+        ],
+        "khata_no": "165, 19, 237, 319",
+        "area_sqm": 9636.62,
+        "area_acres": 2.38,
+        "area_guntha": 95.25,
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "source": "MahaBhuNaksha Official Live Cadastre",
+        "status": "verified",
+        "confidence_score": 98.8,
+        "old_survey_area_acres": 2.38,
+        "old_survey_area_sqm": 9636.62,
+        "new_survey_area_acres": 2.38,
+        "new_survey_area_sqm": 9636.62
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9634847,
+              18.4804745
+            ],
+            [
+              74.9635638,
+              18.4804546
+            ],
+            [
+              74.9646834,
+              18.4799776
+            ],
+            [
+              74.9645651,
+              18.47948
+            ],
+            [
+              74.9631503,
+              18.4799962
+            ],
+            [
+              74.9632558,
+              18.4805352
+            ],
+            [
+              74.9634847,
+              18.4804745
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}
