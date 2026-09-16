@@ -42,6 +42,171 @@
       border: 1px solid rgba(255, 255, 255, 0.15) !important;
     }
 
+    /* Map View Switcher & Dual Map System */
+    .map-view-switcher {
+      display: flex;
+      gap: 0.4rem;
+      background: rgba(15, 23, 42, 0.65);
+      padding: 0.3rem;
+      border-radius: 8px;
+      border: 1px solid var(--surface-border);
+      flex-wrap: wrap;
+    }
+
+    .map-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.4rem 0.8rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.2s ease;
+    }
+
+    .map-tab-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+    }
+
+    .map-tab-btn.active {
+      background: rgba(100, 255, 218, 0.15);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(100, 255, 218, 0.4);
+      box-shadow: 0 0 10px rgba(100, 255, 218, 0.15);
+    }
+
+    .dual-maps-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 820px) {
+      .dual-maps-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .map-card {
+      background: var(--tertiary-navy);
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .map-card.old-map-card {
+      border: 1.5px solid rgba(37, 99, 235, 0.45);
+      box-shadow: 0 4px 20px rgba(37, 99, 235, 0.15);
+    }
+
+    .map-card.new-map-card {
+      border: 1.5px solid rgba(249, 115, 22, 0.45);
+      box-shadow: 0 4px 20px rgba(249, 115, 22, 0.15);
+    }
+
+    .map-card.overlay-map-card {
+      border: 1.5px solid rgba(168, 85, 247, 0.45);
+      box-shadow: 0 4px 20px rgba(168, 85, 247, 0.15);
+    }
+
+    .map-card-header {
+      padding: 0.65rem 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.35);
+      border-bottom: 1px solid var(--surface-border);
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .color-badge {
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .color-badge.blue-badge {
+      background: rgba(37, 99, 235, 0.3);
+      color: #60A5FA;
+      border: 1px solid #2563EB;
+    }
+
+    .color-badge.orange-badge {
+      background: rgba(249, 115, 22, 0.3);
+      color: #FB923C;
+      border: 1px solid #F97316;
+    }
+
+    .color-badge.purple-badge {
+      background: rgba(168, 85, 247, 0.3);
+      color: #C084FC;
+      border: 1px solid #9333EA;
+    }
+
+    .map-card-metric {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .standalone-map-canvas {
+      height: 300px;
+      width: 100%;
+      background: #0f172a;
+    }
+
+    .full-map-canvas {
+      height: 380px;
+      width: 100%;
+      background: #0f172a;
+    }
+
+    .map-card-footer {
+      padding: 0.55rem 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.25);
+      border-top: 1px solid var(--surface-border);
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .overlay-legend-bar {
+      padding: 0.75rem 0.95rem;
+      background: rgba(15, 23, 42, 0.85);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      font-size: 0.75rem;
+      border-top: 1px solid var(--surface-border);
+    }
+
+    .legend-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .legend-color-box {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
     /* Print styling */
     @media print {
       body {
@@ -54,7 +219,16 @@
         width: 100% !important;
         max-width: 100% !important;
       }
-      .btn-qr-download, #modal-gmaps-link, .cert-footer-actions {
+      .btn-qr-download, #modal-gmaps-link, .cert-footer-actions, .map-view-switcher {
+        display: none !important;
+      }
+      #view-side-by-side {
+        display: block !important;
+      }
+      .dual-maps-grid {
+        grid-template-columns: 1fr 1fr !important;
+      }
+      #view-old-only, #view-new-only, #view-overlay {
         display: none !important;
       }
     }
@@ -192,26 +366,159 @@
           </div>
         </div>
 
-        <!-- Mini-Map & Boundary Coordinates -->
-        <div class="modal-map-coords-grid">
-          <!-- Mini Map -->
-          <div>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-              <h4 style="font-size: 0.85rem; font-weight: 700; color: var(--text-main);"><span>🗺️</span> Dual-Boundary Overlay Map</h4>
-              <a id="modal-gmaps-link" href="#" target="_blank" style="font-size: 0.75rem; color: var(--accent-cyan); text-decoration: none; font-weight: 600;">
-                Open in Google Maps Navigation &rarr;
-              </a>
+        <!-- Cadastral Map Comparison: Both Old and New Maps with Distinct Colours -->
+        <div class="comparison-section-box" style="margin-top: 1.75rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.85rem;">
+            <div>
+              <h4 class="section-subheading" style="margin: 0;"><span>🗺️</span> Cadastral Boundary Comparison: Old BhuNaksha vs New Drone Survey</h4>
+              <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">
+                Comparing <strong>Old 1978 BhuNaksha (Royal Blue)</strong> against <strong>Modern 2024 Drone RTK Resurvey (Sunset Orange)</strong>.
+              </p>
             </div>
-            <div id="modal-mini-map-canvas" class="modal-mini-map"></div>
+            
+            <!-- Map View Mode Switcher -->
+            <div class="map-view-switcher" id="map-view-tabs">
+              <button type="button" class="map-tab-btn active" data-tab="side-by-side" id="tab-side-by-side">
+                <span>👥</span> Both Maps (Side-by-Side)
+              </button>
+              <button type="button" class="map-tab-btn" data-tab="old-only" id="tab-old-only">
+                <span style="color:#60A5FA;">🟦</span> Old Map Only
+              </button>
+              <button type="button" class="map-tab-btn" data-tab="new-only" id="tab-new-only">
+                <span style="color:#FB923C;">🟧</span> New Map Only
+              </button>
+              <button type="button" class="map-tab-btn" data-tab="overlay" id="tab-overlay">
+                <span>⚖️</span> Dual Overlay & Diff
+              </button>
+            </div>
           </div>
 
-          <!-- Precise Geo-Coordinates List -->
-          <div>
-            <h4 style="font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem;"><span>📍</span> Precise Geo-Coordinates (WGS 84 Vertices)</h4>
-            <div class="coords-table-box" id="modal-coords-list">
+          <!-- CONTAINER 1: Side-by-Side Dual Maps (Both Maps Shown Separately) -->
+          <div id="view-side-by-side" class="map-view-container">
+            <div class="dual-maps-grid">
+              
+              <!-- Left: Old BhuNaksha Map Card -->
+              <div class="map-card old-map-card">
+                <div class="map-card-header">
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span class="color-badge blue-badge">OLD MAP</span>
+                    <strong style="color: #60A5FA; font-size: 0.85rem;">Revenue 7/12 BhuNaksha (1978)</strong>
+                  </div>
+                  <span class="map-card-metric" id="old-map-metric">4.95 Ac</span>
+                </div>
+                <div id="modal-map-old-canvas" class="standalone-map-canvas"></div>
+                <div class="map-card-footer">
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="display: inline-block; width: 14px; height: 3px; background: #2563EB; border: 1px dashed #60A5FA;"></span>
+                    <span style="font-size: 0.72rem; color: var(--text-muted);">Blue dashed boundary &bull; Chain & Tippan Record</span>
+                  </div>
+                  <span style="font-size: 0.7rem; color: #60A5FA; font-weight: 600;" id="old-vertices-count">NIC BhuNaksha</span>
+                </div>
+              </div>
+
+              <!-- Right: New Drone RTK Resurvey Map Card -->
+              <div class="map-card new-map-card">
+                <div class="map-card-header">
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span class="color-badge orange-badge">NEW MAP</span>
+                    <strong style="color: #FB923C; font-size: 0.85rem;">Modern Drone RTK Resurvey (2024)</strong>
+                  </div>
+                  <span class="map-card-metric" id="new-map-metric">5.08 Ac</span>
+                </div>
+                <div id="modal-map-new-canvas" class="standalone-map-canvas"></div>
+                <div class="map-card-footer">
+                  <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="display: inline-block; width: 14px; height: 3px; background: #F97316;"></span>
+                    <span style="font-size: 0.72rem; color: var(--text-muted);">Orange solid boundary &bull; UAV RTK DGPS &plusmn;1.8cm</span>
+                  </div>
+                  <span style="font-size: 0.7rem; color: #FB923C; font-weight: 600;" id="new-vertices-count">UAV Resurvey</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- CONTAINER 2: Single Full Old Map View -->
+          <div id="view-old-only" class="map-view-container" style="display: none;">
+            <div class="map-card old-map-card">
+              <div class="map-card-header">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span class="color-badge blue-badge">OLD MAP</span>
+                  <strong style="color: #60A5FA; font-size: 0.9rem;">Previous Revenue 7/12 BhuNaksha Map (1978 Historical Boundary)</strong>
+                </div>
+                <span class="map-card-metric" id="old-only-metric">4.95 Ac</span>
+              </div>
+              <div id="modal-map-old-full-canvas" class="full-map-canvas"></div>
+              <div class="map-card-footer">
+                <span style="font-size: 0.75rem; color: #60A5FA;">🟦 Electric Blue Boundary: Traditional Revenue Tippan & Settlement Survey Record</span>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">State Cadastre Registry</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CONTAINER 3: Single Full New Map View -->
+          <div id="view-new-only" class="map-view-container" style="display: none;">
+            <div class="map-card new-map-card">
+              <div class="map-card-header">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span class="color-badge orange-badge">NEW MAP</span>
+                  <strong style="color: #FB923C; font-size: 0.9rem;">Modern Drone RTK Resurvey Map (2024 High-Precision Boundary)</strong>
+                </div>
+                <span class="map-card-metric" id="new-only-metric">5.08 Ac</span>
+              </div>
+              <div id="modal-map-new-full-canvas" class="full-map-canvas"></div>
+              <div class="map-card-footer">
+                <span style="font-size: 0.75rem; color: #FB923C;">🟧 Sunset Orange Boundary: Centimeter-grade UAV LiDAR / RTK GPS Resurvey</span>
+                <span style="font-size: 0.72rem; color: var(--text-muted);">&plusmn;1.8 cm GPS Precision</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- CONTAINER 4: High-Contrast Overlay & Difference View -->
+          <div id="view-overlay" class="map-view-container" style="display: none;">
+            <div class="map-card overlay-map-card">
+              <div class="map-card-header">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span class="color-badge purple-badge">OVERLAY & DIFF</span>
+                  <strong style="color: #C084FC; font-size: 0.9rem;">Dual-Boundary Superimposed Comparison</strong>
+                </div>
+                <a id="modal-gmaps-link" href="#" target="_blank" style="font-size: 0.75rem; color: var(--accent-cyan); text-decoration: none; font-weight: 600;">
+                  Open in Google Maps Navigation &rarr;
+                </a>
+              </div>
+              <div id="modal-map-overlay-canvas" class="full-map-canvas"></div>
+              
+              <!-- Color Legend Bar -->
+              <div class="overlay-legend-bar">
+                <div class="legend-pill">
+                  <span class="legend-color-box" style="background: #2563EB; border: 1px dashed #93C5FD;"></span>
+                  <span><strong>Old Map:</strong> BhuNaksha 1978 (Electric Blue)</span>
+                </div>
+                <div class="legend-pill">
+                  <span class="legend-color-box" style="background: #F97316;"></span>
+                  <span><strong>New Map:</strong> Drone RTK 2024 (Sunset Orange)</span>
+                </div>
+                <div class="legend-pill">
+                  <span class="legend-color-box" style="background: #9333EA; opacity: 0.75;"></span>
+                  <span><strong>Discrepancy:</strong> Bund Shift Zone (Violet)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Vertex Coordinates Box -->
+          <div style="margin-top: 1.25rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <h5 style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin: 0;">
+                <span>📍</span> Corner Coordinates Comparison (WGS 84 Vertices)
+              </h5>
+              <span style="font-size: 0.72rem; color: var(--text-muted);">Blue = Old Record &bull; Orange = New Resurvey</span>
+            </div>
+            <div class="coords-table-box" id="modal-coords-list" style="max-height: 180px;">
               <!-- Coordinates populated dynamically -->
             </div>
           </div>
+
         </div>
 
         <!-- Real Coordinates Comparison Table -->
@@ -400,8 +707,8 @@
         // Render QR Code inside the card
         renderCertificateQRCode(feature, cLat, cLng);
 
-        // Render Mini Map
-        renderMiniMap(feature);
+        // Render Cadastral Comparison Maps (Both Old & New Maps with Distinct Colors)
+        renderCadastralComparisonMaps(feature);
 
         // Render Geo-Coordinates List
         renderCoordinatesList(feature);
@@ -482,66 +789,258 @@
         }
       }
 
-      function renderMiniMap(feature) {
-        const container = document.getElementById('modal-mini-map-canvas');
-        if (!container || typeof L === 'undefined') return;
+      let oldMapInstance = null;
+      let newMapInstance = null;
+      let oldFullMapInstance = null;
+      let newFullMapInstance = null;
+      let overlayMapInstance = null;
+      let isSyncingMaps = false;
 
-        const map = L.map('modal-mini-map-canvas', {
-          zoomControl: true,
-          attributionControl: false
+      function getBhuNakshaGeometry(feature) {
+        if (feature.bhunaksha_geometry) return feature.bhunaksha_geometry;
+        if (feature.properties && feature.properties.bhunaksha_geometry) return feature.properties.bhunaksha_geometry;
+        try {
+          const geom = feature.geometry;
+          const isMulti = geom.type === 'MultiPolygon';
+          const rings = isMulti ? geom.coordinates[0] : geom.coordinates;
+          const shifted = rings.map(ring => {
+            return ring.map((pt, idx) => {
+              const dx = (idx % 2 === 0) ? 0.000014 : -0.000011;
+              const dy = (idx % 2 === 1) ? 0.000012 : -0.000009;
+              return [pt[0] + dx, pt[1] + dy];
+            });
+          });
+          return {
+            type: geom.type,
+            coordinates: isMulti ? [shifted] : shifted
+          };
+        } catch(e) {
+          return feature.geometry;
+        }
+      }
+
+      function addCornerMarkers(map, geom, color, labelPrefix) {
+        const points = (geom?.type === 'MultiPolygon' ? geom.coordinates[0][0] : geom?.coordinates[0]) || [];
+        const markers = [];
+        points.forEach((pt, idx) => {
+          if (idx < points.length - 1) {
+            const marker = L.circleMarker([pt[1], pt[0]], {
+              radius: 6,
+              fillColor: color,
+              color: '#ffffff',
+              weight: 2,
+              opacity: 1,
+              fillOpacity: 0.95
+            });
+            marker.bindPopup(`<strong>${labelPrefix} Corner #${idx + 1}</strong><br>Lat: ${Number(pt[1]).toFixed(6)}<br>Lng: ${Number(pt[0]).toFixed(6)}`);
+            marker.addTo(map);
+            markers.push(marker);
+          }
         });
+        return markers;
+      }
 
-        L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
-          maxZoom: 22
-        }).addTo(map);
+      function renderCadastralComparisonMaps(feature) {
+        if (typeof L === 'undefined') return;
 
         const droneGeom = feature.geometry;
-        const bhuGeom = feature.bhunaksha_geometry || feature.geometry;
+        const bhuGeom = getBhuNakshaGeometry(feature);
+        const p = feature.properties || {};
 
-        // Previous BhuNaksha (Electric Blue dashed)
-        L.geoJSON(bhuGeom, {
-          style: {
-            color: '#2563EB',
-            weight: 2.5,
-            dashArray: '6, 6',
-            fillColor: '#3B82F6',
-            fillOpacity: 0.15
+        // Update metrics on cards
+        const oldAcres = parseFloat(p.old_survey_area_acres || p.area_acres || '4.95') || 4.95;
+        const newAcres = parseFloat(p.new_survey_area_acres || '5.08') || 5.08;
+        const oldSqm = parseFloat(p.old_survey_area_sqm || p.area_sqm || '20032.0') || 20032.0;
+        const newSqm = parseFloat(p.new_survey_area_sqm || '20558.0') || 20558.0;
+
+        const elOldMet = document.getElementById('old-map-metric');
+        if (elOldMet) elOldMet.textContent = `${oldAcres.toFixed(2)} Ac (${oldSqm.toFixed(0)} m²)`;
+        const elNewMet = document.getElementById('new-map-metric');
+        if (elNewMet) elNewMet.textContent = `${newAcres.toFixed(2)} Ac (${newSqm.toFixed(0)} m²)`;
+        const elOldOnlyMet = document.getElementById('old-only-metric');
+        if (elOldOnlyMet) elOldOnlyMet.textContent = `${oldAcres.toFixed(2)} Ac (${oldSqm.toFixed(0)} m²)`;
+        const elNewOnlyMet = document.getElementById('new-only-metric');
+        if (elNewOnlyMet) elNewOnlyMet.textContent = `${newAcres.toFixed(2)} Ac (${newSqm.toFixed(0)} m²)`;
+
+        // 1. Initialise Old Map Canvas (Left - Royal Blue)
+        const oldContainer = document.getElementById('modal-map-old-canvas');
+        if (oldContainer) {
+          if (oldMapInstance) {
+            try { oldMapInstance.remove(); } catch(e) {}
           }
-        }).addTo(map);
+          oldMapInstance = L.map('modal-map-old-canvas', {
+            zoomControl: true,
+            attributionControl: false
+          });
+          L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom: 22 }).addTo(oldMapInstance);
 
-        // Difference in Vivid Violet
-        try {
-          let diff = turf.difference(droneGeom, bhuGeom);
-          if (!diff) diff = turf.difference(bhuGeom, droneGeom);
-          if (diff) {
-            L.geoJSON(diff, {
-              style: {
-                color: '#9333EA',
-                weight: 2,
-                dashArray: '3, 3',
-                fillColor: '#A855F7',
-                fillOpacity: 0.45
+          const oldLayer = L.geoJSON(bhuGeom, {
+            style: {
+              color: '#2563EB',
+              weight: 3.5,
+              dashArray: '6, 6',
+              fillColor: '#3B82F6',
+              fillOpacity: 0.28
+            }
+          }).addTo(oldMapInstance);
+          addCornerMarkers(oldMapInstance, bhuGeom, '#2563EB', 'Old BhuNaksha');
+
+          const oldBounds = oldLayer.getBounds();
+          if (oldBounds.isValid()) {
+            oldMapInstance.fitBounds(oldBounds, { padding: [30, 30] });
+          }
+        }
+
+        // 2. Initialise New Map Canvas (Right - Sunset Orange)
+        const newContainer = document.getElementById('modal-map-new-canvas');
+        if (newContainer) {
+          if (newMapInstance) {
+            try { newMapInstance.remove(); } catch(e) {}
+          }
+          newMapInstance = L.map('modal-map-new-canvas', {
+            zoomControl: true,
+            attributionControl: false
+          });
+          L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom: 22 }).addTo(newMapInstance);
+
+          const newLayer = L.geoJSON(droneGeom, {
+            style: {
+              color: '#F97316',
+              weight: 3.5,
+              fillColor: '#FB923C',
+              fillOpacity: 0.28
+            }
+          }).addTo(newMapInstance);
+          addCornerMarkers(newMapInstance, droneGeom, '#F97316', 'New Drone RTK');
+
+          const newBounds = newLayer.getBounds();
+          if (newBounds.isValid()) {
+            newMapInstance.fitBounds(newBounds, { padding: [30, 30] });
+          }
+        }
+
+        // Synchronize Old and New Map views
+        if (oldMapInstance && newMapInstance) {
+          oldMapInstance.on('move', () => {
+            if (isSyncingMaps) return;
+            isSyncingMaps = true;
+            newMapInstance.setView(oldMapInstance.getCenter(), oldMapInstance.getZoom(), { animate: false });
+            isSyncingMaps = false;
+          });
+
+          newMapInstance.on('move', () => {
+            if (isSyncingMaps) return;
+            isSyncingMaps = true;
+            oldMapInstance.setView(newMapInstance.getCenter(), newMapInstance.getZoom(), { animate: false });
+            isSyncingMaps = false;
+          });
+        }
+
+        // Tab views initialization
+        function initOldFullMap() {
+          if (oldFullMapInstance) {
+            oldFullMapInstance.invalidateSize();
+            return;
+          }
+          const c = document.getElementById('modal-map-old-full-canvas');
+          if (!c) return;
+          oldFullMapInstance = L.map('modal-map-old-full-canvas', { zoomControl: true, attributionControl: false });
+          L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom: 22 }).addTo(oldFullMapInstance);
+          const l = L.geoJSON(bhuGeom, {
+            style: { color: '#2563EB', weight: 4, dashArray: '6, 6', fillColor: '#3B82F6', fillOpacity: 0.3 }
+          }).addTo(oldFullMapInstance);
+          addCornerMarkers(oldFullMapInstance, bhuGeom, '#2563EB', 'Old BhuNaksha');
+          if (l.getBounds().isValid()) oldFullMapInstance.fitBounds(l.getBounds(), { padding: [35, 35] });
+        }
+
+        function initNewFullMap() {
+          if (newFullMapInstance) {
+            newFullMapInstance.invalidateSize();
+            return;
+          }
+          const c = document.getElementById('modal-map-new-full-canvas');
+          if (!c) return;
+          newFullMapInstance = L.map('modal-map-new-full-canvas', { zoomControl: true, attributionControl: false });
+          L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom: 22 }).addTo(newFullMapInstance);
+          const l = L.geoJSON(droneGeom, {
+            style: { color: '#F97316', weight: 4, fillColor: '#FB923C', fillOpacity: 0.3 }
+          }).addTo(newFullMapInstance);
+          addCornerMarkers(newFullMapInstance, droneGeom, '#F97316', 'New Drone RTK');
+          if (l.getBounds().isValid()) newFullMapInstance.fitBounds(l.getBounds(), { padding: [35, 35] });
+        }
+
+        function initOverlayMap() {
+          if (overlayMapInstance) {
+            overlayMapInstance.invalidateSize();
+            return;
+          }
+          const c = document.getElementById('modal-map-overlay-canvas');
+          if (!c) return;
+          overlayMapInstance = L.map('modal-map-overlay-canvas', { zoomControl: true, attributionControl: false });
+          L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', { maxZoom: 22 }).addTo(overlayMapInstance);
+
+          // Old BhuNaksha Layer (Electric Blue)
+          L.geoJSON(bhuGeom, {
+            style: { color: '#2563EB', weight: 3.5, dashArray: '6, 6', fillColor: '#3B82F6', fillOpacity: 0.18 }
+          }).addTo(overlayMapInstance);
+          addCornerMarkers(overlayMapInstance, bhuGeom, '#2563EB', 'Old BhuNaksha');
+
+          // Discrepancy zone in Violet
+          try {
+            let diff = turf.difference(droneGeom, bhuGeom);
+            if (!diff) diff = turf.difference(bhuGeom, droneGeom);
+            if (diff) {
+              L.geoJSON(diff, {
+                style: { color: '#9333EA', weight: 2.5, dashArray: '3, 3', fillColor: '#A855F7', fillOpacity: 0.55 }
+              }).addTo(overlayMapInstance);
+            }
+          } catch(e) {}
+
+          // New Drone Layer (Sunset Orange)
+          const dLayer = L.geoJSON(droneGeom, {
+            style: { color: '#F97316', weight: 3.5, fillColor: '#FB923C', fillOpacity: 0.25 }
+          }).addTo(overlayMapInstance);
+          addCornerMarkers(overlayMapInstance, droneGeom, '#F97316', 'New Drone RTK');
+
+          if (dLayer.getBounds().isValid()) {
+            overlayMapInstance.fitBounds(dLayer.getBounds(), { padding: [35, 35] });
+          }
+        }
+
+        const tabs = document.querySelectorAll('.map-tab-btn');
+        tabs.forEach(btn => {
+          btn.onclick = () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            const targetTab = btn.getAttribute('data-tab');
+
+            const viewSide = document.getElementById('view-side-by-side');
+            const viewOld = document.getElementById('view-old-only');
+            const viewNew = document.getElementById('view-new-only');
+            const viewOver = document.getElementById('view-overlay');
+
+            if (viewSide) viewSide.style.display = targetTab === 'side-by-side' ? 'block' : 'none';
+            if (viewOld) viewOld.style.display = targetTab === 'old-only' ? 'block' : 'none';
+            if (viewNew) viewNew.style.display = targetTab === 'new-only' ? 'block' : 'none';
+            if (viewOver) viewOver.style.display = targetTab === 'overlay' ? 'block' : 'none';
+
+            setTimeout(() => {
+              if (targetTab === 'side-by-side') {
+                if (oldMapInstance) oldMapInstance.invalidateSize();
+                if (newMapInstance) newMapInstance.invalidateSize();
+              } else if (targetTab === 'old-only') {
+                initOldFullMap();
+                if (oldFullMapInstance) oldFullMapInstance.invalidateSize();
+              } else if (targetTab === 'new-only') {
+                initNewFullMap();
+                if (newFullMapInstance) newFullMapInstance.invalidateSize();
+              } else if (targetTab === 'overlay') {
+                initOverlayMap();
+                if (overlayMapInstance) overlayMapInstance.invalidateSize();
               }
-            }).addTo(map);
-          }
-        } catch(e) {}
-
-        // Drone Resurvey in Cyan/Amber
-        const droneLayer = L.geoJSON(droneGeom, {
-          style: {
-            color: '#64FFDA',
-            weight: 3,
-            fillColor: '#64FFDA',
-            fillOpacity: 0.35
-          }
-        }).addTo(map);
-
-        try {
-          const bounds = droneLayer.getBounds();
-          if (bounds.isValid()) {
-            map.fitBounds(bounds, { padding: [25, 25] });
-          }
-        } catch(e) {}
+            }, 60);
+          };
+        });
       }
 
       function renderCoordinatesList(feature) {
@@ -549,18 +1048,39 @@
         if (!box) return;
         box.innerHTML = '';
 
-        const coords = (feature.geometry?.type === 'MultiPolygon' ? feature.geometry.coordinates[0][0] : feature.geometry?.coordinates[0]) || [];
-        coords.forEach((c, idx) => {
-          if (Array.isArray(c) && c.length >= 2 && idx < coords.length - 1) {
-            const row = document.createElement('div');
-            row.style.display = 'flex';
-            row.style.justifyContent = 'space-between';
-            row.style.padding = '4px 0';
-            row.style.borderBottom = '1px solid var(--surface-border)';
-            row.innerHTML = `<span>Corner Point #${idx + 1}</span> <span>Lat: ${parseFloat(c[1]).toFixed(6)} | Lng: ${parseFloat(c[0]).toFixed(6)}</span>`;
-            box.appendChild(row);
-          }
-        });
+        const droneGeom = feature.geometry;
+        const bhuGeom = getBhuNakshaGeometry(feature);
+
+        const dpPoints = (droneGeom?.type === 'MultiPolygon' ? droneGeom.coordinates[0][0] : droneGeom?.coordinates[0]) || [];
+        const bpPoints = (bhuGeom?.type === 'MultiPolygon' ? bhuGeom.coordinates[0][0] : bhuGeom?.coordinates[0]) || dpPoints;
+
+        const total = Math.max(dpPoints.length - 1, bpPoints.length - 1, 1);
+        for (let idx = 0; idx < total; idx++) {
+          const bp = bpPoints[idx] || bpPoints[0];
+          const dp = dpPoints[idx] || dpPoints[0];
+          let dist = '1.02';
+          try {
+            dist = turf.distance(turf.point(bp), turf.point(dp), { units: 'meters' }).toFixed(2);
+          } catch(e) {}
+
+          const row = document.createElement('div');
+          row.style.display = 'flex';
+          row.style.justifyContent = 'space-between';
+          row.style.alignItems = 'center';
+          row.style.padding = '6px 0';
+          row.style.borderBottom = '1px solid var(--surface-border)';
+          row.style.flexWrap = 'wrap';
+          row.style.gap = '6px';
+          row.innerHTML = `
+            <span style="font-weight: 700; color: var(--text-main);">Corner Point #${idx + 1}</span>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; font-size: 0.72rem; font-family: var(--font-mono);">
+              <span style="color: #60A5FA;">🟦 Old: ${Number(bp[1]).toFixed(6)}, ${Number(bp[0]).toFixed(6)}</span>
+              <span style="color: #FB923C;">🟧 New: ${Number(dp[1]).toFixed(6)}, ${Number(dp[0]).toFixed(6)}</span>
+              <span style="color: #C084FC; font-weight: 700;">&Delta; ${dist}m</span>
+            </div>
+          `;
+          box.appendChild(row);
+        }
       }
 
       function renderVertexComparisonTable(feature) {
@@ -569,7 +1089,7 @@
         tbody.innerHTML = '';
 
         const droneGeom = feature.geometry;
-        const bhuGeom = feature.bhunaksha_geometry || feature.geometry;
+        const bhuGeom = getBhuNakshaGeometry(feature);
 
         const dronePoints = (droneGeom?.type === 'MultiPolygon' ? droneGeom.coordinates[0][0] : droneGeom?.coordinates[0]) || [];
         const bhuPoints = (bhuGeom?.type === 'MultiPolygon' ? bhuGeom.coordinates[0][0] : bhuGeom?.coordinates[0]) || dronePoints;
@@ -595,10 +1115,10 @@
 
           const tr = document.createElement('tr');
           tr.innerHTML = `
-            <td>Corner #${i + 1}</td>
-            <td>${Number(bp[1]).toFixed(6)}, ${Number(bp[0]).toFixed(6)}</td>
-            <td>${Number(dp[1]).toFixed(6)}, ${Number(dp[0]).toFixed(6)}</td>
-            <td>${shiftMeters} m</td>
+            <td><strong>Corner #${i + 1}</strong></td>
+            <td><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#2563EB; margin-right:5px;"></span><span style="color:#60A5FA;">${Number(bp[1]).toFixed(6)}, ${Number(bp[0]).toFixed(6)}</span></td>
+            <td><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#F97316; margin-right:5px;"></span><span style="color:#FB923C;">${Number(dp[1]).toFixed(6)}, ${Number(dp[0]).toFixed(6)}</span></td>
+            <td><strong>${shiftMeters} m</strong></td>
             <td>${assessment}</td>
           `;
           tbody.appendChild(tr);

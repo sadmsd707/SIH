@@ -3058,23 +3058,38 @@ function initModalMiniMap(feature) {
 
   L.tileLayer(TILE_PROVIDERS.google_sat.url, { maxZoom: 21 }).addTo(miniMapInstance);
 
+  const bhuGeom = feature.bhunaksha_geometry || feature.properties?.bhunaksha_geometry;
+
   // Render Previous BhuNaksha Boundary (dashed electric blue)
-  if (feature.bhunaksha_geometry) {
+  if (bhuGeom) {
     try {
-      L.geoJSON(feature.bhunaksha_geometry, {
+      L.geoJSON(bhuGeom, {
         style: {
           color: '#2563EB',
-          weight: 2.5,
+          weight: 3.5,
           dashArray: '6, 6',
           fillColor: '#3B82F6',
           fillOpacity: 0.2
         }
       }).addTo(miniMapInstance);
 
+      // Corner markers for Old Record
+      const bhuPts = (bhuGeom?.type === 'MultiPolygon' ? bhuGeom.coordinates[0][0] : bhuGeom?.coordinates[0]) || [];
+      bhuPts.slice(0, -1).forEach((pt, i) => {
+        L.circleMarker([pt[1], pt[0]], {
+          radius: 5,
+          fillColor: '#2563EB',
+          color: '#ffffff',
+          weight: 2,
+          opacity: 1,
+          fillOpacity: 0.9
+        }).bindPopup(`Old BhuNaksha P${i+1}`).addTo(miniMapInstance);
+      });
+
       // Render Discrepancy Zone in Violet
       try {
-        let diff = turf.difference(feature.geometry, feature.bhunaksha_geometry);
-        if (!diff) diff = turf.difference(feature.bhunaksha_geometry, feature.geometry);
+        let diff = turf.difference(feature.geometry, bhuGeom);
+        if (!diff) diff = turf.difference(bhuGeom, feature.geometry);
         if (diff) {
           L.geoJSON(diff, {
             style: {
@@ -3090,16 +3105,29 @@ function initModalMiniMap(feature) {
     } catch (e) {}
   }
 
-  // Render New Drone RTK Boundary (solid cyan)
+  // Render New Drone RTK Boundary (solid sunset orange)
   try {
     const miniGeoJson = L.geoJSON(feature, {
       style: {
-        color: '#64FFDA',
-        weight: 3,
-        fillColor: '#64FFDA',
-        fillOpacity: 0.45
+        color: '#F97316',
+        weight: 3.5,
+        fillColor: '#FB923C',
+        fillOpacity: 0.28
       }
     }).addTo(miniMapInstance);
+
+    // Corner markers for Drone Survey
+    const dronePts = (feature.geometry?.type === 'MultiPolygon' ? feature.geometry.coordinates[0][0] : feature.geometry?.coordinates[0]) || [];
+    dronePts.slice(0, -1).forEach((pt, i) => {
+      L.circleMarker([pt[1], pt[0]], {
+        radius: 5,
+        fillColor: '#F97316',
+        color: '#ffffff',
+        weight: 2,
+        opacity: 1,
+        fillOpacity: 0.9
+      }).bindPopup(`Drone RTK P${i+1}`).addTo(miniMapInstance);
+    });
 
     const bounds = miniGeoJson.getBounds();
     if (bounds && bounds.isValid()) {
