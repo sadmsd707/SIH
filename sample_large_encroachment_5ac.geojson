@@ -1,0 +1,65 @@
+{
+  "type": "FeatureCollection",
+  "name": "Large_Encroachment_Resurvey_5_Acres",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-IND-KAL-078-ENCROACH",
+        "survey_no": "78/1",
+        "gat_no": "78/1",
+        "khata_no": "245",
+        "owner_name": "तानाजी रावसाहेब मोरे (Tanaji Raosaheb More)",
+        "joint_owners": [
+          "सुमित्रा तानाजी मोरे (Sumitra T. More)",
+          "अमोल तानाजी मोरे (Amol T. More)"
+        ],
+        "father_name": "रावसाहेब भिकू मोरे",
+        "village": "Kalamb",
+        "village_mr": "कळंब",
+        "taluka": "Indapur",
+        "taluka_mr": "इंदापूर",
+        "district": "Pune",
+        "district_mr": "पुणे",
+        "state": "Maharashtra",
+        "land_type": "बागायत शेती (Bagayat - Irrigated)",
+        "land_class_code": "AGRI-BAG-01",
+        "status": "dispute",
+        "confidence_score": 42.1,
+        "old_survey_area_acres": 3.39,
+        "old_survey_area_sqm": 13734.1,
+        "new_survey_area_acres": 5.00,
+        "new_survey_area_sqm": 20220.1,
+        "area_diff_pct": 47.2,
+        "mean_shift_m": 48.3,
+        "iou_overlap_pct": 67.9,
+        "survey_date": "2024-05-18",
+        "drone_model": "DJI Matrice 350 RTK + Zenmuse P1 (35mm)",
+        "rtk_accuracy_cm": 1.2,
+        "gcp_count": 8,
+        "ror_extract_no": "MH-712-2024-551029",
+        "assessment_rupees": "14.20",
+        "soil_type": "काळी कसदार जमीन (Black Cotton Soil)",
+        "review_reason": "CRITICAL AREA DISCREPANCY: Uploaded drone resurvey measures 5.00 Acres vs 3.39 Acres 7/12 reference area (+47.2% / +6,486 m²). Massive northern perimeter expansion encroaches deeply into government grazing land & Gat 79."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [74.962800, 18.488044],
+            [74.961000, 18.488245],
+            [74.961260, 18.490100],
+            [74.963220, 18.489750],
+            [74.962800, 18.488044]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GeoLand Portal — Technology-Driven Land Survey & Resurvey System</title>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <!-- Leaflet GIS CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <!-- Custom Application Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="light-theme">
+
+  <!-- ==========================================================================
+       Header & Navigation Bar
+       ========================================================================== -->
+  <header class="header-nav">
+    <div class="brand-container">
+      <div class="brand-emblem">🌍</div>
+      <div class="brand-titles">
+        <h1>GeoLand <span>Portal</span></h1>
+        <p class="brand-subtitle">Digital Cadastre &bull; ISRO Bhuvan &bull; Mahabhulekh 7/12 &bull; MahaBhuNaksha &bull; QGIS</p>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="nav-tab-btn active" data-target="view-dashboard">
+        <span>📊</span> Dashboard
+      </button>
+      <button class="nav-tab-btn" data-target="view-odm">
+        <span>🛰️</span> WebODM & QGIS Station
+      </button>
+      <button class="nav-tab-btn" data-target="view-records">
+        <span>📋</span> Cadastral Register
+      </button>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <div class="gov-badge">
+        <span>🏛️</span> ISRO Bhuvan &bull; Mahabhulekh
+      </div>
+      <button class="btn-primary-action" id="btn-export-geojson" title="Export current cadastral database as GeoJSON">
+        <span>📥</span> Export GeoJSON
+      </button>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       Main Workspace
+       ========================================================================== -->
+  <main class="main-wrapper">
+
+    <!-- ======================================================================
+         SECTION 1: DASHBOARD VIEW
+         ====================================================================== -->
+    <section id="view-dashboard" class="section-container active">
+
+      <!-- Metrics KPI Grid -->
+      <div class="stats-grid">
+        <!-- Total Parcels -->
+        <div class="stat-card total">
+          <div class="stat-header">
+            <span class="stat-title">Total Parcels</span>
+            <div class="stat-icon-wrapper" style="color: var(--accent-blue);">🗂️</div>
+          </div>
+          <div class="stat-number" id="stat-total-parcels">8</div>
+          <div class="stat-footer">
+            <span class="badge-sub" style="background: rgba(9, 132, 227, 0.15); color: var(--accent-blue);">Drone Mapped</span>
+            <span id="stat-total-area-desc">30.46 Acres Total Surveyed</span>
+          </div>
+        </div>
+
+        <!-- Verified Parcels -->
+        <div class="stat-card verified">
+          <div class="stat-header">
+            <span class="stat-title">Verified Parcels</span>
+            <div class="stat-icon-wrapper" style="color: var(--status-verified);">✅</div>
+          </div>
+          <div class="stat-number" id="stat-verified-parcels">5</div>
+          <div class="stat-footer">
+            <span class="badge-sub" style="background: var(--status-verified-bg); color: var(--status-verified);">Score &ge; 90%</span>
+            <span>Boundary Match &lt; 2% Delta</span>
+          </div>
+        </div>
+
+        <!-- Parcels Needing Review -->
+        <div class="stat-card review">
+          <div class="stat-header">
+            <span class="stat-title">Needing Review</span>
+            <div class="stat-icon-wrapper" style="color: var(--status-review);">⚠️</div>
+          </div>
+          <div class="stat-number" id="stat-review-parcels">2</div>
+          <div class="stat-footer">
+            <span class="badge-sub" style="background: var(--status-review-bg); color: var(--status-review);">70% - 89%</span>
+            <span>Bund shift / Canal deviation</span>
+          </div>
+        </div>
+
+        <!-- Parcels Under Dispute -->
+        <div class="stat-card dispute">
+          <div class="stat-header">
+            <span class="stat-title">Under Dispute</span>
+            <div class="stat-icon-wrapper" style="color: var(--status-dispute);">🚨</div>
+          </div>
+          <div class="stat-number" id="stat-dispute-parcels">1</div>
+          <div class="stat-footer">
+            <span class="badge-sub" style="background: var(--status-dispute-bg); color: var(--status-dispute);">Score &lt; 70%</span>
+            <span>Encroachment &gt; 10%</span>
+          </div>
+        </div>
+
+        <!-- Average Confidence -->
+        <div class="stat-card confidence">
+          <div class="stat-header">
+            <span class="stat-title">Avg Confidence</span>
+            <div class="stat-icon-wrapper" style="color: var(--accent-cyan);">💯</div>
+          </div>
+          <div class="stat-number" id="stat-avg-confidence">87.0%</div>
+          <div class="stat-footer">
+            <span class="badge-sub" style="background: rgba(100, 255, 218, 0.15); color: var(--accent-cyan);">RTK + GCP</span>
+            <span>Centimeter Accuracy</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================================
+           BHUNAKSHA & REAL COORDINATES CADASTRAL SEARCH ENGINE
+           ====================================================================== -->
+      <div class="bhunaksha-search-card">
+        <div class="bhunaksha-header-row">
+          <div class="bhunaksha-title-group">
+            <h2><span>📍</span> Real Land Coordinates & BhuNaksha Cadastral Resolver</h2>
+            <p>Input exact GPS coordinates (WGS84) or query official BhuNaksha / Mahabhulekh records to compare previous vs new survey boundaries</p>
+          </div>
+          <div class="search-mode-toggles">
+            <button class="search-mode-btn active" id="btn-mode-compare">
+              <span>⚡</span> Upload GeoJSON vs Form Coordinates
+            </button>
+            <button class="search-mode-btn" id="btn-mode-coords">
+              <span>🌐</span> Single GPS Point
+            </button>
+            <button class="search-mode-btn" id="btn-mode-hierarchy">
+              <span>🏛️</span> BhuNaksha Register
+            </button>
+          </div>
+        </div>
+
+        <!-- Mode C: Dual-Boundary Comparison Station (Upload GeoJSON vs Form Coordinates) -->
+        <div id="form-compare-mode" class="compare-station-container">
+          <div class="compare-grid-layout">
+            <!-- Left Column: Form Reference Coordinates -->
+            <div class="compare-col-box">
+              <div class="compare-col-header">
+                <div>
+                  <span class="compare-step-badge">STEP 1</span>
+                  <strong>Form Reference Coordinates (Field / 7/12 Boundary)</strong>
+                </div>
+                <button type="button" class="preset-load-btn" id="btn-load-user-coords" title="Load your 4 coordinates">
+                  📍 Load 4 User Coords
+                </button>
+              </div>
+              <p class="compare-col-subtitle">Input 4 boundary perimeter vertices (WGS84) or use the pre-filled coordinates:</p>
+
+              <div class="compare-coords-inputs-grid">
+                <div class="compare-coord-field">
+                  <label>Corner 1 (SE):</label>
+                  <div class="coord-inline-pair">
+                    <input type="number" id="cmp-lat-1" step="0.000001" placeholder="Lat" value="18.488044">
+                    <input type="number" id="cmp-lng-1" step="0.000001" placeholder="Lng" value="74.962731">
+                  </div>
+                </div>
+                <div class="compare-coord-field">
+                  <label>Corner 2 (SW):</label>
+                  <div class="coord-inline-pair">
+                    <input type="number" id="cmp-lat-2" step="0.000001" placeholder="Lat" value="18.488245">
+                    <input type="number" id="cmp-lng-2" step="0.000001" placeholder="Lng" value="74.961100">
+                  </div>
+                </div>
+                <div class="compare-coord-field">
+                  <label>Corner 3 (NW - 18°29'22.8"N 74°57'41.0"E):</label>
+                  <div class="coord-inline-pair">
+                    <input type="number" id="cmp-lat-3" step="0.000001" placeholder="Lat" value="18.489667">
+                    <input type="number" id="cmp-lng-3" step="0.000001" placeholder="Lng" value="74.961389">
+                  </div>
+                </div>
+                <div class="compare-coord-field">
+                  <label>Corner 4 (NE):</label>
+                  <div class="coord-inline-pair">
+                    <input type="number" id="cmp-lat-4" step="0.000001" placeholder="Lat" value="18.489330">
+                    <input type="number" id="cmp-lng-4" step="0.000001" placeholder="Lng" value="74.963083">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Cadastral Metadata -->
+              <div class="compare-meta-grid">
+                <div class="meta-input-item">
+                  <label>Survey / Gat No.</label>
+                  <input type="text" id="cmp-survey-no" value="78/1" placeholder="e.g. 78/1">
+                </div>
+                <div class="meta-input-item">
+                  <label>Registered Landholder</label>
+                  <input type="text" id="cmp-owner-name" value="तानाजी रावसाहेब मोरे (Tanaji R. More)" placeholder="Owner Name">
+                </div>
+                <div class="meta-input-item">
+                  <label>Village & Taluka</label>
+                  <input type="text" id="cmp-village" value="कळंब (Kalamb), Indapur" placeholder="Village">
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Upload GeoJSON File or Choose 1-Click Samples -->
+            <div class="compare-col-box">
+              <div class="compare-col-header">
+                <div>
+                  <span class="compare-step-badge secondary">STEP 2</span>
+                  <strong>Upload GeoJSON Boundary (Drone / QGIS Resurvey)</strong>
+                </div>
+              </div>
+              <p class="compare-col-subtitle">Select or drop any GeoJSON file exported from drone photogrammetry or QGIS:</p>
+
+              <!-- Dropzone -->
+              <div class="compare-dropzone" id="compare-dropzone">
+                <div class="dropzone-mini-icon">🗺️</div>
+                <div>
+                  <strong style="font-size: 0.85rem; color: var(--text-main);">Drop your .geojson / .json file here</strong>
+                  <div style="font-size: 0.72rem; color: var(--text-muted);">or click to browse from computer</div>
+                </div>
+                <input type="file" id="compare-file-input" accept=".geojson,.json" style="display: none;">
+              </div>
+
+              <div id="compare-file-badge" class="file-loaded-badge" style="display: none;">
+                <span>📄 Active File:</span> <strong id="compare-loaded-filename">Uploaded Boundary</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Bar -->
+          <div class="compare-actions-bar">
+            <button type="button" class="btn-primary-action compare-submit-btn" id="btn-execute-comparison">
+              <span>⚡</span> Compare Form Coordinates vs Uploaded GeoJSON & View on Map
+            </button>
+          </div>
+
+          <!-- Dynamic Comparison Results HUD -->
+          <div id="compare-results-hud" class="compare-results-hud" style="display: none;">
+            <div class="results-hud-header">
+              <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <span style="font-size: 1.3rem;">📊</span>
+                <div>
+                  <h3 id="res-hud-title" style="font-size: 1rem; font-weight: 800; color: var(--text-main); margin: 0;">Dual-Boundary Comparison Analysis</h3>
+                  <p id="res-hud-desc" style="font-size: 0.75rem; color: var(--text-muted); margin: 0;">Calculated spatial variance between Form ground coordinates & uploaded GeoJSON resurvey</p>
+                </div>
+              </div>
+              <span id="res-hud-status-badge" class="badge-tag verified">VERIFIED (98.4%)</span>
+            </div>
+
+            <div class="results-hud-grid">
+              <!-- Metric 1: Confidence Score -->
+              <div class="hud-metric-box">
+                <span class="hud-metric-label">Land Confidence Score</span>
+                <div class="hud-metric-val" id="res-hud-score" style="color: var(--status-verified);">98.4%</div>
+                <div class="progress-track" style="margin-top: 4px; height: 6px;">
+                  <div class="progress-fill" id="res-hud-score-fill" style="width: 98.4%; background: var(--status-verified);"></div>
+                </div>
+              </div>
+
+              <!-- Metric 2: Form Coordinates Area (BLUE) -->
+              <div class="hud-metric-box" style="border-color: #2563EB;">
+                <span class="hud-metric-label" style="color: #2563EB;">🟦 Original Ground Reference (7/12)</span>
+                <div class="hud-metric-val" id="res-hud-form-area" style="color: #2563EB;">3.39 Ac</div>
+                <span class="hud-metric-sub" id="res-hud-form-sqm">13,734.1 m² (1978 Record)</span>
+              </div>
+
+              <!-- Metric 3: Uploaded GeoJSON Area (RED / GREEN) -->
+              <div class="hud-metric-box" style="border-color: #EF4444;">
+                <span class="hud-metric-label" style="color: #EF4444;">🟥 Captured Drone Resurvey Area</span>
+                <div class="hud-metric-val" id="res-hud-geo-area" style="color: #EF4444;">3.40 Ac</div>
+                <span class="hud-metric-sub" id="res-hud-geo-sqm">13,745.2 m² (Resurvey)</span>
+              </div>
+
+              <!-- Metric 4: Area Delta Variance -->
+              <div class="hud-metric-box">
+                <span class="hud-metric-label">Area Variance Delta</span>
+                <div class="hud-metric-val" id="res-hud-delta">0.1%</div>
+                <span class="hud-metric-sub" id="res-hud-delta-sqm">+11.1 m² discrepancy</span>
+              </div>
+
+              <!-- Metric 5: Mean Boundary Shift -->
+              <div class="hud-metric-box">
+                <span class="hud-metric-label">Mean Boundary Shift</span>
+                <div class="hud-metric-val" id="res-hud-shift">0.39 m</div>
+                <span class="hud-metric-sub">Centimeter DGPS offset</span>
+              </div>
+
+              <!-- Metric 6: Spatial IoU Overlap -->
+              <div class="hud-metric-box">
+                <span class="hud-metric-label">Spatial Overlap (IoU)</span>
+                <div class="hud-metric-val" id="res-hud-iou">98.8%</div>
+                <span class="hud-metric-sub">Geometric concordance</span>
+              </div>
+            </div>
+
+            <!-- Vertex-by-Vertex Shift Table -->
+            <div style="margin-top: 0.85rem; background: var(--surface-card); border: 1px solid var(--surface-border); border-radius: var(--radius-sm); padding: 0.75rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                <span style="font-size: 0.75rem; font-weight: 700; color: var(--text-main);">📍 Vertex-by-Vertex Boundary Comparison (Form vs Uploaded)</span>
+                <span style="font-size: 0.7rem; color: var(--accent-cyan); font-family: var(--font-mono);">WGS84 EPSG:4326</span>
+              </div>
+              <div id="res-hud-vertex-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.5rem; font-size: 0.72rem; font-family: var(--font-mono);">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mode A: GPS Coordinate Input Form -->
+        <div id="form-coords-mode" class="coords-search-form" style="display: none;">
+          <div class="coord-input-group">
+            <label>LAT (N):</label>
+            <input type="number" id="search-input-lat" step="0.000001" placeholder="17.672050" value="17.672050">
+          </div>
+          <div class="coord-input-group">
+            <label>LNG (E):</label>
+            <input type="number" id="search-input-lng" step="0.000001" placeholder="75.900120" value="75.900120">
+          </div>
+          <button class="btn-primary-action" id="btn-search-coords">
+            <span>🔍</span> Locate & Compare with BhuNaksha
+          </button>
+          <button class="layer-chip" id="btn-pin-map-tool" title="Click anywhere on the satellite map to pick coordinates">
+            <span>🎯</span> Pin on Map
+          </button>
+          <button class="layer-chip" id="btn-device-gps" title="Get current device GPS coordinates">
+            <span>📱</span> My GPS
+          </button>
+        </div>
+
+        <!-- Mode B: Revenue Hierarchy Form (BhuNaksha Dropdowns) -->
+        <div id="form-hierarchy-mode" class="coords-search-form" style="display: none;">
+          <div class="hierarchy-select-group">
+            <select class="hierarchy-select" id="sel-district">
+              <option value="">-- Select District --</option>
+            </select>
+            <select class="hierarchy-select" id="sel-taluka">
+              <option value="">-- Select Taluka --</option>
+            </select>
+            <select class="hierarchy-select" id="sel-village">
+              <option value="">-- Select Village --</option>
+            </select>
+            <input type="text" class="hierarchy-select" id="sel-gat" placeholder="Enter Survey / Gat No." style="background: var(--surface-bg); border: 1px solid var(--surface-border); color: var(--text-primary); padding: 0.5rem 0.8rem; border-radius: var(--radius-sm); font-size: 0.82rem;">
+          </div>
+          <button class="btn-primary-action" id="btn-search-hierarchy">
+            <span>📜</span> Fetch BhuNaksha & 7/12 RoR
+          </button>
+        </div>
+
+        <!-- Quick Test Coordinate Chips -->
+        <div class="presets-container">
+          <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700;">QUICK LOCATIONS:</span>
+          <button class="preset-chip" data-lat="17.68000" data-lng="75.90000">📍 Barshi (Center)</button>
+          <button class="preset-chip" data-lat="18.52000" data-lng="73.85000">📍 Pune (City)</button>
+          <button class="preset-chip" data-lat="17.67900" data-lng="75.91500">📍 Solapur Region</button>
+        </div>
+
+        <!-- Official Land Portals Quick Bridge -->
+        <div class="gov-portals-bridge">
+          <span style="font-size: 0.72rem; color: var(--text-muted);">
+            🔗 Cross-Verify with Official Portals:
+          </span>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <a href="https://mahabhunaksha.mahabhumi.gov.in/" target="_blank" class="portal-link-btn">
+              <span>🏛️</span> Maha BhuNaksha
+            </a>
+            <a href="https://bhulekh.mahabhumi.gov.in/" target="_blank" class="portal-link-btn">
+              <span>📜</span> MahaBhulekh 7/12
+            </a>
+            <a href="https://dilrmp.gov.in/" target="_blank" class="portal-link-btn">
+              <span>🪪</span> DILRMP National
+            </a>
+            <a href="https://bhuvan.nrsc.gov.in/" target="_blank" class="portal-link-btn">
+              <span>🛰️</span> ISRO Bhuvan GIS
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Technology Pipeline Bar -->
+      <div class="pipeline-card">
+        <div class="pipeline-header">
+          <h2><span>⚙️</span> End-to-End Survey & Resurvey Technology Pipeline</h2>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">Real-Time Digital Cadastre Synchronization</span>
+        </div>
+        <div class="pipeline-steps">
+          <div class="pipe-node success">
+            <div class="pipe-circle">🚁</div>
+            <span class="pipe-title">Drone Capture</span>
+            <span class="pipe-desc">RTK GPS &bull; DJI/Wingtra</span>
+          </div>
+          <span class="pipe-arrow-sep">&rarr;</span>
+          <div class="pipe-node success">
+            <div class="pipe-circle">⚙️</div>
+            <span class="pipe-title">WebODM</span>
+            <span class="pipe-desc">SfM &bull; Dense Cloud</span>
+          </div>
+          <span class="pipe-arrow-sep">&rarr;</span>
+          <div class="pipe-node success">
+            <div class="pipe-circle">🛰️</div>
+            <span class="pipe-title">Orthophoto</span>
+            <span class="pipe-desc">2.1cm/px Mosaic</span>
+          </div>
+          <span class="pipe-arrow-sep">&rarr;</span>
+          <div class="pipe-node success">
+            <div class="pipe-circle">📐</div>
+            <span class="pipe-title">QGIS GeoJSON</span>
+            <span class="pipe-desc">Cadastral Boundary</span>
+          </div>
+          <span class="pipe-arrow-sep">&rarr;</span>
+          <div class="pipe-node active">
+            <div class="pipe-circle">🌍</div>
+            <span class="pipe-title">GeoLand Engine</span>
+            <span class="pipe-desc">Unified GIS Portal</span>
+          </div>
+          <span class="pipe-arrow-sep">&rarr;</span>
+          <div class="pipe-node active">
+            <div class="pipe-circle">🆔</div>
+            <span class="pipe-title">Parcel ID & QR</span>
+            <span class="pipe-desc">Digital Cert & Auth</span>
+          </div>
+          <span class="pipe-arrow-sep">&rarr;</span>
+          <div class="pipe-node active">
+            <div class="pipe-circle">📋</div>
+            <span class="pipe-title">RoR & Mutations</span>
+            <span class="pipe-desc">7/12 & Ferfar Logs</span>
+          </div>
+          <span class="pipe-arrow-sep">&rarr;</span>
+          <div class="pipe-node active">
+            <div class="pipe-circle">💯</div>
+            <span class="pipe-title">Confidence</span>
+            <span class="pipe-desc">Old vs New Diff</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Integrated GIS Map & Quick Inspector Grid -->
+      <div class="gis-layout-grid">
+        <!-- Left: Leaflet Google Satellite Map -->
+        <div class="map-viewport-card">
+          <div class="map-toolbar">
+            <div class="map-layer-toggles">
+              <button class="layer-chip active" data-layer="google_sat">🛰️ Google Satellite</button>
+              <button class="layer-chip" data-layer="bhuvan_sat">🇮🇳 ISRO Bhuvan</button>
+              <button class="layer-chip" data-layer="topo">⛰️ Topographic</button>
+              <button class="layer-chip" data-layer="osm">🗺️ Street Map</button>
+              <button class="layer-chip" data-layer="esri_sat">🌍 Esri Imagery</button>
+            </div>
+            <div class="map-control-actions">
+              <button class="layer-chip active" id="btn-toggle-dual-boundaries" style="border-color: var(--accent-orange); color: var(--accent-orange);">
+                <span>🔀</span> Compare BhuNaksha vs Drone
+              </button>
+              <button class="layer-chip" id="btn-toggle-ortho">🔄 Toggle WebODM Ortho</button>
+              <button class="layer-chip" id="btn-quick-upload-geojson" title="Upload GeoJSON file to compare against form coordinates" style="border-color: var(--accent-cyan); color: var(--accent-cyan);">
+                <span>📂</span> Upload & Compare GeoJSON
+              </button>
+              <input type="file" id="dash-quick-geojson-input" accept=".geojson,.json" style="display: none;">
+              <button class="layer-chip" id="btn-bhuvan-districts" onclick="toggleBhuvanOverlay('district_boundaries');">🗺️ ISRO District Boundaries</button>
+              <button class="layer-chip" id="btn-bhuvan-villages" onclick="toggleBhuvanOverlay('village_boundaries');">📍 ISRO Village Boundaries</button>
+              <div class="ortho-slider-container">
+                <span>Opacity:</span>
+                <input type="range" id="ortho-opacity-slider" min="0" max="1" step="0.05" value="0.6">
+              </div>
+              <button class="layer-chip" id="btn-map-fit">🎯 Fit All</button>
+            </div>
+          </div>
+
+          <!-- The Map Canvas -->
+          <div id="gis-map-canvas"></div>
+
+          <!-- Floating Legend -->
+          <div class="map-floating-legend">
+            <div class="legend-title">Cadastral Layers</div>
+            <div class="legend-item">
+              <div class="legend-swatch bhunaksha-old"></div>
+              <span>🟦 Original Ground Record (7/12)</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-swatch drone-new"></div>
+              <span>🟥 Captured Drone Resurvey</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-swatch encroach-zone"></div>
+              <span>🟪 Area Discrepancy / Overlap Gap</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-swatch verified"></div>
+              <span>Verified Status (&ge;90%)</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-swatch review"></div>
+              <span>Needs Review (70–89%)</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-swatch dispute"></div>
+              <span>Disputed Area (&lt;70%)</span>
+            </div>
+          </div>
+
+          <!-- Floating Coordinate Tracker -->
+          <div class="map-coords-badge">
+            WGS84: <span id="map-live-lat">17.673800</span>, <span id="map-live-lng">75.903000</span>
+          </div>
+        </div>
+
+        <!-- Right: Parcel Quick Inspector Panel -->
+        <div class="parcel-inspector-card">
+          <div class="inspector-header">
+            <h3><span>📌</span> Parcel Inspector</h3>
+            <span class="badge-tag" id="insp-status-badge" style="background: rgba(100, 116, 139, 0.2); color: var(--text-muted);">WAITING FOR UPLOAD</span>
+          </div>
+          <div class="inspector-body">
+            <div class="inspector-hero">
+              <div class="inspector-badge-row">
+                <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted);" id="insp-parcel-id">—</span>
+                <span style="font-size: 0.7rem; color: var(--text-muted); font-weight: 700;" id="insp-bhunaksha-ref">Standby Mode</span>
+              </div>
+              <h4 class="inspector-owner-name" id="insp-owner-name">No Parcel Loaded</h4>
+              <p class="inspector-meta" id="insp-meta-desc">Upload a GeoJSON file in Step 2 to inspect parcel boundaries & legal records.</p>
+              
+              <!-- Confidence Progress Mini Bar -->
+              <div class="mini-score-bar">
+                <div class="mini-score-header">
+                  <span>Land Confidence Score</span>
+                  <span id="insp-conf-val" style="color: var(--text-muted);">0%</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" id="insp-conf-fill" style="width: 0%; background: var(--text-muted);"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Comparison Metric Boxes -->
+            <div class="inspector-comparison-boxes">
+              <div class="insp-comp-box">
+                <div class="insp-comp-label">Old BhuNaksha Area</div>
+                <div class="insp-comp-value" id="insp-old-area">—</div>
+                <div class="insp-comp-sub" id="insp-old-sqm">No record loaded</div>
+              </div>
+              <div class="insp-comp-box" style="border-color: var(--surface-border);">
+                <div class="insp-comp-label" style="color: var(--text-muted);">New Drone RTK Area</div>
+                <div class="insp-comp-value" id="insp-new-area" style="color: var(--text-muted);">—</div>
+                <div class="insp-comp-sub" id="insp-new-sqm">No survey loaded</div>
+              </div>
+            </div>
+
+            <!-- Key Cadastral Data Rows -->
+            <div class="inspector-data-list">
+              <div class="data-row">
+                <span class="data-label">⚖️ Area Variance Delta</span>
+                <span class="data-val" id="insp-area-diff" style="color: var(--text-muted);">—</span>
+              </div>
+              <div class="data-row">
+                <span class="data-label">📏 Mean Boundary Shift</span>
+                <span class="data-val" id="insp-shift-dist" style="color: var(--text-muted);">—</span>
+              </div>
+              <div class="data-row">
+                <span class="data-label">📐 Spatial IoU Overlap</span>
+                <span class="data-val" id="insp-iou-val" style="color: var(--status-verified);">96.8%</span>
+              </div>
+              <div class="data-row">
+                <span class="data-label">🌿 Land Use / Type</span>
+                <span class="data-val" id="insp-land-type">Irrigated Agricultural</span>
+              </div>
+              <div class="data-row">
+                <span class="data-label">📡 RTK GPS Accuracy</span>
+                <span class="data-val" id="insp-rtk-acc">&plusmn;1.8 cm</span>
+              </div>
+              <div class="data-row">
+                <span class="data-label">🎯 DGPS Ground Controls</span>
+                <span class="data-val" id="insp-gcps">8 Fixed Targets</span>
+              </div>
+            </div>
+
+            <!-- Inspector Action -->
+            <div class="inspector-actions">
+              <button class="btn-open-full-parcel" id="btn-open-inspector-modal">
+                <span>📋</span> View Full 7/12 Extract, Diff & QR
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cadastral Parcels Master Table -->
+      <div class="table-card">
+        <div class="table-header-controls">
+          <div class="table-title-group">
+            <h2>📜 Cadastral Register — Real Data from Mahabhulekh / QGIS</h2>
+            <p>Source: Official 7/12 Extracts &bull; MahaBhuNaksha &bull; ISRO Bhuvan &bull; QGIS GeoJSON Import</p>
+          </div>
+          <div class="table-filters">
+            <button class="filter-pill active" data-filter="all">All Parcels</button>
+            <button class="filter-pill" data-filter="verified" style="color: var(--status-verified);">Verified (&ge;90%)</button>
+            <button class="filter-pill" data-filter="needs_review" style="color: var(--status-review);">Review (70-89%)</button>
+            <button class="filter-pill" data-filter="dispute" style="color: var(--status-dispute);">Disputed (&lt;70%)</button>
+            <input type="text" class="search-box" id="table-search-input" placeholder="Search Owner / Survey No...">
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="cadastral-table">
+            <thead>
+              <tr>
+                <th>Parcel ID</th>
+                <th>Survey & Gat No.</th>
+                <th>Registered Owner</th>
+                <th>Old BhuNaksha Area</th>
+                <th>Drone Resurvey</th>
+                <th>Status</th>
+                <th>Confidence Index</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="cadastral-table-body">
+              <!-- Dynamically populated via app.js -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Empty State Panel (shown when no parcels loaded) -->
+      <div id="empty-state-panel" class="empty-state-card" style="display: none;">
+        <div class="empty-state-icon">🗺️</div>
+        <h2>No Land Records Loaded</h2>
+        <p>All demo/fake records have been removed. Add real data from official government sources:</p>
+        <div class="empty-state-steps">
+          <div class="es-step">
+            <div class="es-step-num">1</div>
+            <div>
+              <h4>📜 Get 7/12 Extract from Mahabhulekh</h4>
+              <p>Visit <a href="https://bhulekh.mahabhumi.gov.in/" target="_blank">bhulekh.mahabhumi.gov.in</a> → Select District → Taluka → Village → Search by Survey/Gat No.</p>
+            </div>
+          </div>
+          <div class="es-step">
+            <div class="es-step-num">2</div>
+            <div>
+              <h4>🗺️ Get Boundary Map from MahaBhuNaksha</h4>
+              <p>Visit <a href="https://mahabhunakasha.mahabhumi.gov.in/" target="_blank">mahabhunakasha.mahabhumi.gov.in</a> → Find your plot → Note corner coordinates</p>
+            </div>
+          </div>
+          <div class="es-step">
+            <div class="es-step-num">3</div>
+            <div>
+              <h4>✏️ Enter Data in This Portal</h4>
+              <p>Use the <strong>"Add from Mahabhulekh 7/12"</strong> form in the WebODM & QGIS Station tab, or import a QGIS GeoJSON file.</p>
+            </div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem; flex-wrap: wrap; justify-content: center;">
+          <a href="https://bhulekh.mahabhumi.gov.in/" target="_blank" class="portal-link-btn" style="padding: 0.6rem 1.2rem;">
+            <span>📜</span> Open Mahabhulekh 7/12
+          </a>
+          <a href="https://mahabhunakasha.mahabhumi.gov.in/" target="_blank" class="portal-link-btn" style="padding: 0.6rem 1.2rem;">
+            <span>🗺️</span> Open MahaBhuNaksha
+          </a>
+          <a href="https://bhuvan.nrsc.gov.in/" target="_blank" class="portal-link-btn" style="padding: 0.6rem 1.2rem;">
+            <span>🛰️</span> Open ISRO Bhuvan
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SECTION 3: WEBODM & QGIS INGESTION STATION
+         ====================================================================== -->
+    <section id="view-odm" class="section-container">
+      <div class="pipeline-card" style="margin-bottom: 1.5rem;">
+        <div class="pipeline-header">
+          <h2><span>🛰️</span> Drone Photogrammetry & Cadastral Station</h2>
+          <span style="font-size: 0.8rem; color: var(--accent-cyan);">Upload drone imagery, run WebODM photogrammetry processing & cadastral database synchronization</span>
+        </div>
+      </div>
+
+      <div class="odm-grid">
+        <!-- Panel 1: Upload Drone Images -->
+        <div class="odm-panel-card">
+          <h3><span>📤</span> Upload Raw Drone Aerial Images</h3>
+          <p class="subtitle">Supports DJI Phantom 4 RTK, Mavic 3E, WingtraOne, SenseFly eBee (JPG/TIFF)</p>
+          
+          <div class="dropzone" id="drone-dropzone">
+            <div class="dropzone-icon">📷</div>
+            <div class="dropzone-text">
+              <h4>Drag & drop aerial drone survey imagery here</h4>
+              <p>or click to select photo directory &bull; Minimum 20 overlapping frames</p>
+            </div>
+            <input type="file" id="drone-images-input" multiple accept="image/jpeg,image/tiff,image/png" style="display: none;">
+          </div>
+
+          <div class="files-preview-list" id="drone-files-preview"></div>
+
+          <div style="margin-top: 1.25rem; display: flex; gap: 0.75rem;">
+            <button class="btn-primary-action" id="btn-start-odm" style="flex: 1; justify-content: center;" disabled>
+              <span>⚙️</span> Start WebODM Processing
+            </button>
+          </div>
+        </div>
+
+        <!-- Panel 2: WebODM Connection & Terminal -->
+        <div class="odm-panel-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <h3><span>💻</span> WebODM Processing Console</h3>
+            <div class="connection-status-pill">
+              <div class="pulse-dot"></div>
+              <span>WebODM API Bridge: Online</span>
+            </div>
+          </div>
+          <p class="subtitle">Structure from Motion (SfM) &bull; OpenMVS &bull; Point Cloud &bull; Orthomosaic</p>
+
+          <!-- Progress Bar -->
+          <div style="margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 0.35rem;">
+              <span>Processing Pipeline Status</span>
+              <span id="odm-progress-pct" style="color: var(--accent-cyan); font-weight: 700;">0%</span>
+            </div>
+            <div class="progress-track" style="height: 10px;">
+              <div class="progress-fill" id="odm-progress-fill" style="width: 0%; background: linear-gradient(90deg, var(--accent-cyan), #00b894);"></div>
+            </div>
+          </div>
+
+          <!-- Terminal Output -->
+          <div class="terminal-console" id="odm-terminal-output">
+            <div class="terminal-line info">[READY] WebODM photogrammetry node initialized on port 8000.</div>
+            <div class="terminal-line">[STANDBY] Waiting for drone flight mission photos...</div>
+          </div>
+        </div>
+
+
+
+        <!-- Panel 4: Push to Database & Export -->
+        <div class="odm-panel-card">
+          <h3><span>💾</span> Cadastral Database Synchronizer</h3>
+          <p class="subtitle">Persist normalized survey records to the unified digital land portal database</p>
+
+          <div style="background: rgba(2, 12, 27, 0.4); border: 1px solid var(--surface-border); border-radius: var(--radius-sm); padding: 1.25rem; margin-bottom: 1.25rem;">
+            <div class="data-row">
+              <span class="data-label">Active Registry Table</span>
+              <span class="data-val">parcels_agricultural_cadastre</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">Spatial Reference System</span>
+              <span class="data-val">EPSG:4326 (WGS 84)</span>
+            </div>
+            <div class="data-row">
+              <span class="data-label">RoR Integration Format</span>
+              <span class="data-val">Maharashtra E-MahaBhumi 7/12</span>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem;">
+            <button class="btn-primary-action" id="btn-push-to-cadastre" style="flex: 1; justify-content: center;">
+              <span>➡️</span> Push to Unified Land Portal
+            </button>
+          </div>
+        </div>
+
+        <!-- Panel 5: Manual Entry from Mahabhulekh 7/12 -->
+        <div class="odm-panel-card" style="grid-column: 1 / -1;">
+          <h3><span>📜</span> Add Land Record from Mahabhulekh 7/12 Extract</h3>
+          <p class="subtitle">Enter data manually from your official 7/12 (Satbara) extract downloaded from <a href="https://bhulekh.mahabhumi.gov.in/" target="_blank" style="color: var(--accent-cyan);">bhulekh.mahabhumi.gov.in</a></p>
+
+          <form id="mahabhulekh-entry-form">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin-bottom: 1rem;">
+              <div class="form-field">
+                <label>Survey / Gat No. (सर्वे/गट नंबर) *</label>
+                <input type="text" id="entry-survey-no" required placeholder="e.g. 45/1A">
+              </div>
+              <div class="form-field">
+                <label>Gat No. (गट क्रमांक)</label>
+                <input type="text" id="entry-gat-no" placeholder="e.g. 104">
+              </div>
+              <div class="form-field">
+                <label>Khata No. (खाते क्रमांक)</label>
+                <input type="text" id="entry-khata-no" placeholder="e.g. 312">
+              </div>
+              <div class="form-field">
+                <label>Owner Name (खातेदाराचे नाव) *</label>
+                <input type="text" id="entry-owner-name" required placeholder="Full name from 7/12">
+              </div>
+              <div class="form-field">
+                <label>Father's Name (वडिलांचे नाव)</label>
+                <input type="text" id="entry-father-name" placeholder="Father's name">
+              </div>
+              <div class="form-field">
+                <label>District (जिल्हा) *</label>
+                <input type="text" id="entry-district" required value="Solapur" placeholder="e.g. Solapur">
+              </div>
+              <div class="form-field">
+                <label>Taluka (तालुका) *</label>
+                <input type="text" id="entry-taluka" required value="Barshi" placeholder="e.g. Barshi">
+              </div>
+              <div class="form-field">
+                <label>Village (गाव) *</label>
+                <input type="text" id="entry-village" required placeholder="Village name">
+              </div>
+              <div class="form-field">
+                <label>Land Type (जमीन प्रकार)</label>
+                <select id="entry-land-type">
+                  <option value="Jirayat (जिरायत)">Jirayat (जिरायत) — Dry Land</option>
+                  <option value="Bagayat (बागायत)">Bagayat (बागायत) — Irrigated</option>
+                  <option value="Pot Kharabi (पोट खराबी)">Pot Kharabi — Uncultivable</option>
+                  <option value="Varkas (वरकस)">Varkas — Fallow</option>
+                  <option value="Bhaat (भात)">Bhaat — Paddy/Rice</option>
+                  <option value="Udyan Vikas (उद्यान विकास)">Udyan Vikas — Horticulture</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label>Area (Acres from 7/12)</label>
+                <input type="number" id="entry-area-acres" step="0.01" placeholder="e.g. 2.50">
+              </div>
+              <div class="form-field">
+                <label>Area (Guntha from 7/12)</label>
+                <input type="number" id="entry-area-guntha" step="1" placeholder="e.g. 20">
+              </div>
+            </div>
+
+            <div style="margin-bottom: 0.75rem;">
+              <h4 style="font-size: 0.85rem; color: var(--accent-cyan); margin-bottom: 0.5rem;">📍 Boundary Coordinates (from BhuNaksha / GPS)</h4>
+              <p style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.5rem;">Enter 3-4 corner point coordinates. Get these from MahaBhuNaksha map or GPS field survey.</p>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.5rem;">
+                <div class="coord-pair">
+                  <span>Corner 1:</span>
+                  <input type="number" id="entry-lat-1" step="0.000001" placeholder="Lat (e.g. 17.672050)">
+                  <input type="number" id="entry-lng-1" step="0.000001" placeholder="Lng (e.g. 75.900120)">
+                </div>
+                <div class="coord-pair">
+                  <span>Corner 2:</span>
+                  <input type="number" id="entry-lat-2" step="0.000001" placeholder="Lat">
+                  <input type="number" id="entry-lng-2" step="0.000001" placeholder="Lng">
+                </div>
+                <div class="coord-pair">
+                  <span>Corner 3:</span>
+                  <input type="number" id="entry-lat-3" step="0.000001" placeholder="Lat">
+                  <input type="number" id="entry-lng-3" step="0.000001" placeholder="Lng">
+                </div>
+                <div class="coord-pair">
+                  <span>Corner 4:</span>
+                  <input type="number" id="entry-lat-4" step="0.000001" placeholder="Lat (optional)">
+                  <input type="number" id="entry-lng-4" step="0.000001" placeholder="Lng (optional)">
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary-action" style="width: 100%; justify-content: center; padding: 0.75rem;">
+              <span>✅</span> Add Parcel from Mahabhulekh 7/12 Data
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SECTION 4: CADASTRE REGISTER & MUTATION LEDGER VIEW
+         ====================================================================== -->
+    <section id="view-records" class="section-container">
+      <div class="pipeline-card" style="margin-bottom: 1.5rem;">
+        <div class="pipeline-header" style="flex-wrap: wrap; gap: 0.75rem;">
+          <div>
+            <h2><span>📋</span> Record of Rights (RoR 7/12) & Mutation Ledger</h2>
+            <span style="font-size: 0.8rem; color: var(--accent-cyan);">Official Maharashtra Cadastral Land Register &bull; Historical Ferfar Chain &bull; Legal Title Validation</span>
+          </div>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <span class="badge-tag verified" style="font-size: 0.75rem;">🏛️ Revenue Dept. Certified</span>
+            <button class="btn-primary-action" id="btn-export-register-csv" style="padding: 0.4rem 0.9rem; font-size: 0.75rem;">
+              <span>📥</span> Export Register CSV
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Register KPI Bar -->
+      <div class="stats-grid" style="margin-bottom: 1.5rem;">
+        <div class="stat-card total">
+          <div class="stat-header">
+            <span class="stat-title">Total Registered Holdings</span>
+            <div class="stat-icon-wrapper">📁</div>
+          </div>
+          <div class="stat-number" id="reg-stat-total">8</div>
+          <div class="stat-footer">
+            <span>Barshi Taluka &bull; 30.46 Acres</span>
+          </div>
+        </div>
+
+        <div class="stat-card verified">
+          <div class="stat-header">
+            <span class="stat-title">Clear Title Certified</span>
+            <div class="stat-icon-wrapper">✅</div>
+          </div>
+          <div class="stat-number" id="reg-stat-verified">5</div>
+          <div class="stat-footer">
+            <span class="badge-sub verified">100% Match</span>
+            <span>Drone RTK = BhuNaksha</span>
+          </div>
+        </div>
+
+        <div class="stat-card review">
+          <div class="stat-header">
+            <span class="stat-title">Needs Joint Verification</span>
+            <div class="stat-icon-wrapper">⚠️</div>
+          </div>
+          <div class="stat-number" id="reg-stat-review">2</div>
+          <div class="stat-footer">
+            <span class="badge-sub review">TILR Action</span>
+            <span>Bund shift &lt; 2.5m</span>
+          </div>
+        </div>
+
+        <div class="stat-card dispute">
+          <div class="stat-header">
+            <span class="stat-title">Encumbrance / Dispute</span>
+            <div class="stat-icon-wrapper">🚨</div>
+          </div>
+          <div class="stat-number" id="reg-stat-dispute">1</div>
+          <div class="stat-footer">
+            <span class="badge-sub dispute">Road Variance</span>
+            <span>PMGSY alignment overlap</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Register Layout: Master Table + Detail Inspector -->
+      <div class="register-layout-grid">
+        <!-- Left: Full Cadastral Register Master Table -->
+        <div class="cadastral-ledger-card">
+          <div class="table-card-header" style="flex-wrap: wrap; gap: 0.75rem; padding-bottom: 1rem;">
+            <div class="table-title-group">
+              <h3><span>📜</span> Mahabhulekh Master 7/12 Register</h3>
+              <p class="subtitle">Click any row to inspect historical mutation ledger, deeds, and RTK coordinates</p>
+            </div>
+
+            <div class="table-controls-row" style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+              <div class="table-search-box">
+                <span>🔍</span>
+                <input type="text" id="register-search-input" placeholder="Search Owner, Gat, Khata, Survey...">
+              </div>
+
+              <div class="table-filter-pills">
+                <button class="filter-pill active reg-filter-pill" data-reg-filter="all">All (8)</button>
+                <button class="filter-pill reg-filter-pill" data-reg-filter="verified">Verified (5)</button>
+                <button class="filter-pill reg-filter-pill" data-reg-filter="needs_review">Review (2)</button>
+                <button class="filter-pill reg-filter-pill" data-reg-filter="dispute">Disputed (1)</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table -->
+          <div class="table-scroll-container">
+            <table class="cadastral-data-table">
+              <thead>
+                <tr>
+                  <th>PARCEL ID</th>
+                  <th>SURVEY / GAT</th>
+                  <th>REGISTERED OWNER (खातेदार)</th>
+                  <th>VILLAGE</th>
+                  <th>BHUNAKSHA (1978)</th>
+                  <th>DRONE RTK (2024)</th>
+                  <th>VARIANCE</th>
+                  <th>STATUS</th>
+                  <th>CONFIDENCE</th>
+                  <th>ACTION</th>
+                </tr>
+              </thead>
+              <tbody id="register-table-body">
+                <!-- Populated dynamically by app.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Right: Selected Parcel Title & Mutation Ledger Inspector -->
+        <div class="register-detail-panel" id="register-detail-panel">
+          <div class="inspector-header">
+            <h3><span>⚖️</span> Legal Title & Mutation Ledger</h3>
+            <span class="badge-tag verified" id="reg-detail-badge">VERIFIED</span>
+          </div>
+
+          <div class="reg-parcel-summary" style="margin: 0.85rem 0;">
+            <h2 id="reg-detail-parcel-id" style="font-size: 1.15rem; font-family: var(--font-mono); color: var(--accent-cyan);">MH-SOL-BAR-142-1</h2>
+            <p id="reg-detail-owner" style="font-size: 1.05rem; font-weight: 700; color: var(--text-main); margin-top: 0.2rem;">सखाराम बबनराव पाटील (Sakharam Babanrao Patil)</p>
+            <p id="reg-detail-meta" style="font-size: 0.78rem; color: var(--text-muted);">Survey 142/1 &bull; Gat 142/1 &bull; Khata #108 &bull; Village Borale, Taluka Barshi</p>
+          </div>
+
+          <!-- Form 7 & Form 12 Tabs / Quick View -->
+          <div class="reg-forms-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+            <div class="reg-form-box" style="background: var(--tertiary-navy); border: 1px solid var(--surface-border); border-radius: var(--radius-sm); padding: 0.75rem;">
+              <span style="font-size: 0.68rem; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase;">गाव नमुना 7 (अधिकार अभिलेख)</span>
+              <div style="margin-top: 0.35rem; font-size: 0.8rem; color: var(--text-main);">
+                <div>लागवडी क्षेत्र: <strong id="reg-detail-cultivable">1.45 Ha (3.58 Ac)</strong></div>
+                <div>जमीन प्रकार: <strong id="reg-detail-land-type">जिरायत शेती</strong></div>
+                <div>आकारणी: <strong id="reg-detail-tax">रु. 12.50</strong></div>
+              </div>
+            </div>
+
+            <div class="reg-form-box" style="background: var(--tertiary-navy); border: 1px solid var(--surface-border); border-radius: var(--radius-sm); padding: 0.75rem;">
+              <span style="font-size: 0.68rem; font-weight: 700; color: var(--status-verified); text-transform: uppercase;">गाव नमुना 12 (पिकांची पाहणी)</span>
+              <div style="margin-top: 0.35rem; font-size: 0.8rem; color: var(--text-main);" id="reg-detail-crops">
+                <div>सोयाबीन: <strong>2.00 Ac</strong> (खरीप)</div>
+                <div>ज्वारी: <strong>1.55 Ac</strong> (रब्बी)</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chronological Mutation Chain (फेरफार नोंदवही) -->
+          <div style="margin-bottom: 1rem;">
+            <h4 style="font-size: 0.82rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+              <span>📜</span> Historical Ferfar Mutation Chain (फेरफार नोंदी)
+            </h4>
+            <div class="mutation-timeline" id="reg-mutation-timeline" style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem;">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+          <!-- Verified GPS Coordinates Box -->
+          <div style="margin-bottom: 1rem;">
+            <h4 style="font-size: 0.82rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem;">
+              <span>📍</span> Verified RTK Boundary Coordinates (WGS84)
+            </h4>
+            <div id="reg-coords-list" style="max-height: 120px; overflow-y: auto; font-family: var(--font-mono); font-size: 0.75rem; background: var(--tertiary-navy); border: 1px solid var(--surface-border); border-radius: var(--radius-sm); padding: 0.5rem 0.75rem;">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button class="btn-primary-action" id="btn-reg-view-modal" style="flex: 1; justify-content: center;">
+              <span>📜</span> View Full 7/12 Certificate
+            </button>
+            <button class="layer-chip" id="btn-reg-inspect-map" style="flex: 1; justify-content: center; background: var(--tertiary-navy); color: var(--accent-cyan); border-color: var(--accent-cyan);">
+              <span>🗺️</span> View on Satellite Map
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================================================
+       DETAILED PARCEL MODAL (MATCHING USER'S COMPLETE SCHEMATIC)
+       ========================================================================== -->
+  <div class="modal-overlay" id="parcel-detail-modal">
+    <div class="modal-content-card">
+      
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="modal-header-titles">
+          <h2><span>🌾</span> Cadastral Land Record Certificate: <span id="modal-parcel-id" style="color: var(--accent-cyan); font-family: var(--font-mono);">GLP-MH-2024-001</span></h2>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <span class="badge-tag verified" id="modal-status-badge">VERIFIED</span>
+          <button class="modal-close-btn" id="btn-close-modal">&times;</button>
+        </div>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        
+        <!-- Hero: Owner Details & Dynamic QR Code -->
+        <div class="modal-hero-layout">
+          <!-- Left: Owner Information -->
+          <div class="hero-details-block">
+            <h3 class="owner-headline" id="modal-owner-name">Ramesh Vishnu Patil</h3>
+            <p class="owner-sub" id="modal-father-name">S/o Vishnu Govind Patil &bull; Sole Proprietor</p>
+            
+            <div class="grid-key-values">
+              <div class="kv-item">
+                <span class="kv-label">Survey Number</span>
+                <span class="kv-value" id="modal-survey-no">45/1A</span>
+              </div>
+              <div class="kv-item">
+                <span class="kv-label">Gat Number</span>
+                <span class="kv-value" id="modal-gat-no">104</span>
+              </div>
+              <div class="kv-item">
+                <span class="kv-label">Village & Taluka</span>
+                <span class="kv-value" id="modal-village">Khadkewadi, Barshi, Solapur</span>
+              </div>
+              <div class="kv-item">
+                <span class="kv-label">Land Classification</span>
+                <span class="kv-value" id="modal-land-type">Irrigated Agricultural</span>
+              </div>
+              <div class="kv-item">
+                <span class="kv-label">RoR 7/12 Extract Ref</span>
+                <span class="kv-value" id="modal-ror-no">ROR-SOL-451A-2024</span>
+              </div>
+              <div class="kv-item">
+                <span class="kv-label">Khata (Account) No.</span>
+                <span class="kv-value" id="modal-khata-no">खाते क्र. 312</span>
+              </div>
+              <div class="kv-item">
+                <span class="kv-label">BhuNaksha Status</span>
+                <span class="kv-value" style="color: var(--accent-cyan);">Synced with NIC BhuNaksha</span>
+              </div>
+              <div class="kv-item">
+                <span class="kv-label">Aadhaar Verification</span>
+                <span class="kv-value">XXXX-XXXX-4521 (UIDAI Linked)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Dynamic Verifiable QR Code -->
+          <div class="hero-qr-block">
+            <div id="modal-qr-target"></div>
+            <p class="qr-caption">Scan with any mobile camera to verify digital title on GeoLand Portal</p>
+            <button class="btn-qr-download" id="btn-download-qr">
+              <span>⬇️</span> Download QR Code
+            </button>
+            <button class="btn-qr-download" id="btn-copy-qr-link" style="margin-top: 0.4rem; background: transparent; border: 1px solid var(--surface-border); color: var(--accent-cyan);">
+              <span>📋</span> Copy Verification Link
+            </button>
+          </div>
+        </div>
+
+        <!-- Survey Comparison: Old vs New -->
+        <div class="comparison-section-box">
+          <h4 class="section-subheading"><span>⚖️</span> Cadastral Survey Comparison: Previous BhuNaksha vs Modern Drone RTK Survey</h4>
+          
+          <div class="comparison-grid">
+            <!-- Old Survey Column -->
+            <div class="comparison-column">
+              <div class="comp-col-label">Previous BhuNaksha Record (1978)</div>
+              <div class="comp-col-val" id="comp-old-acres">2.50 Ac</div>
+              <div class="comp-col-unit" id="comp-old-sqm">10,117 m²</div>
+              <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.35rem;">Method: Traditional Revenue Chain & Tippan</p>
+            </div>
+
+            <!-- New Survey Column -->
+            <div class="comparison-column highlight">
+              <div class="comp-col-label" style="color: var(--accent-cyan);">Modern Drone Resurvey (RTK GPS)</div>
+              <div class="comp-col-val" id="comp-new-acres" style="color: var(--accent-cyan);">2.47 Ac</div>
+              <div class="comp-col-unit" id="comp-new-sqm">9,995 m²</div>
+              <p style="font-size: 0.7rem; color: var(--accent-cyan); margin-top: 0.35rem;">Method: RTK Drone + DGPS (Accuracy: &plusmn;1.8 cm)</p>
+            </div>
+
+            <!-- Difference Column -->
+            <div class="comparison-column">
+              <div class="comp-col-label">Area Variance / Difference</div>
+              <div class="comp-col-val" id="comp-diff-val" style="color: var(--status-verified);">1.2%</div>
+              <div class="comp-col-unit" id="comp-diff-sqm">Delta: 0.03 Acres (122 m²)</div>
+              <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.35rem;" id="modal-review-note">Within acceptable tolerance</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Real Coordinates Comparison Table -->
+        <div class="comparison-section-box">
+          <h4 class="section-subheading"><span>📍</span> Real Vertex Coordinates: Previous BhuNaksha vs Drone Resurvey</h4>
+          <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+            Comparison of boundary corner vertices between traditional Revenue BhuNaksha map and high-precision RTK drone coordinates.
+          </p>
+          <div class="vertex-table-wrap">
+            <table class="vertex-comparison-table">
+              <thead>
+                <tr>
+                  <th>Corner Point</th>
+                  <th>Previous BhuNaksha (Lat, Lng)</th>
+                  <th>Drone RTK Resurvey (Lat, Lng)</th>
+                  <th>Boundary Shift (&Delta;d)</th>
+                  <th>Cadastral Assessment</th>
+                </tr>
+              </thead>
+              <tbody id="modal-vertex-comparison-tbody">
+                <!-- Dynamically generated point by point comparison -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Confidence Score Breakdown -->
+        <div class="comparison-section-box">
+          <h4 class="section-subheading"><span>💯</span> Multi-Factor Land Confidence Score: <span id="modal-confidence-gauge-text" style="color: var(--accent-cyan);">96.4%</span></h4>
+          <div class="grid-key-values" style="margin-top: 0.75rem;">
+            <div class="kv-item">
+              <span class="kv-label">RTK Rover GPS Precision</span>
+              <span class="kv-value" id="modal-conf-rtk">&plusmn;1.8 cm</span>
+            </div>
+            <div class="kv-item">
+              <span class="kv-label">Ground Control Points (GCPs)</span>
+              <span class="kv-value" id="modal-conf-gcp">8 Fixed Targets</span>
+            </div>
+            <div class="kv-item">
+              <span class="kv-label">Spatial IoU Overlap</span>
+              <span class="kv-value" id="modal-conf-iou" style="color: var(--status-verified);">96.8%</span>
+            </div>
+            <div class="kv-item">
+              <span class="kv-label">Boundary Marker Status</span>
+              <span class="kv-value" id="modal-conf-bund">All 4 Stone Bunds Geo-Tagged</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mini-Map & Boundary Coordinates -->
+        <div class="modal-map-coords-grid">
+          <!-- Mini Map -->
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <h4 style="font-size: 0.85rem; font-weight: 700; color: #FFFFFF;"><span>🗺️</span> Dual-Boundary Overlay Map</h4>
+              <a id="modal-gmaps-link" href="#" target="_blank" style="font-size: 0.75rem; color: var(--accent-cyan); text-decoration: none; font-weight: 600;">
+                Open in Google Maps Navigation &rarr;
+              </a>
+            </div>
+            <div id="modal-mini-map-canvas" class="modal-mini-map"></div>
+          </div>
+
+          <!-- Precise Geo-Coordinates List -->
+          <div>
+            <h4 style="font-size: 0.85rem; font-weight: 700; color: #FFFFFF; margin-bottom: 0.5rem;"><span>📍</span> Precise Geo-Coordinates (WGS 84 Vertices)</h4>
+            <div class="coords-table-box" id="modal-coords-list">
+              <!-- Coordinates populated dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Mutation / RoR History Timeline -->
+        <div class="comparison-section-box" style="margin-top: 2rem; margin-bottom: 0;">
+          <h4 class="section-subheading"><span>📜</span> Record of Rights (RoR) & Mutation History (Ferfar Register)</h4>
+          <div class="timeline-track" id="modal-mutation-timeline">
+            <!-- Timeline populated dynamically -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- Turf.js for Advanced Geospatial Calculations -->
+  <script src="https://unpkg.com/@turf/turf@6.5.0/turf.min.js"></script>
+  <!-- QRCode.js for Crisp Client-Side QR Generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- Main Application Script -->
+  <script src="app.js"></script>
+</body>
+</html>

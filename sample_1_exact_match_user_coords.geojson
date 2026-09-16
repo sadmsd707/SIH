@@ -1,0 +1,91 @@
+{
+  "type": "FeatureCollection",
+  "name": "Sample_1_Exact_Match_Resurvey",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-IND-KAL-078-1",
+        "survey_no": "78/1",
+        "gat_no": "78/1",
+        "khata_no": "245",
+        "owner_name": "तानाजी रावसाहेब मोरे (Tanaji Raosaheb More)",
+        "joint_owners": [
+          "सुमित्रा तानाजी मोरे (Sumitra T. More)",
+          "अमोल तानाजी मोरे (Amol T. More)"
+        ],
+        "father_name": "रावसाहेब भिकू मोरे",
+        "village": "Kalamb",
+        "village_mr": "कळंब",
+        "taluka": "Indapur",
+        "taluka_mr": "इंदापूर",
+        "district": "Pune",
+        "district_mr": "पुणे",
+        "state": "Maharashtra",
+        "land_type": "बागायत शेती (Bagayat - Canal & Well Irrigated)",
+        "land_class_code": "AGRI-BAG-01",
+        "status": "verified",
+        "confidence_score": 98.4,
+        "old_survey_area_acres": 3.39,
+        "old_survey_area_sqm": 13734.1,
+        "new_survey_area_acres": 3.40,
+        "new_survey_area_sqm": 13745.2,
+        "area_diff_pct": 0.1,
+        "mean_shift_m": 0.39,
+        "iou_overlap_pct": 98.8,
+        "survey_date": "2024-04-10",
+        "drone_model": "DJI Matrice 350 RTK + Zenmuse P1 (35mm)",
+        "rtk_accuracy_cm": 1.2,
+        "gcp_count": 6,
+        "ror_extract_no": "MH-712-2024-551029",
+        "assessment_rupees": "14.20",
+        "soil_type": "काळी कसदार जमीन (Black Cotton Soil)",
+        "crops": [
+          {
+            "name": "ऊस (Sugarcane Co-86032)",
+            "area_acres": 2.20,
+            "season": "अडसाली (Adsali)"
+          },
+          {
+            "name": "सोयाबीन (Soybean)",
+            "area_acres": 1.20,
+            "season": "खरीप (Kharif)"
+          }
+        ],
+        "ferfar_entries": [
+          {
+            "ferfar_no": "1842",
+            "date": "2019-11-04",
+            "type": "वारस नोंद (Inheritance)",
+            "status": "मंजूर (Approved)"
+          },
+          {
+            "ferfar_no": "2310",
+            "date": "2023-08-14",
+            "type": "ठिबक सिंचन अनुदान नोंद (Drip Irrigation Subsidy)",
+            "status": "प्रमाणित (Certified)"
+          }
+        ],
+        "review_reason": "High-precision RTK drone resurvey coincides with original 1978 BhuNaksha cadastral boundary within 0.39m tolerance. Title cleared."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [74.962734, 18.488046],
+            [74.961098, 18.488248],
+            [74.961392, 18.489664],
+            [74.963081, 18.489328],
+            [74.962734, 18.488046]
+          ]
+        ]
+      }
+    }
+  ]
+}

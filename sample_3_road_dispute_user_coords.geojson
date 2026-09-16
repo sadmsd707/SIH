@@ -1,0 +1,90 @@
+{
+  "type": "FeatureCollection",
+  "name": "Sample_3_Road_Dispute_Resurvey",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-IND-KAL-078-3",
+        "survey_no": "78/3",
+        "gat_no": "78/3",
+        "khata_no": "194",
+        "owner_name": "विठ्ठल किसन कदम (Vitthal Kisan Kadam)",
+        "joint_owners": [
+          "मारुती किसन कदम (Maruti K. Kadam)"
+        ],
+        "father_name": "किसन बापू कदम",
+        "village": "Kalamb",
+        "village_mr": "कळंब",
+        "taluka": "Indapur",
+        "taluka_mr": "इंदापूर",
+        "district": "Pune",
+        "district_mr": "पुणे",
+        "state": "Maharashtra",
+        "land_type": "जिरायत शेती (Jirayat - Encroachment / Variance Notice)",
+        "land_class_code": "AGRI-DIS-03",
+        "status": "dispute",
+        "confidence_score": 61.2,
+        "old_survey_area_acres": 3.39,
+        "old_survey_area_sqm": 13734.1,
+        "new_survey_area_acres": 3.26,
+        "new_survey_area_sqm": 13192.4,
+        "area_diff_pct": 3.9,
+        "mean_shift_m": 2.66,
+        "iou_overlap_pct": 82.4,
+        "survey_date": "2024-04-12",
+        "drone_model": "WingtraOne GEN II PPK VTOL",
+        "rtk_accuracy_cm": 1.5,
+        "gcp_count": 8,
+        "ror_extract_no": "MH-712-2024-551142",
+        "assessment_rupees": "10.50",
+        "soil_type": "हलकी ते मध्यम जमीन (Light to Medium Soil)",
+        "crops": [
+          {
+            "name": "मका (Maize)",
+            "area_acres": 1.80,
+            "season": "खरीप (Kharif)"
+          },
+          {
+            "name": "हरभरा (Gram / Chana)",
+            "area_acres": 1.46,
+            "season": "रब्बी (Rabi)"
+          }
+        ],
+        "ferfar_entries": [
+          {
+            "ferfar_no": "1730",
+            "date": "2018-02-19",
+            "type": "वारस नोंद (Inheritance Record)",
+            "status": "मंजूर (Approved)"
+          },
+          {
+            "ferfar_no": "2405",
+            "date": "2024-01-10",
+            "type": "सार्वजनिक रस्ता संपादन फेरफार (Road Easement Notice)",
+            "status": "प्रलंबित / वादग्रस्त (Disputed / Pending)"
+          }
+        ],
+        "review_reason": "Severe boundary conflict: Drone resurvey shows 2.66m inward reduction along the southern village link road. Discrepancy of 541 m² (0.13 Ac) requires revenue court settlement & revised 7/12 area entry."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [74.962695, 18.488078],
+            [74.961135, 18.488279],
+            [74.961389, 18.489667],
+            [74.963083, 18.489330],
+            [74.962695, 18.488078]
+          ]
+        ]
+      }
+    }
+  ]
+}

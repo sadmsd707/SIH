@@ -1,0 +1,565 @@
+{
+  "type": "FeatureCollection",
+  "name": "Maharashtra_Cadastral_Registry_Barshi_Solapur",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-SOL-BAR-142-1",
+        "survey_no": "142/1",
+        "gat_no": "142/1",
+        "khata_no": "108",
+        "owner_name": "सखाराम बबनराव पाटील (Sakharam Babanrao Patil)",
+        "joint_owners": ["पार्वती सखाराम पाटील (Parvati S. Patil)", "सागर सखाराम पाटील (Sagar S. Patil)"],
+        "father_name": "बबनराव राघोबा पाटील",
+        "village": "Borale",
+        "village_mr": "बोराळे",
+        "taluka": "Barshi",
+        "taluka_mr": "बार्शी",
+        "district": "Solapur",
+        "district_mr": "सोलापूर",
+        "state": "Maharashtra",
+        "land_type": "जिरायत शेती (Jirayat - Rainfed)",
+        "land_class_code": "AGRI-JIR-01",
+        "status": "verified",
+        "confidence_score": 96.4,
+        "old_survey_area_acres": 3.58,
+        "old_survey_area_sqm": 14488.0,
+        "new_survey_area_acres": 3.55,
+        "new_survey_area_sqm": 14371.4,
+        "area_diff_pct": 0.8,
+        "mean_shift_m": 0.42,
+        "iou_overlap_pct": 98.4,
+        "survey_date": "2024-03-12",
+        "drone_model": "DJI Matrice 300 RTK + Zenmuse P1",
+        "rtk_accuracy_cm": 1.4,
+        "gcp_count": 8,
+        "ror_extract_no": "MH-712-2024-098124",
+        "assessment_rupees": "12.50",
+        "soil_type": "काळी कसदार जमीन (Medium Black Cotton)",
+        "crops": [
+          {"name": "सोयाबीन (Soybean)", "area_acres": 2.00, "season": "खरीप (Kharif)"},
+          {"name": "ज्वारी (Jowar)", "area_acres": 1.55, "season": "रब्बी (Rabi)"}
+        ],
+        "ferfar_entries": [
+          {"ferfar_no": "1420", "date": "2018-04-12", "type": "वारस नोंद (Inheritance)", "status": "मंजूर (Approved)"},
+          {"ferfar_no": "2102", "date": "2022-09-18", "type": "बँक बोजा (SBI Crop Loan)", "status": "नोंदवलेला (Active)"}
+        ],
+        "review_reason": "Centimeter-accurate RTK resurvey matches historical BhuNaksha boundary within 0.42m tolerance."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [75.90080, 17.67480],
+            [75.90220, 17.67490],
+            [75.90230, 17.67360],
+            [75.90090, 17.67350],
+            [75.90080, 17.67480]
+          ]
+        ]
+      },
+      "bhunaksha_geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [75.90082, 17.67483],
+            [75.90218, 17.67488],
+            [75.90232, 17.67358],
+            [75.90092, 17.67353],
+            [75.90082, 17.67483]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-SOL-BAR-142-2",
+        "survey_no": "142/2",
+        "gat_no": "142/2",
+        "khata_no": "109",
+        "owner_name": "तानाजी बबनराव पाटील (Tanaji Babanrao Patil)",
+        "joint_owners": ["सुनीता तानाजी पाटील (Sunita T. Patil)"],
+        "father_name": "बबनराव राघोबा पाटील",
+        "village": "Borale",
+        "village_mr": "बोराळे",
+        "taluka": "Barshi",
+        "taluka_mr": "बार्शी",
+        "district": "Solapur",
+        "district_mr": "सोलापूर",
+        "state": "Maharashtra",
+        "land_type": "बागायत शेती (Bagayat - Well Irrigated)",
+        "land_class_code": "AGRI-BAG-02",
+        "status": "verified",
+        "confidence_score": 94.1,
+        "old_survey_area_acres": 2.27,
+        "old_survey_area_sqm": 9186.0,
+        "new_survey_area_acres": 2.24,
+        "new_survey_area_sqm": 9070.0,
+        "area_diff_pct": 1.2,
+        "mean_shift_m": 0.58,
+        "iou_overlap_pct": 97.6,
+        "survey_date": "2024-03-12",
+        "drone_model": "DJI Matrice 300 RTK + Zenmuse P1",
+        "rtk_accuracy_cm": 1.5,
+        "gcp_count": 8,
+        "ror_extract_no": "MH-712-2024-098125",
+        "assessment_rupees": "8.80",
+        "soil_type": "मध्यम काळी जमीन (Medium Black)",
+        "crops": [
+          {"name": "ऊस (Sugarcane)", "area_acres": 1.50, "season": "वार्षिक (Annual)"},
+          {"name": "कांदा (Onion)", "area_acres": 0.74, "season": "रब्बी (Rabi)"}
+        ],
+        "ferfar_entries": [
+          {"ferfar_no": "1421", "date": "2018-04-12", "type": "आपसातील वाटप (Family Partition)", "status": "मंजूर (Approved)"}
+        ],
+        "review_reason": "High precision resurvey with active agricultural well and drip pipeline verified on orthomosaic."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [75.90220, 17.67490],
+            [75.90360, 17.67500],
+            [75.90370, 17.67370],
+            [75.90230, 17.67360],
+            [75.90220, 17.67490]
+          ]
+        ]
+      },
+      "bhunaksha_geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [75.90218, 17.67488],
+            [75.90358, 17.67496],
+            [75.90374, 17.67366],
+            [75.90232, 17.67358],
+            [75.90218, 17.67488]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-SOL-BAR-143",
+        "survey_no": "143",
+        "gat_no": "143",
+        "khata_no": "215",
+        "owner_name": "दत्तात्रय तुकाराम देशमुख (Dattatraya Tukaram Deshmukh)",
+        "joint_owners": ["अशोक तुकाराम देशमुख (Ashok T. Deshmukh)"],
+        "father_name": "तुकाराम विठोबा देशमुख",
+        "village": "Borale",
+        "village_mr": "बोराळे",
+        "taluka": "Barshi",
+        "taluka_mr": "बार्शी",
+        "district": "Solapur",
+        "district_mr": "सोलापूर",
+        "state": "Maharashtra",
+        "land_type": "जिरायत व फळबाग (Jirayat & Pomegranate Orchard)",
+        "land_class_code": "AGRI-HORTI-03",
+        "status": "needs_review",
+        "confidence_score": 79.3,
+        "old_survey_area_acres": 5.19,
+        "old_survey_area_sqm": 21003.0,
+        "new_survey_area_acres": 4.97,
+        "new_survey_area_sqm": 20113.0,
+        "area_diff_pct": 4.3,
+        "mean_shift_m": 2.15,
+        "iou_overlap_pct": 91.5,
+        "survey_date": "2024-03-14",
+        "drone_model": "DJI Matrice 300 RTK + Zenmuse P1",
+        "rtk_accuracy_cm": 1.8,
+        "gcp_count": 8,
+        "ror_extract_no": "MH-712-2024-098230",
+        "assessment_rupees": "18.20",
+        "soil_type": "काळी कसदार जमीन (Deep Black)",
+        "crops": [
+          {"name": "डाळिंब फळबाग (Pomegranate)", "area_acres": 3.00, "season": "बारमाही (Perennial)"},
+          {"name": "हरभरा (Gram)", "area_acres": 1.97, "season": "रब्बी (Rabi)"}
+        ],
+        "ferfar_entries": [
+          {"ferfar_no": "1856", "date": "2020-11-05", "type": "खरेदीखत (Sale Deed)", "status": "मंजूर (Approved)"}
+        ],
+        "review_reason": "Northern stone bund shifted 2.15m towards natural drainage nallah over 45 years. Needs joint measurement by Taluka Inspector of Land Records (TILR)."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [75.90070, 17.67630],
+            [75.90350, 17.67650],
+            [75.90360, 17.67500],
+            [75.90080, 17.67480],
+            [75.90070, 17.67630]
+          ]
+        ]
+      },
+      "bhunaksha_geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [75.90070, 17.67650],
+            [75.90350, 17.67670],
+            [75.90358, 17.67496],
+            [75.90082, 17.67483],
+            [75.90070, 17.67650]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-SOL-BAR-144",
+        "survey_no": "144",
+        "gat_no": "144",
+        "khata_no": "342",
+        "owner_name": "सुभाष विष्णू गायकवाड (Subhash Vishnu Gaikwad)",
+        "joint_owners": ["आनंदा विष्णू गायकवाड (Ananda V. Gaikwad)"],
+        "father_name": "विष्णू सयाजी गायकवाड",
+        "village": "Borale",
+        "village_mr": "बोराळे",
+        "taluka": "Barshi",
+        "taluka_mr": "बार्शी",
+        "district": "Solapur",
+        "district_mr": "सोलापूर",
+        "state": "Maharashtra",
+        "land_type": "जिरायत शेती (Jirayat - Rainfed)",
+        "land_class_code": "AGRI-JIR-01",
+        "status": "dispute",
+        "confidence_score": 64.2,
+        "old_survey_area_acres": 4.55,
+        "old_survey_area_sqm": 18413.0,
+        "new_survey_area_acres": 4.15,
+        "new_survey_area_sqm": 16800.0,
+        "area_diff_pct": 8.7,
+        "mean_shift_m": 3.48,
+        "iou_overlap_pct": 84.8,
+        "survey_date": "2024-03-14",
+        "drone_model": "DJI Matrice 300 RTK + Zenmuse P1",
+        "rtk_accuracy_cm": 1.9,
+        "gcp_count": 8,
+        "ror_extract_no": "MH-712-2024-098341",
+        "assessment_rupees": "14.40",
+        "soil_type": "तांबडी हलकी जमीन (Reddish Loam)",
+        "crops": [
+          {"name": "तूर (Tur / Pigeon Pea)", "area_acres": 2.15, "season": "खरीप (Kharif)"},
+          {"name": "बाजरी (Bajra)", "area_acres": 2.00, "season": "खरीप (Kharif)"}
+        ],
+        "ferfar_entries": [
+          {"ferfar_no": "1994", "date": "2021-06-15", "type": "वारस नोंद व फेरबदल", "status": "तक्रार दाखल (Disputed)"}
+        ],
+        "review_reason": "PMGSY Taluka Road widening overlaps 3.48m onto southern boundary. Red highlighted variance polygon indicates public encroachment zone."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [75.90090, 17.67350],
+            [75.90370, 17.67370],
+            [75.90380, 17.67200],
+            [75.90100, 17.67190],
+            [75.90090, 17.67350]
+          ]
+        ]
+      },
+      "bhunaksha_geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [75.90092, 17.67353],
+            [75.90374, 17.67366],
+            [75.90395, 17.67165],
+            [75.90115, 17.67155],
+            [75.90092, 17.67353]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-SOL-BAR-145-A",
+        "survey_no": "145/A",
+        "gat_no": "145/A",
+        "khata_no": "418",
+        "owner_name": "ज्ञानेश्वर मारुती शिंदे (Dnyaneshwar Maruti Shinde)",
+        "joint_owners": ["मंगला ज्ञानेश्वर शिंदे (Mangala D. Shinde)"],
+        "father_name": "मारुती गोविंद शिंदे",
+        "village": "Borale",
+        "village_mr": "बोराळे",
+        "taluka": "Barshi",
+        "taluka_mr": "बार्शी",
+        "district": "Solapur",
+        "district_mr": "सोलापूर",
+        "state": "Maharashtra",
+        "land_type": "बागायत शेती (Bagayat - Irrigated)",
+        "land_class_code": "AGRI-BAG-02",
+        "status": "verified",
+        "confidence_score": 95.2,
+        "old_survey_area_acres": 3.09,
+        "old_survey_area_sqm": 12505.0,
+        "new_survey_area_acres": 3.07,
+        "new_survey_area_sqm": 12423.8,
+        "area_diff_pct": 0.6,
+        "mean_shift_m": 0.38,
+        "iou_overlap_pct": 98.7,
+        "survey_date": "2024-03-15",
+        "drone_model": "DJI Matrice 300 RTK + Zenmuse P1",
+        "rtk_accuracy_cm": 1.3,
+        "gcp_count": 8,
+        "ror_extract_no": "MH-712-2024-098418",
+        "assessment_rupees": "11.20",
+        "soil_type": "काळी मध्यम जमीन (Medium Black)",
+        "crops": [
+          {"name": "ऊस (Sugarcane)", "area_acres": 2.00, "season": "वार्षिक (Annual)"},
+          {"name": "गहू (Wheat)", "area_acres": 1.07, "season": "रब्बी (Rabi)"}
+        ],
+        "ferfar_entries": [
+          {"ferfar_no": "2214", "date": "2023-01-10", "type": "हक्कसोडपत्र (Relinquishment)", "status": "मंजूर (Approved)"}
+        ],
+        "review_reason": "Boundaries verified by RTK DGPS ground survey and matching original Tippan record."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [75.90360, 17.67500],
+            [75.90520, 17.67510],
+            [75.90530, 17.67380],
+            [75.90370, 17.67370],
+            [75.90360, 17.67500]
+          ]
+        ]
+      },
+      "bhunaksha_geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [75.90358, 17.67496],
+            [75.90518, 17.67506],
+            [75.90534, 17.67376],
+            [75.90374, 17.67366],
+            [75.90358, 17.67496]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-SOL-BAR-145-B",
+        "survey_no": "145/B",
+        "gat_no": "145/B",
+        "khata_no": "419",
+        "owner_name": "रुक्मिणी पांडुरंग कदम (Rukmini Pandurang Kadam)",
+        "joint_owners": ["संजय पांडुरंग कदम (Sanjay P. Kadam)"],
+        "father_name": "पांडुरंग बापू कदम",
+        "village": "Borale",
+        "village_mr": "बोराळे",
+        "taluka": "Barshi",
+        "taluka_mr": "बार्शी",
+        "district": "Solapur",
+        "district_mr": "सोलापूर",
+        "state": "Maharashtra",
+        "land_type": "जिरायत शेती (Jirayat - Rainfed)",
+        "land_class_code": "AGRI-JIR-01",
+        "status": "verified",
+        "confidence_score": 93.6,
+        "old_survey_area_acres": 2.72,
+        "old_survey_area_sqm": 11007.0,
+        "new_survey_area_acres": 2.69,
+        "new_survey_area_sqm": 10886.0,
+        "area_diff_pct": 1.1,
+        "mean_shift_m": 0.52,
+        "iou_overlap_pct": 97.4,
+        "survey_date": "2024-03-15",
+        "drone_model": "DJI Matrice 300 RTK + Zenmuse P1",
+        "rtk_accuracy_cm": 1.6,
+        "gcp_count": 8,
+        "ror_extract_no": "MH-712-2024-098419",
+        "assessment_rupees": "9.50",
+        "soil_type": "मध्यम काळी जमीन (Medium Black)",
+        "crops": [
+          {"name": "सोयाबीन (Soybean)", "area_acres": 1.50, "season": "खरीप (Kharif)"},
+          {"name": "सूर्यफूल (Sunflower)", "area_acres": 1.19, "season": "रब्बी (Rabi)"}
+        ],
+        "ferfar_entries": [
+          {"ferfar_no": "2301", "date": "2023-08-20", "type": "वारस नोंद (Succession)", "status": "मंजूर (Approved)"}
+        ],
+        "review_reason": "Boundaries accurately pinned with RTK fix; clear farm embankment on orthomosaic."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [75.90520, 17.67510],
+            [75.90680, 17.67520],
+            [75.90690, 17.67390],
+            [75.90530, 17.67380],
+            [75.90520, 17.67510]
+          ]
+        ]
+      },
+      "bhunaksha_geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [75.90518, 17.67506],
+            [75.90678, 17.67515],
+            [75.90692, 17.67385],
+            [75.90534, 17.67376],
+            [75.90518, 17.67506]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-SOL-BAR-146",
+        "survey_no": "146",
+        "gat_no": "146",
+        "khata_no": "502",
+        "owner_name": "भाऊसाहेब नामदेव पवार (Bhausaheb Namdev Pawar)",
+        "joint_owners": ["शरद नामदेव पवार (Sharad N. Pawar)"],
+        "father_name": "नामदेव ज्ञानोबा पवार",
+        "village": "Borale",
+        "village_mr": "बोराळे",
+        "taluka": "Barshi",
+        "taluka_mr": "बार्शी",
+        "district": "Solapur",
+        "district_mr": "सोलापूर",
+        "state": "Maharashtra",
+        "land_type": "बागायत शेती (Bagayat - Irrigated Sugarcane)",
+        "land_class_code": "AGRI-BAG-02",
+        "status": "verified",
+        "confidence_score": 91.8,
+        "old_survey_area_acres": 5.81,
+        "old_survey_area_sqm": 23512.0,
+        "new_survey_area_acres": 5.72,
+        "new_survey_area_sqm": 23148.0,
+        "area_diff_pct": 1.5,
+        "mean_shift_m": 0.74,
+        "iou_overlap_pct": 96.8,
+        "survey_date": "2024-03-16",
+        "drone_model": "DJI Matrice 300 RTK + Zenmuse P1",
+        "rtk_accuracy_cm": 1.7,
+        "gcp_count": 8,
+        "ror_extract_no": "MH-712-2024-098502",
+        "assessment_rupees": "22.50",
+        "soil_type": "काळी खोल कसदार जमीन (Deep Black Soil)",
+        "crops": [
+          {"name": "ऊस (Sugarcane 86032)", "area_acres": 4.00, "season": "वार्षिक (Annual)"},
+          {"name": "मका (Maize)", "area_acres": 1.72, "season": "रब्बी (Rabi)"}
+        ],
+        "ferfar_entries": [
+          {"ferfar_no": "2340", "date": "2023-11-14", "type": "बँक कर्ज बोजा (DCC Bank)", "status": "नोंदवलेला (Active)"}
+        ],
+        "review_reason": "Continuous sugarcane cultivation with well-defined stone markers inspected by aerial survey."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [75.90350, 17.67650],
+            [75.90670, 17.67660],
+            [75.90680, 17.67520],
+            [75.90360, 17.67500],
+            [75.90350, 17.67650]
+          ]
+        ]
+      },
+      "bhunaksha_geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [75.90350, 17.67670],
+            [75.90670, 17.67680],
+            [75.90678, 17.67515],
+            [75.90358, 17.67496],
+            [75.90350, 17.67670]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-SOL-BAR-141",
+        "survey_no": "141",
+        "gat_no": "141",
+        "khata_no": "89",
+        "owner_name": "विठ्ठल किसन जाधव (Vitthal Kisan Jadhav)",
+        "joint_owners": ["कमल विठ्ठल जाधव (Kamal V. Jadhav)"],
+        "father_name": "किसन बाबुराव जाधव",
+        "village": "Borale",
+        "village_mr": "बोराळे",
+        "taluka": "Barshi",
+        "taluka_mr": "बार्शी",
+        "district": "Solapur",
+        "district_mr": "सोलापूर",
+        "state": "Maharashtra",
+        "land_type": "जिरायत शेती (Jirayat - Rainfed)",
+        "land_class_code": "AGRI-JIR-01",
+        "status": "needs_review",
+        "confidence_score": 81.5,
+        "old_survey_area_acres": 4.20,
+        "old_survey_area_sqm": 16997.0,
+        "new_survey_area_acres": 4.07,
+        "new_survey_area_sqm": 16470.0,
+        "area_diff_pct": 3.2,
+        "mean_shift_m": 1.80,
+        "iou_overlap_pct": 92.8,
+        "survey_date": "2024-03-16",
+        "drone_model": "DJI Matrice 300 RTK + Zenmuse P1",
+        "rtk_accuracy_cm": 1.7,
+        "gcp_count": 8,
+        "ror_extract_no": "MH-712-2024-098089",
+        "assessment_rupees": "13.60",
+        "soil_type": "मध्यम तांबडी जमीन (Medium Loamy)",
+        "crops": [
+          {"name": "ज्वारी (Jowar Maldandi)", "area_acres": 2.50, "season": "रब्बी (Rabi)"},
+          {"name": "उडीद (Urad)", "area_acres": 1.57, "season": "खरीप (Kharif)"}
+        ],
+        "ferfar_entries": [
+          {"ferfar_no": "1678", "date": "2019-08-11", "type": "खरेदीखत (Sale Deed)", "status": "मंजूर (Approved)"}
+        ],
+        "review_reason": "Cart track (पाणंद रस्ता) realignment caused 1.80m shift along western boundary. Recommended for TILR joint measurement."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [75.89850, 17.67550],
+            [75.90080, 17.67480],
+            [75.90090, 17.67250],
+            [75.89860, 17.67260],
+            [75.89850, 17.67550]
+          ]
+        ]
+      },
+      "bhunaksha_geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [75.89848, 17.67560],
+            [75.90082, 17.67483],
+            [75.90095, 17.67230],
+            [75.89865, 17.67240],
+            [75.89848, 17.67560]
+          ]
+        ]
+      }
+    }
+  ]
+}

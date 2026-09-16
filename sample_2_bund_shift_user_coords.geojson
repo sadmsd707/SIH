@@ -1,0 +1,84 @@
+{
+  "type": "FeatureCollection",
+  "name": "Sample_2_North_Bund_Shift_Resurvey",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-IND-KAL-078-2",
+        "survey_no": "78/2",
+        "gat_no": "78/2",
+        "khata_no": "312",
+        "owner_name": "अंकुश महादेव सावंत (Ankush Mahadev Sawant)",
+        "joint_owners": [
+          "लता अंकुश सावंत (Lata A. Sawant)"
+        ],
+        "father_name": "महादेव विठोबा सावंत",
+        "village": "Kalamb",
+        "village_mr": "कळंब",
+        "taluka": "Indapur",
+        "taluka_mr": "इंदापूर",
+        "district": "Pune",
+        "district_mr": "पुणे",
+        "state": "Maharashtra",
+        "land_type": "जिरायत शेती (Jirayat - Rainfed Agricultural)",
+        "land_class_code": "AGRI-JIR-02",
+        "status": "needs_review",
+        "confidence_score": 83.5,
+        "old_survey_area_acres": 3.39,
+        "old_survey_area_sqm": 13734.1,
+        "new_survey_area_acres": 3.46,
+        "new_survey_area_sqm": 14002.5,
+        "area_diff_pct": 2.0,
+        "mean_shift_m": 1.26,
+        "iou_overlap_pct": 91.2,
+        "survey_date": "2024-04-11",
+        "drone_model": "DJI Mavic 3 Enterprise RTK",
+        "rtk_accuracy_cm": 1.8,
+        "gcp_count": 5,
+        "ror_extract_no": "MH-712-2024-551088",
+        "assessment_rupees": "11.80",
+        "soil_type": "मध्यम काळी जमीन (Medium Black)",
+        "crops": [
+          {
+            "name": "ज्वारी (Maldandi Jowar)",
+            "area_acres": 2.00,
+            "season": "रब्बी (Rabi)"
+          },
+          {
+            "name": "बाजरी (Bajra)",
+            "area_acres": 1.46,
+            "season": "खरीप (Kharif)"
+          }
+        ],
+        "ferfar_entries": [
+          {
+            "ferfar_no": "1910",
+            "date": "2020-03-22",
+            "type": "खरेदी खत नोंद (Registered Sale Deed)",
+            "status": "मंजूर (Approved)"
+          }
+        ],
+        "review_reason": "Drone RTK resurvey detects a 1.26m outward shift on the northern stone bund bordering Gat 79. Recommended for Joint Measurement (संयुक्त मोजणी) with Taluka Inspector of Land Records (TILR)."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [74.962731, 18.488044],
+            [74.961100, 18.488245],
+            [74.961375, 18.489685],
+            [74.963098, 18.489348],
+            [74.962731, 18.488044]
+          ]
+        ]
+      }
+    }
+  ]
+}
