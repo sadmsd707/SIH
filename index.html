@@ -703,23 +703,30 @@
                 <span class="insp-qr-live-pill">
                   <span class="pulse-dot"></span> ACTIVE PARCEL QR
                 </span>
-                <span class="insp-qr-unique-token" id="insp-qr-token">SCAN TO VERIFY</span>
+                <div class="insp-qr-mode-switch">
+                  <button type="button" class="btn-qr-mode active" id="btn-qr-mode-pass" title="Digital Land Pass text - scans on all mobile cameras instantly without internet or 404 errors">
+                    📱 Land Pass
+                  </button>
+                  <button type="button" class="btn-qr-mode" id="btn-qr-mode-url" title="Direct Web Link to online certificate">
+                    🌐 Web Link
+                  </button>
+                </div>
               </div>
               <div class="insp-qr-main-flex">
                 <div class="insp-qr-display" id="insp-qr-display-box" title="Click to view full inspection certificate & 7/12 extract">
                   <div id="insp-card-qr-target" class="insp-qr-target-surface"></div>
                 </div>
                 <div class="insp-qr-details">
-                  <div class="insp-qr-header-title">Official Land Pass QR</div>
-                  <p class="insp-qr-desc">
-                    Scan with smartphone camera to instantly verify <strong>7/12 Digital Extract &amp; Drone RTK Resurvey</strong> on mobile.
+                  <div class="insp-qr-header-title" id="insp-qr-title">Official Land Pass QR</div>
+                  <p class="insp-qr-desc" id="insp-qr-desc">
+                    Scan with any mobile camera (Google Lens / iPhone Camera) to view <strong>7/12 Extract &amp; Resurvey Record</strong> directly on your screen.
                   </p>
                   <div class="insp-qr-btn-group">
-                    <button type="button" class="btn-insp-qr-action" id="btn-insp-open-cert" title="Test scan and open certificate">
+                    <button type="button" class="btn-insp-qr-action" id="btn-insp-open-cert" title="Test scan and preview digital phone certificate">
                       <span>👁️</span> Test Scan
                     </button>
-                    <button type="button" class="btn-insp-qr-action" id="btn-insp-copy-link" title="Copy verification URL">
-                      <span>🔗</span> Copy Link
+                    <button type="button" class="btn-insp-qr-action" id="btn-insp-copy-link" title="Copy QR data or link">
+                      <span>📋</span> Copy
                     </button>
                     <button type="button" class="btn-insp-qr-action" id="btn-insp-download-qr" title="Download QR image">
                       <span>📥</span> Download

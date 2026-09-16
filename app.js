@@ -3128,14 +3128,16 @@ function downloadQRElementImage(container, filename) {
   }
 }
 
+let currentInspectorQRMode = 'pass'; // 'pass' (Smart Land Pass Text) or 'url' (Web Link)
+
 function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
   const cardTarget = document.getElementById('insp-card-qr-target');
   const modalTarget = document.getElementById('modal-qr-target');
   if (!cardTarget && !modalTarget) return;
 
   let p = {};
-  let cLat = 18.4890;
-  let cLng = 74.9620;
+  let cLat = 18.489002;
+  let cLng = 74.962986;
   let activeFeature = null;
 
   if (featureOrId && typeof featureOrId === 'object') {
@@ -3164,11 +3166,11 @@ function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
     } else {
       p = { parcel_id: pid, survey_no: arg2 || '—', owner_name: arg3 || 'Landholder' };
     }
-    cLat = typeof arg4 === 'number' ? arg4 : 18.4890;
-    cLng = typeof arg5 === 'number' ? arg5 : 74.9620;
+    cLat = typeof arg4 === 'number' ? arg4 : 18.489002;
+    cLng = typeof arg5 === 'number' ? arg5 : 74.962986;
   }
 
-  const survey = p.survey_no || p.gat_no || '—';
+  const survey = p.survey_no || p.gat_no || '231';
   const gat = p.gat_no || survey;
   const pid = p.parcel_id || `MH-AHM-KAR-BEN-${survey}`;
   const owner = p.owner_name || 'नोंदणीकृत खातेदार';
@@ -3178,66 +3180,93 @@ function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
   const landType = p.land_type || 'जिरायत शेती (Jirayat)';
   const status = p.status || 'verified';
   const score = p.confidence_score !== undefined ? p.confidence_score : '98.6';
-  const oldArea = p.old_survey_area_acres !== undefined ? p.old_survey_area_acres : (p.area_acres || '0');
-  const newArea = p.new_survey_area_acres !== undefined ? p.new_survey_area_acres : oldArea;
+  const oldArea = parseFloat(p.old_survey_area_acres !== undefined ? p.old_survey_area_acres : (p.area_acres || '0')) || 0;
+  const newArea = parseFloat(p.new_survey_area_acres !== undefined ? p.new_survey_area_acres : oldArea) || oldArea;
+  const oldSqm = Math.round(p.old_survey_area_sqm || (oldArea * 4046.86));
+  const newSqm = Math.round(p.new_survey_area_sqm || (newArea * 4046.86));
   const shift = p.mean_shift_m !== undefined ? p.mean_shift_m : '0.38';
   const diff = p.area_diff_pct !== undefined ? p.area_diff_pct : '0';
-  const uniqueToken = (p._ts || Date.now()).toString(36);
+  const iou = p.iou_overlap_pct !== undefined ? p.iou_overlap_pct : '98.8';
+  const rtkAcc = p.rtk_accuracy_cm !== undefined ? p.rtk_accuracy_cm : '1.2';
+  const gcpCount = p.gcp_count || 8;
 
-  // Build the universal active verification URL
-  // If local/file, use the GitHub Pages deployment so any smartphone camera scanning the QR code anywhere opens the live certificate!
-  const isLocalOrFile = !window.location.origin ||
-                        window.location.origin === 'null' ||
-                        window.location.protocol === 'file:' ||
-                        window.location.hostname === 'localhost' ||
-                        window.location.hostname === '127.0.0.1';
+  // 1. Digital Land Pass (Instant Text payload with Google Maps GPS satellite link)
+  // When scanned by ANY smartphone camera (Google Lens / iPhone Camera / Samsung), it displays the complete 7/12 record directly on screen!
+  const landPassPayload = `🏛️ MAHARASHTRA 7/12 LAND RECORD & BHUNAKSHA
+====================================
+🆔 Parcel ID: ${pid}
+📌 Survey / Gat No: ${gat}
+👤 Landholder: ${owner}
+🏡 Village: ${village}
+📍 Taluka: ${taluka} | District: ${dist}
+🌾 Land Use: ${landType}
+------------------------------------
+📐 7/12 BhuNaksha Area: ${oldArea.toFixed(2)} Ac (${oldSqm.toLocaleString()} m²)
+🛰️ Drone RTK Resurvey: ${newArea.toFixed(2)} Ac (${newSqm.toLocaleString()} m²)
+⚖️ Variance Delta: ${diff}%
+📏 Boundary Shift: ${shift}m | Overlap: ${iou}%
+🎯 RTK Accuracy: ±${rtkAcc}cm | DGPS Targets: ${gcpCount}
+------------------------------------
+✅ Legal Status: ${status.toUpperCase()}
+⭐ Confidence Score: ${score}%
+🛰️ GPS Satellite Map:
+https://maps.google.com/?q=${Number(cLat).toFixed(6)},${Number(cLng).toFixed(6)}&z=19&t=k
+====================================`;
 
-  const baseOrigin = isLocalOrFile ? 'https://sadmsd707.github.io/SIH/' : (window.location.origin + window.location.pathname);
-
-  const params = new URLSearchParams({
-    inspect: '1',
-    pid: String(pid),
-    survey: String(survey),
-    gat: String(gat),
-    owner: String(owner),
-    village: String(village),
-    taluka: String(taluka),
-    dist: String(dist),
-    land_type: String(landType),
-    status: String(status),
-    score: String(score),
-    old_acres: String(oldArea),
-    new_acres: String(newArea),
-    shift: String(shift),
-    diff: String(diff),
-    lat: Number(cLat).toFixed(6),
-    lng: Number(cLng).toFixed(6),
-    ts: uniqueToken
-  });
-
-  const separator = baseOrigin.includes('?') ? '&' : '?';
-  const verificationUrl = `${baseOrigin}${separator}${params.toString()}`;
-
-  // Update token label in inspector card
-  const tokenEl = document.getElementById('insp-qr-token');
-  if (tokenEl) {
-    tokenEl.textContent = `GAT #${gat} • ${status.toUpperCase()}`;
+  // 2. Direct Web URL Payload (Converts directly to Standalone Certificate view)
+  let baseOrigin = '';
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    baseOrigin = `http://10.30.3.155:${window.location.port || '5500'}/index.html`;
+  } else if (window.location.protocol === 'file:') {
+    baseOrigin = `http://10.30.3.155:5500/index.html`;
+  } else {
+    baseOrigin = window.location.origin + window.location.pathname;
   }
 
-  // 1. Render in Inspector Card
+  const webUrlPayload = `${baseOrigin}?inspect=1&pid=${encodeURIComponent(pid)}&gat=${encodeURIComponent(gat)}&score=${score}&st=${status === 'verified' ? 'v' : (status === 'needs_review' ? 'r' : 'd')}&lat=${Number(cLat).toFixed(6)}&lng=${Number(cLng).toFixed(6)}`;
+
+  // Choose payload according to active mode
+  const activePayload = currentInspectorQRMode === 'url' ? webUrlPayload : landPassPayload;
+
+  // Render QR into Card and Modal
   if (cardTarget) {
-    renderQRIntoElement(cardTarget, verificationUrl, 95);
+    renderQRIntoElement(cardTarget, activePayload, 95);
   }
-
-  // 2. Render in Full Detail Modal
   if (modalTarget) {
-    renderQRIntoElement(modalTarget, verificationUrl, 140);
+    renderQRIntoElement(modalTarget, activePayload, 140);
   }
 
-  // 3. Connect interactive actions
+  // Update mode toggle buttons
+  const passBtn = document.getElementById('btn-qr-mode-pass');
+  const urlBtn = document.getElementById('btn-qr-mode-url');
+  const titleEl = document.getElementById('insp-qr-title');
+  const descEl = document.getElementById('insp-qr-desc');
+
+  if (passBtn && urlBtn) {
+    passBtn.className = `btn-qr-mode ${currentInspectorQRMode === 'pass' ? 'active' : ''}`;
+    urlBtn.className = `btn-qr-mode ${currentInspectorQRMode === 'url' ? 'active' : ''}`;
+
+    passBtn.onclick = (e) => {
+      e.stopPropagation();
+      currentInspectorQRMode = 'pass';
+      if (titleEl) titleEl.textContent = 'Official Land Pass QR';
+      if (descEl) descEl.innerHTML = 'Scan with any mobile camera (Google Lens / iPhone Camera) to view <strong>7/12 Extract &amp; Resurvey Record</strong> directly on your screen.';
+      generateParcelQRCode(activeFeature || featureOrId);
+    };
+
+    urlBtn.onclick = (e) => {
+      e.stopPropagation();
+      currentInspectorQRMode = 'url';
+      if (titleEl) titleEl.textContent = 'Web Certificate QR';
+      if (descEl) descEl.innerHTML = 'Scan to open the <strong>Standalone Digital Inspection Certificate</strong> in your mobile web browser.';
+      generateParcelQRCode(activeFeature || featureOrId);
+    };
+  }
+
+  // Connect Download actions
   const inspDownloadBtn = document.getElementById('btn-insp-download-qr');
   if (inspDownloadBtn && cardTarget) {
-    inspDownloadBtn.onclick = () => downloadQRElementImage(cardTarget, `QR_Inspector_${pid}.png`);
+    inspDownloadBtn.onclick = () => downloadQRElementImage(cardTarget, `QR_${currentInspectorQRMode}_${pid}.png`);
   }
 
   const modalDownloadBtn = document.getElementById('btn-download-qr');
@@ -3245,6 +3274,7 @@ function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
     modalDownloadBtn.onclick = () => downloadQRElementImage(modalTarget, `QR_Modal_${pid}.png`);
   }
 
+  // Connect Copy actions
   const copyButtons = [
     document.getElementById('btn-insp-copy-link'),
     document.getElementById('btn-copy-qr-link')
@@ -3253,25 +3283,31 @@ function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
     if (!btn) return;
     btn.onclick = () => {
       if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(verificationUrl).then(() => {
+        navigator.clipboard.writeText(activePayload).then(() => {
           const orig = btn.innerHTML;
           btn.innerHTML = '<span>✅</span> Copied!';
           setTimeout(() => { btn.innerHTML = orig; }, 2000);
           if (typeof showVillageToast === 'function') {
-            showVillageToast(`🔗 Active QR Verification Link Copied for Gat ${survey}!`);
+            showVillageToast(`📋 ${currentInspectorQRMode === 'url' ? 'Web Link' : 'Land Pass Data'} Copied for Gat ${survey}!`);
           }
         }).catch(() => {
-          prompt('Active QR Verification URL:', verificationUrl);
+          prompt('Active QR Data:', activePayload);
         });
       } else {
-        prompt('Active QR Verification URL:', verificationUrl);
+        prompt('Active QR Data:', activePayload);
       }
     };
   });
 
+  // Connect Test Scan action
   const triggerModal = () => {
     const f = activeFeature || currentSelectedFeature;
-    if (f) openParcelModal(f);
+    if (f) {
+      if (typeof showVillageToast === 'function') {
+        showVillageToast(`📱 Scanned Gat ${gat}: Loading Official 7/12 Extract & Certificate...`);
+      }
+      openParcelModal(f);
+    }
   };
 
   const testScanBtn = document.getElementById('btn-insp-open-cert');
@@ -3282,25 +3318,17 @@ function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
 
 function checkUrlInspectionMode() {
   const params = new URLSearchParams(window.location.search);
-  if (params.get('inspect') === '1' || params.get('inspect') === 'true' || params.has('pid')) {
+  if (params.get('inspect') === '1' || params.get('inspect') === 'true' || params.has('pid') || params.has('gat')) {
     const pid = params.get('pid') || 'GLP-VERIFIED';
-    const survey = params.get('survey') || '—';
+    const survey = params.get('gat') || params.get('survey') || '231';
     const gat = params.get('gat') || survey;
-    const owner = params.get('owner') || 'Landholder';
-    const village = params.get('village') || 'Benwadi (बेनवडी)';
-    const taluka = params.get('taluka') || 'Karjat (कर्जत)';
-    const dist = params.get('dist') || 'Ahmednagar (अहमदनगर)';
-    const landType = params.get('land_type') || 'जिरायत शेती (Jirayat)';
-    const status = params.get('status') || 'verified';
     const score = parseFloat(params.get('score')) || 98.6;
-    const oldAcres = parseFloat(params.get('old_acres')) || 2.50;
-    const newAcres = parseFloat(params.get('new_acres')) || oldAcres;
-    const shift = params.get('shift') || '0.38';
-    const diff = params.get('diff') || '0.0';
-    const lat = parseFloat(params.get('lat')) || 18.4890;
-    const lng = parseFloat(params.get('lng')) || 74.9620;
+    const stParam = params.get('st') || params.get('status') || 'verified';
+    const status = (stParam === 'v' || stParam === 'verified') ? 'verified' : (stParam === 'r' ? 'needs_review' : 'dispute');
+    const lat = parseFloat(params.get('lat')) || 18.489002;
+    const lng = parseFloat(params.get('lng')) || 74.962986;
 
-    let feature = appParcels.features.find(f => f.properties.parcel_id === pid);
+    let feature = appParcels.features.find(f => f.properties.parcel_id === pid || String(f.properties?.survey_no) === String(survey));
     if (!feature && typeof benwadiVillageCadastreData !== 'undefined' && benwadiVillageCadastreData && benwadiVillageCadastreData.features) {
       feature = benwadiVillageCadastreData.features.find(f => String(f.properties?.survey_no) === String(survey) || String(f.properties?.gat_no) === String(gat));
     }
@@ -3312,24 +3340,24 @@ function checkUrlInspectionMode() {
           parcel_id: pid,
           survey_no: survey,
           gat_no: gat,
-          khata_no: '312',
-          owner_name: owner,
+          khata_no: '141, 149, 184',
+          owner_name: params.get('owner') || 'पंढरीनाथ शंकर देशमूख व इतर',
           joint_owners: [],
-          father_name: 'Verified Landholder',
-          village: village,
-          taluka: taluka,
-          district: dist,
+          father_name: 'शंकर रामजी देशमुख',
+          village: 'Benwadi (बेनवडी)',
+          taluka: 'Karjat (कर्जत)',
+          district: 'Ahmednagar (अहमदनगर)',
           state: 'Maharashtra',
-          land_type: landType,
+          land_type: 'जिरायत व बागायत शेती',
           status: status,
           confidence_score: score,
-          old_survey_area_acres: oldAcres,
-          old_survey_area_sqm: parseFloat((oldAcres * 4046.86).toFixed(1)),
-          new_survey_area_acres: newAcres,
-          new_survey_area_sqm: parseFloat((newAcres * 4046.86).toFixed(1)),
-          area_diff_pct: diff,
-          mean_shift_m: shift,
-          iou_overlap_pct: 98.8,
+          old_survey_area_acres: 18.28,
+          old_survey_area_sqm: 73968,
+          new_survey_area_acres: 18.29,
+          new_survey_area_sqm: 74014,
+          area_diff_pct: 0.06,
+          mean_shift_m: 0.42,
+          iou_overlap_pct: 98.9,
           survey_date: new Date().toISOString().split('T')[0],
           drone_model: 'DJI Matrice 350 RTK + Zenmuse P1',
           rtk_accuracy_cm: 1.2,
@@ -3356,9 +3384,7 @@ function checkUrlInspectionMode() {
     // Add prominent Return to Portal banner on the card
     const modalCard = document.querySelector('#parcel-detail-modal .modal-content-card');
     if (modalCard && !document.getElementById('inspect-top-banner')) {
-      const returnUrl = (window.location.protocol === 'file:' || !window.location.origin || window.location.origin === 'null')
-        ? window.location.pathname.split('?')[0]
-        : (window.location.origin + window.location.pathname);
+      const returnUrl = window.location.pathname.split('?')[0] || '/';
 
       const topBanner = document.createElement('div');
       topBanner.id = 'inspect-top-banner';
@@ -3385,10 +3411,7 @@ function checkUrlInspectionMode() {
     const closeBtn = document.getElementById('btn-close-modal');
     if (closeBtn) {
       closeBtn.onclick = () => {
-        const cleanUrl = (window.location.protocol === 'file:' || !window.location.origin || window.location.origin === 'null')
-          ? window.location.pathname.split('?')[0]
-          : (window.location.origin + window.location.pathname);
-        window.location.href = cleanUrl;
+        window.location.href = window.location.pathname.split('?')[0] || '/';
       };
     }
   }
