@@ -1080,6 +1080,8 @@ body {
 .insp-qr-display {
   width: 120px;
   height: 120px;
+  min-width: 120px;
+  min-height: 120px;
   background: #ffffff;
   padding: 6px;
   border-radius: 8px;
@@ -1106,14 +1108,27 @@ body {
   justify-content: center;
   background: #ffffff;
   overflow: hidden;
+  position: relative;
 }
 
-.insp-qr-target-surface canvas,
-.insp-qr-target-surface img {
+.insp-qr-target-surface canvas {
   display: block !important;
   width: 108px !important;
   height: 108px !important;
   margin: 0 auto !important;
+}
+
+.insp-qr-target-surface img {
+  display: block;
+  width: 108px !important;
+  height: 108px !important;
+  margin: 0 auto !important;
+}
+
+/* Hide duplicate img when canvas is rendered by QRCode.js */
+.insp-qr-target-surface canvas ~ img,
+#modal-qr-target canvas ~ img {
+  display: none !important;
 }
 
 .insp-qr-details {
