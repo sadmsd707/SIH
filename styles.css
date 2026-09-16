@@ -2562,3 +2562,74 @@ body {
   flex-direction: column;
   gap: 2px;
 }
+
+/* ==========================================================================
+   Standalone Parcel Inspector Certificate Mode (Activated via QR Code Scan)
+   ========================================================================== */
+body.inspection-only-mode {
+  background: var(--primary-navy) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+body.inspection-only-mode header,
+body.inspection-only-mode main,
+body.inspection-only-mode .site-footer {
+  display: none !important;
+}
+
+body.inspection-only-mode #parcel-detail-modal {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  position: relative !important;
+  inset: auto !important;
+  width: 100% !important;
+  min-height: 100vh !important;
+  background: var(--primary-navy) !important;
+  padding: 1rem !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+}
+
+body.inspection-only-mode .modal-content-card {
+  max-width: 960px !important;
+  width: 100% !important;
+  margin: 0.5rem auto 2rem auto !important;
+  border: 1.5px solid var(--accent-cyan) !important;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7) !important;
+}
+
+.inspect-mode-top-banner {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(6, 182, 212, 0.15));
+  border: 1px solid var(--status-verified);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.85rem;
+  margin-bottom: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.inspect-portal-return-btn {
+  background: rgba(10, 25, 47, 0.8);
+  border: 1px solid var(--accent-cyan);
+  color: var(--accent-cyan);
+  padding: 0.3rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.2s ease;
+}
+
+.inspect-portal-return-btn:hover {
+  background: var(--accent-cyan);
+  color: var(--primary-navy);
+}
+

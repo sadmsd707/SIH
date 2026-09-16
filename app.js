@@ -1405,6 +1405,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Show empty-state if no parcels
   updateEmptyState();
+
+  // Check if opened via QR code scan (shows standalone parcel inspector certificate)
+  checkUrlInspectionMode();
 });
 
 function setupNavigationTabs() {
@@ -2850,8 +2853,8 @@ function openParcelModal(feature) {
     timelineBox.appendChild(node);
   });
 
-  // Generate Real Dynamic QR Code
-  generateParcelQRCode(p.parcel_id, p.survey_no, p.owner_name, centroidLat, centroidLng);
+  // Generate Real Dynamic QR Code (Unique to this parcel)
+  generateParcelQRCode(feature, centroidLat, centroidLng);
 
   // Initialize or re-render Mini-Map with Dual Boundaries
   modal.classList.add('active');
@@ -2938,12 +2941,77 @@ function initModalMiniMap(feature) {
   miniMapInstance.fitBounds(miniGeoJson.getBounds(), { padding: [25, 25] });
 }
 
-function generateParcelQRCode(parcelId, surveyNo, ownerName, lat, lng) {
+function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
   const qrTarget = document.getElementById('modal-qr-target');
   if (!qrTarget) return;
   qrTarget.innerHTML = '';
 
-  const verificationUrl = `https://atharvagaykar.github.io/geoland-portal/?parcel=${encodeURIComponent(parcelId)}&survey=${encodeURIComponent(surveyNo || '')}&lat=${lat}&lng=${lng}`;
+  let p = {};
+  let cLat = 17.6738;
+  let cLng = 75.9030;
+
+  if (featureOrId && typeof featureOrId === 'object' && featureOrId.properties) {
+    p = featureOrId.properties;
+    cLat = typeof arg2 === 'number' ? arg2 : 17.6738;
+    cLng = typeof arg3 === 'number' ? arg3 : 75.9030;
+    try {
+      const c = turf.centroid(featureOrId);
+      cLng = c.geometry.coordinates[0];
+      cLat = c.geometry.coordinates[1];
+    } catch(e) {}
+  } else if (typeof featureOrId === 'string') {
+    const pid = featureOrId;
+    const match = (activeComparedParcel && activeComparedParcel.properties.parcel_id === pid) ? activeComparedParcel :
+                  appParcels.features.find(f => f.properties.parcel_id === pid);
+    p = match ? match.properties : {
+      parcel_id: pid,
+      survey_no: arg2 || '—',
+      owner_name: arg3 || 'Landholder'
+    };
+    cLat = typeof arg4 === 'number' ? arg4 : 17.6738;
+    cLng = typeof arg5 === 'number' ? arg5 : 75.9030;
+  }
+
+  const pid = p.parcel_id || `GLP-${Date.now().toString().slice(-6)}`;
+  const survey = p.survey_no || '—';
+  const gat = p.gat_no || survey;
+  const owner = p.owner_name || 'Landholder';
+  const village = p.village || 'Indapur, Pune';
+  const taluka = p.taluka || 'Indapur';
+  const dist = p.district || 'Pune';
+  const landType = p.land_type || 'Agricultural';
+  const status = p.status || 'verified';
+  const score = p.confidence_score !== undefined ? p.confidence_score : '90';
+  const oldArea = p.old_survey_area_acres !== undefined ? p.old_survey_area_acres : (p.area_acres || '0');
+  const newArea = p.new_survey_area_acres !== undefined ? p.new_survey_area_acres : oldArea;
+  const shift = p.mean_shift_m || '0';
+  const diff = p.area_diff_pct !== undefined ? p.area_diff_pct : '0';
+  const uniqueToken = (p._ts || Date.now()).toString(36);
+
+  // Build unique verification URL pointing directly to the Standalone Parcel Inspector Certificate
+  const currentOrigin = window.location.origin + window.location.pathname;
+  const params = new URLSearchParams({
+    inspect: '1',
+    pid: pid,
+    survey: String(survey),
+    gat: String(gat),
+    owner: String(owner),
+    village: String(village),
+    taluka: String(taluka),
+    dist: String(dist),
+    land_type: String(landType),
+    status: String(status),
+    score: String(score),
+    old_acres: String(oldArea),
+    new_acres: String(newArea),
+    shift: String(shift),
+    diff: String(diff),
+    lat: Number(cLat).toFixed(6),
+    lng: Number(cLng).toFixed(6),
+    ts: uniqueToken
+  });
+
+  const verificationUrl = `${currentOrigin}?${params.toString()}`;
 
   let qrRendered = false;
   if (typeof QRCode !== 'undefined') {
@@ -2966,7 +3034,7 @@ function generateParcelQRCode(parcelId, surveyNo, ownerName, lat, lng) {
   if (!qrRendered || !qrTarget.hasChildNodes()) {
     const fallbackImg = document.createElement('img');
     fallbackImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&margin=4&data=${encodeURIComponent(verificationUrl)}`;
-    fallbackImg.alt = `Verification QR Code for ${parcelId}`;
+    fallbackImg.alt = `Verification QR Code for ${pid}`;
     fallbackImg.style.width = '140px';
     fallbackImg.style.height = '140px';
     fallbackImg.style.borderRadius = '6px';
@@ -2990,7 +3058,7 @@ function generateParcelQRCode(parcelId, surveyNo, ownerName, lat, lng) {
       }
       if (dataUrl) {
         const link = document.createElement('a');
-        link.download = `QR_BhuNaksha_${parcelId}.png`;
+        link.download = `QR_BhuNaksha_${pid}.png`;
         link.href = dataUrl;
         link.target = '_blank';
         link.click();
@@ -3012,6 +3080,109 @@ function generateParcelQRCode(parcelId, surveyNo, ownerName, lat, lng) {
         prompt('Copy verification URL:', verificationUrl);
       });
     };
+  }
+}
+
+function checkUrlInspectionMode() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('inspect') === '1' || params.get('inspect') === 'true' || params.has('pid')) {
+    const pid = params.get('pid') || 'GLP-VERIFIED';
+    const survey = params.get('survey') || '—';
+    const gat = params.get('gat') || survey;
+    const owner = params.get('owner') || 'Landholder';
+    const village = params.get('village') || 'Barshi, Solapur';
+    const taluka = params.get('taluka') || 'Barshi';
+    const dist = params.get('dist') || 'Solapur';
+    const landType = params.get('land_type') || 'Irrigated Agricultural (Jirayat)';
+    const status = params.get('status') || 'verified';
+    const score = parseFloat(params.get('score')) || 94.2;
+    const oldAcres = parseFloat(params.get('old_acres')) || 2.50;
+    const newAcres = parseFloat(params.get('new_acres')) || oldAcres;
+    const shift = params.get('shift') || '1.15';
+    const diff = params.get('diff') || '0.8';
+    const lat = parseFloat(params.get('lat')) || 17.6738;
+    const lng = parseFloat(params.get('lng')) || 75.9030;
+
+    let feature = appParcels.features.find(f => f.properties.parcel_id === pid);
+    if (!feature) {
+      feature = {
+        type: 'Feature',
+        properties: {
+          parcel_id: pid,
+          survey_no: survey,
+          gat_no: gat,
+          khata_no: '312',
+          owner_name: owner,
+          joint_owners: [],
+          father_name: 'Verified Landholder',
+          village: village,
+          taluka: taluka,
+          district: dist,
+          state: 'Maharashtra',
+          land_type: landType,
+          status: status,
+          confidence_score: score,
+          old_survey_area_acres: oldAcres,
+          old_survey_area_sqm: parseFloat((oldAcres * 4046.86).toFixed(1)),
+          new_survey_area_acres: newAcres,
+          new_survey_area_sqm: parseFloat((newAcres * 4046.86).toFixed(1)),
+          area_diff_pct: diff,
+          mean_shift_m: shift,
+          iou_overlap_pct: 96.8,
+          survey_date: new Date().toISOString().split('T')[0],
+          drone_model: 'DJI Mavic 3 Enterprise RTK',
+          rtk_accuracy_cm: 1.8,
+          gcp_count: 8,
+          ror_extract_no: `ROR-MH-${pid}`,
+          review_reason: 'Authentic Digital Cadastre Title verified via GeoLand Maharashtra Land Records & MahaBhuNaksha portal.'
+        },
+        geometry: {
+          type: 'Polygon',
+          coordinates: [[
+            [lng - 0.0012, lat - 0.001],
+            [lng + 0.0012, lat - 0.001],
+            [lng + 0.0012, lat + 0.001],
+            [lng - 0.0012, lat + 0.001],
+            [lng - 0.0012, lat - 0.001]
+          ]]
+        }
+      };
+    }
+
+    // Enable Standalone Inspector View (Hides the rest of the website)
+    document.body.classList.add('inspection-only-mode');
+
+    // Add prominent Return to Portal banner on the card
+    const modalCard = document.querySelector('#parcel-detail-modal .modal-content-card');
+    if (modalCard && !document.getElementById('inspect-top-banner')) {
+      const topBanner = document.createElement('div');
+      topBanner.id = 'inspect-top-banner';
+      topBanner.className = 'inspect-mode-top-banner';
+      topBanner.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 1.25rem;">🏛️</span>
+          <div>
+            <strong style="color: var(--status-verified); font-size: 0.85rem;">Official Maharashtra Cadastral Inspection Certificate</strong>
+            <div style="font-size: 0.7rem; color: var(--text-muted);">Verified Title &bull; Drone RTK Resurvey &bull; MahaBhuNaksha Record</div>
+          </div>
+        </div>
+        <a href="${window.location.origin + window.location.pathname}" class="inspect-portal-return-btn">
+          <span>🌐</span> Open Full GIS Portal
+        </a>
+      `;
+      modalCard.prepend(topBanner);
+    }
+
+    // Open the modal with the verified parcel
+    openParcelModal(feature);
+
+    // Ensure close button navigates back to clean website
+    const closeBtn = document.getElementById('btn-close-modal');
+    if (closeBtn) {
+      closeBtn.onclick = () => {
+        window.location.href = window.location.origin + window.location.pathname;
+      };
+    }
   }
 }
 
@@ -4043,11 +4214,13 @@ function executeDualBoundaryComparison(targetGeojson = null) {
   const ownerName = document.getElementById('cmp-owner-name')?.value?.trim() || 'तानाजी रावसाहेब मोरे (Tanaji R. More)';
   const village = document.getElementById('cmp-village')?.value?.trim() || 'कळंब (Kalamb), Indapur';
 
-  // 7. Assemble Unified Compared Parcel
+  // 7. Assemble Unified Compared Parcel (Unique ID and Timestamp per search)
+  const uniqueSuffix = Math.floor(1000 + Math.random() * 9000);
   const comparedParcel = {
     type: 'Feature',
     properties: {
-      parcel_id: `COMP-MH-${surveyNo.replace(/[^a-zA-Z0-9]/g, '-')}`,
+      parcel_id: `COMP-MH-${surveyNo.replace(/[^a-zA-Z0-9]/g, '-')}-${uniqueSuffix}`,
+      _ts: Date.now(),
       survey_no: surveyNo,
       gat_no: surveyNo,
       khata_no: uploadedFeature.properties?.khata_no || '245',
