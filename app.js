@@ -3343,13 +3343,13 @@ function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
   const oldSqm = Math.round(p.old_survey_area_sqm || (p.area_sqm || (oldArea * 4046.86)));
   const khata = p.khata_no || '—';
 
-  // 1. Web URL Payload — Ultra-clean 45-character URL for 100% instant phone camera scanning
+  // 1. Web URL Payload — Dedicated Standalone Certificate for this particular scanned Gat!
   let baseOrigin = 'https://sadmsd707.github.io/SIH/';
   if (typeof window !== 'undefined' && window.location && window.location.hostname && !window.location.hostname.includes('github.io') && window.location.protocol !== 'file:') {
     baseOrigin = window.location.origin + window.location.pathname.replace(/index\.html$/, '');
     if (!baseOrigin.endsWith('/')) baseOrigin += '/';
   }
-  const webUrlPayload = `${baseOrigin}?gat=${encodeURIComponent(gat)}&inspect=1`;
+  const webUrlPayload = `${baseOrigin}certificate.html?gat=${encodeURIComponent(gat)}`;
 
   // 2. Official Digital Land Pass Text Payload — Plain-text verifiable record (compact)
   const shortOwner = owner ? owner.slice(0, 50) : 'नोंदणीकृत खातेदार';
@@ -3466,12 +3466,8 @@ function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
   // Connect Test Scan action
   const triggerModal = () => {
     const f = activeFeature || currentSelectedFeature;
-    if (f) {
-      if (typeof showVillageToast === 'function') {
-        showVillageToast(`📱 Scanned Gat ${gat}: Loading Official 7/12 Certificate...`);
-      }
-      openParcelModal(f);
-    }
+    const currentGat = (f && f.properties && (f.properties.gat_no || f.properties.survey_no)) || gat || '1';
+    window.open(`certificate.html?gat=${encodeURIComponent(currentGat)}`, '_blank');
   };
 
   const testScanBtn = document.getElementById('btn-insp-open-cert');
@@ -3482,71 +3478,28 @@ function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
 
 function checkUrlInspectionMode() {
   const params = new URLSearchParams(window.location.search);
-  if (!params.has('gat') && !params.has('survey') && !params.has('pid') && params.get('inspect') !== '1') {
+  // If user explicitly requests full portal view (?full=1), remain on portal
+  if (params.get('full') === '1' || params.get('full') === 'true') {
+    const pidParam = params.get('pid');
+    const surveyParam = params.get('gat') || params.get('survey') || (pidParam ? pidParam.split('-').pop() : '1');
+    const gat = String(surveyParam).replace(/[^0-9]/g, '') || '1';
+    if (typeof benwadiVillageCadastreData !== 'undefined' && benwadiVillageCadastreData && benwadiVillageCadastreData.features) {
+      const match = benwadiVillageCadastreData.features.find(f => String(f.properties?.gat_no) === String(gat) || String(f.properties?.survey_no) === String(gat));
+      if (match && typeof selectBenwadiCadastreParcel === 'function') {
+        selectBenwadiCadastreParcel(match);
+      }
+    }
     return;
   }
 
-  const pidParam = params.get('pid');
-  const surveyParam = params.get('gat') || params.get('survey') || (pidParam ? pidParam.split('-').pop() : '1');
-  const gat = String(surveyParam).replace(/[^0-9]/g, '') || '1';
-
-  function applyGatToPortal(feat) {
-    if (!feat) return;
-
-    // 1. Select parcel in cadastre & sync inspector
-    if (typeof selectBenwadiCadastreParcel === 'function') {
-      selectBenwadiCadastreParcel(feat);
-    }
-
-    // 2. Build drone resurvey with 2-3% error and run dual-boundary comparison
-    const droneResurvey = generateDroneResurveyFeature(feat);
-    uploadedGeoJsonData = {
-      type: 'FeatureCollection',
-      features: [droneResurvey]
-    };
-    const badge = document.getElementById('compare-file-badge');
-    const filename = document.getElementById('compare-loaded-filename');
-    if (badge && filename) {
-      badge.style.display = 'flex';
-      filename.textContent = `gat_${gat}_drone_resurvey.geojson (${droneResurvey.properties.area_diff_pct}% Delta)`;
-    }
-    if (typeof executeDualBoundaryComparison === 'function') {
-      executeDualBoundaryComparison(uploadedGeoJsonData);
-    }
-
-    // 3. Open official certificate modal
-    if (typeof openParcelModal === 'function') {
-      openParcelModal(feat);
-    }
-
-    if (typeof showVillageToast === 'function') {
-      showVillageToast(`🏛️ Verified Digital 7/12 Certificate: Gat #${gat}`);
-    }
+  // Any scan URL without ?full=1 automatically opens the dedicated single-parcel Certificate!
+  if (params.has('gat') || params.has('survey') || params.has('pid') || params.get('inspect') === '1') {
+    const pidParam = params.get('pid');
+    const surveyParam = params.get('gat') || params.get('survey') || (pidParam ? pidParam.split('-').pop() : '1');
+    const gat = String(surveyParam).replace(/[^0-9]/g, '') || '1';
+    window.location.replace(`certificate.html?gat=${encodeURIComponent(gat)}`);
+    return;
   }
-
-  // Check if cadastre is already loaded in memory
-  if (typeof benwadiVillageCadastreData !== 'undefined' && benwadiVillageCadastreData && benwadiVillageCadastreData.features) {
-    const match = benwadiVillageCadastreData.features.find(f => String(f.properties?.gat_no) === String(gat) || String(f.properties?.survey_no) === String(gat));
-    if (match) {
-      applyGatToPortal(match);
-      return;
-    }
-  }
-
-  // Fetch individual 3KB GeoJSON immediately for instant mobile loading
-  fetch(`benwadi_geojson/gat_${gat}.geojson`)
-    .then(r => {
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      return r.json();
-    })
-    .then(fc => {
-      if (fc && fc.features && fc.features[0]) {
-        applyGatToPortal(fc.features[0]);
-      }
-    })
-    .catch(err => {
-      console.warn(`Could not load gat_${gat}.geojson on QR scan:`, err);
-    });
 }
 
 // Close Modal
