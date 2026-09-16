@@ -697,6 +697,38 @@
               </div>
             </div>
 
+            <!-- Unique Cadastral QR Code Verification Card -->
+            <div class="inspector-qr-card-block" id="insp-qr-card-block">
+              <div class="insp-qr-badge-bar">
+                <span class="insp-qr-live-pill">
+                  <span class="pulse-dot"></span> ACTIVE PARCEL QR
+                </span>
+                <span class="insp-qr-unique-token" id="insp-qr-token">SCAN TO VERIFY</span>
+              </div>
+              <div class="insp-qr-main-flex">
+                <div class="insp-qr-display" id="insp-qr-display-box" title="Click to view full inspection certificate & 7/12 extract">
+                  <div id="insp-card-qr-target" class="insp-qr-target-surface"></div>
+                </div>
+                <div class="insp-qr-details">
+                  <div class="insp-qr-header-title">Official Land Pass QR</div>
+                  <p class="insp-qr-desc">
+                    Scan with smartphone camera to instantly verify <strong>7/12 Digital Extract &amp; Drone RTK Resurvey</strong> on mobile.
+                  </p>
+                  <div class="insp-qr-btn-group">
+                    <button type="button" class="btn-insp-qr-action" id="btn-insp-open-cert" title="Test scan and open certificate">
+                      <span>👁️</span> Test Scan
+                    </button>
+                    <button type="button" class="btn-insp-qr-action" id="btn-insp-copy-link" title="Copy verification URL">
+                      <span>🔗</span> Copy Link
+                    </button>
+                    <button type="button" class="btn-insp-qr-action" id="btn-insp-download-qr" title="Download QR image">
+                      <span>📥</span> Download
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Inspector Action -->
             <div class="inspector-actions">
               <button class="btn-open-full-parcel" id="btn-open-inspector-modal">
@@ -1374,8 +1406,13 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <!-- Turf.js for Advanced Geospatial Calculations -->
   <script src="https://unpkg.com/@turf/turf@6.5.0/turf.min.js"></script>
-  <!-- QRCode.js for Crisp Client-Side QR Generation -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- QRCode.js (Local copy first, fallback to CDN) -->
+  <script src="qrcode.min.js"></script>
+  <script>
+    if (typeof QRCode === 'undefined') {
+      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\\/script>');
+    }
+  </script>
   <!-- Main Application Script -->
   <script src="app.js"></script>
 </body>
