@@ -162,6 +162,9 @@
                   <strong>Mahabhulekh 7/12 & BhuNaksha K-Prat (क-प्रत)</strong>
                 </div>
                 <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                  <button type="button" class="preset-load-btn" id="btn-load-all-benwadi" title="View & render all 544 real cadastre parcels of Benwadi village on map" style="background: rgba(245, 158, 11, 0.2); border-color: #F59E0B; color: #F59E0B; font-weight: 700;">
+                    🏘️ All Benwadi Plots (544)
+                  </button>
                   <button type="button" class="preset-load-btn" id="btn-load-bhunaksha-231" title="Load real MahaBhuNaksha Benwadi Gat 231 (Ahmednagar - from Govt Portal)" style="background: rgba(37, 99, 235, 0.2); border-color: var(--accent-cyan); color: #38BDF8; font-weight: 700;">
                     🏛️ Benwadi Gat 231 (Live BhuNaksha)
                   </button>
@@ -198,7 +201,8 @@
                 </div>
                 <div class="meta-input-item">
                   <label>Survey / Gat No. (गट)</label>
-                  <input type="text" id="cmp-survey-no" value="78/1" placeholder="e.g. 78/1">
+                  <input type="text" id="cmp-survey-no" value="78/1" placeholder="e.g. 231" list="benwadi-plots-datalist">
+                  <datalist id="benwadi-plots-datalist"></datalist>
                 </div>
                 <div class="meta-input-item" style="grid-column: span 2;">
                   <label>Registered Landholder (खातेदाराचे नाव)</label>
@@ -291,21 +295,47 @@
                 <div style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.3rem;">
                   <span>⚡ 1-Click Drone Resurvey Presets:</span>
                 </div>
-                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
-                  <button type="button" class="preset-load-btn" onclick="loadSampleGeoJson(4)" style="background: rgba(37, 99, 235, 0.2); border-color: var(--accent-cyan); color: #38BDF8; font-weight: 700;" title="Load Drone Resurvey for Benwadi Gat 231 (Ahmednagar - Real Govt Data)">
+              <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                  <button type="button" class="preset-load-btn" onclick="loadSampleGeoJson(4)" style="background: rgba(37, 99, 235, 0.2); border-color: var(--accent-cyan); color: #38BDF8; font-weight: 700;" title="Load Real Benwadi Gat 231 Resurvey from MahaBhuNaksha (Ahmednagar)">
                     🎯 Benwadi 231 Resurvey
                   </button>
-                  <button type="button" class="preset-load-btn" onclick="loadSampleGeoJson(1)" title="Load Exact Match Resurvey for Kalamb Gat 78/1">
-                    🟢 Kalamb 78/1
+                  <button type="button" class="preset-load-btn" onclick="loadSampleGeoJson(1)" title="Load Verified Resurvey: Benwadi Gat 231 (98.6% Match)" style="background: rgba(16, 185, 129, 0.12); border-color: #10B981; color: #10B981;">
+                    ✅ Gat 231 (Verified)
                   </button>
-                  <button type="button" class="preset-load-btn" onclick="loadSampleGeoJson(2)" title="Load Bund Shift Variance">
-                    🟡 Bund Shift
+                  <button type="button" class="preset-load-btn" onclick="loadSampleGeoJson(2)" title="Load Needs-Review Resurvey: Benwadi Gat 247 (84.2%, NE bund shifted 1.82m)" style="background: rgba(245, 158, 11, 0.12); border-color: #F59E0B; color: #F59E0B;">
+                    ⚠️ Gat 247 (Review)
                   </button>
-                  <button type="button" class="preset-load-btn" onclick="loadSampleGeoJson(3)" title="Load Road Encroachment Dispute">
-                    🔴 Road Dispute
+                  <button type="button" class="preset-load-btn" onclick="loadSampleGeoJson(3)" title="Load Dispute Resurvey: Benwadi Gat 229 (61.8%, Road Encroachment 2.76m)" style="background: rgba(239, 68, 68, 0.12); border-color: #EF4444; color: #EF4444;">
+                    🔴 Gat 229 (Dispute)
                   </button>
                 </div>
               </div>
+
+              <!-- 📂 Sample GeoJSON File Downloads -->
+              <div style="margin-top: 0.8rem; background: rgba(2, 12, 27, 0.45); border: 1px solid rgba(56, 189, 248, 0.18); border-radius: 8px; padding: 0.7rem 0.9rem;">
+                <div style="font-size: 0.7rem; color: var(--accent-cyan); font-weight: 700; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+                  <span>📂</span> Download Sample GeoJSON Files (Real Benwadi Cadastre Data)
+                </div>
+                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                  <a href="/sample_benwadi_gat231_verified_resurvey.geojson" download="sample_benwadi_gat231_verified_resurvey.geojson"
+                     style="display: inline-flex; align-items: center; gap: 0.3rem; background: rgba(16,185,129,0.1); border: 1px solid #10B981; color: #10B981; border-radius: 6px; padding: 0.3rem 0.6rem; font-size: 0.68rem; text-decoration: none; font-weight: 700; transition: all 0.2s;"
+                     onmouseover="this.style.background='rgba(16,185,129,0.25)'" onmouseout="this.style.background='rgba(16,185,129,0.1)'">
+                    ⬇️ Gat 231 Verified
+                  </a>
+                  <a href="/sample_benwadi_gat247_review_resurvey.geojson" download="sample_benwadi_gat247_review_resurvey.geojson"
+                     style="display: inline-flex; align-items: center; gap: 0.3rem; background: rgba(245,158,11,0.1); border: 1px solid #F59E0B; color: #F59E0B; border-radius: 6px; padding: 0.3rem 0.6rem; font-size: 0.68rem; text-decoration: none; font-weight: 700; transition: all 0.2s;"
+                     onmouseover="this.style.background='rgba(245,158,11,0.25)'" onmouseout="this.style.background='rgba(245,158,11,0.1)'">
+                    ⬇️ Gat 247 Review
+                  </a>
+                  <a href="/sample_benwadi_gat229_dispute_resurvey.geojson" download="sample_benwadi_gat229_dispute_resurvey.geojson"
+                     style="display: inline-flex; align-items: center; gap: 0.3rem; background: rgba(239,68,68,0.1); border: 1px solid #EF4444; color: #EF4444; border-radius: 6px; padding: 0.3rem 0.6rem; font-size: 0.68rem; text-decoration: none; font-weight: 700; transition: all 0.2s;"
+                     onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.1)'">
+                    ⬇️ Gat 229 Dispute
+                  </a>
+                </div>
+                <div style="font-size: 0.63rem; color: var(--text-muted); margin-top: 0.35rem;">Coordinates extracted from MahaBhuNaksha API · Dist: Ahmednagar · Taluka: Karjat · Village: Benwadi</div>
+              </div>
+
 
               <div id="compare-file-badge" class="file-loaded-badge" style="display: none;">
                 <span>📄 Active File:</span> <strong id="compare-loaded-filename">Uploaded Boundary</strong>
@@ -532,6 +562,9 @@
               <button class="layer-chip" data-layer="esri_sat">🌍 Esri Imagery</button>
             </div>
             <div class="map-control-actions">
+              <button class="layer-chip" id="btn-toggle-village-cadastre" style="border-color: #F59E0B; color: #F59E0B; font-weight: 700;">
+                <span>🏘️</span> Benwadi Cadastre (544 Plots)
+              </button>
               <button class="layer-chip active" id="btn-toggle-dual-boundaries" style="border-color: var(--accent-orange); color: var(--accent-orange);">
                 <span>🔀</span> Compare BhuNaksha vs Drone
               </button>
@@ -556,6 +589,10 @@
           <!-- Floating Legend -->
           <div class="map-floating-legend">
             <div class="legend-title">Cadastral Layers</div>
+            <div class="legend-item" id="legend-village-cadastre" style="display: none;">
+              <div class="legend-swatch" style="background: rgba(245, 158, 11, 0.3); border: 2px solid #D97706;"></div>
+              <span style="font-weight: 600; color: #F59E0B;">🟧 Benwadi Cadastre (544 Plots)</span>
+            </div>
             <div class="legend-item">
               <div class="legend-swatch bhunaksha-old"></div>
               <span>🟦 Original Ground Record (7/12)</span>

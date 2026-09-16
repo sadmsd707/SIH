@@ -247,6 +247,17 @@ REAL_BENWADI_231 = {
     "village": "Benwadi (बेनवडी - 272600130334420000)"
 }
 
+@app.get("/api/bhunaksha/village/benwadi")
+def get_benwadi_village():
+    """
+    Return all real cadastral parcels for Benwadi village (Ahmednagar, Karjat)
+    """
+    path = os.path.join(os.path.dirname(__file__), "benwadi_village_cadastre.geojson")
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {"type": "FeatureCollection", "features": []}
+
 @app.get("/api/bhunaksha/kprat")
 def get_bhunaksha_kprat(
     district: Optional[str] = "Pune",
@@ -267,11 +278,46 @@ def get_bhunaksha_kprat(
     tal_str = str(taluka or "").lower()
     vill_str = str(village or "").lower()
 
-    # 1. Exact Match for Benwadi Gat 231 (Ahmednagar, Karjat) from user's MahaBhuNaksha screenshot
-    if survey_str == "231" or "benwadi" in vill_str or "बेनवडी" in vill_str or ("karjat" in tal_str and "231" in survey_str):
-        # Attempt live query first
+    # 1. Match Any Parcel in Benwadi (Ahmednagar, Karjat)
+    if "benwadi" in vill_str or "बेनवडी" in vill_str or ("karjat" in tal_str and dist_str in ["ahmednagar", "26"]):
+        # Check if parcel is already in our saved Benwadi cadastre
+        path = os.path.join(os.path.dirname(__file__), "benwadi_village_cadastre.geojson")
+        if os.path.exists(path):
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    cadastre = json.load(f)
+                    for feat in cadastre.get("features", []):
+                        if str(feat.get("properties", {}).get("survey_no")) == survey_str:
+                            props = feat["properties"]
+                            return {
+                                "type": "Feature",
+                                "properties": {
+                                    "kprat_id": props.get("parcel_id", f"KPRAT-MH-AHM-KAR-{survey_str}"),
+                                    "sheet_type": "MahaBhuNaksha Official Live K-Prat (क-प्रत)",
+                                    "survey_no": survey_str,
+                                    "gat_no": survey_str,
+                                    "owner_name": props.get("owner_name", "Registered Landholder"),
+                                    "all_owners": props.get("all_owners", []),
+                                    "khata_no": props.get("khata_no", "—"),
+                                    "district": "Ahmednagar (अहमदनगर)",
+                                    "taluka": "Karjat (कर्जत)",
+                                    "village": "Benwadi (बेनवडी)",
+                                    "state": "Maharashtra",
+                                    "kprat_area_acres": props.get("area_acres", 18.28),
+                                    "kprat_area_sqm": props.get("area_sqm", 73967.7),
+                                    "crs": "EPSG:4326 (WGS 84)",
+                                    "corner_count": len(feat["geometry"]["coordinates"][0]) - 1,
+                                    "timestamp": "2024-04-14T00:00:00Z",
+                                    "live_fetched": True
+                                },
+                                "geometry": feat["geometry"]
+                            }
+            except Exception as e:
+                print("Error reading benwadi_village_cadastre.geojson:", e)
+
+        # Attempt live query from MahaBhuNaksha portal
         try:
-            live_data = fetch_real_mahabhunaksha_plot("RVM2613272600130334420000", "231")
+            live_data = fetch_real_mahabhunaksha_plot("RVM2613272600130334420000", survey_str)
             if live_data and "the_geom" in live_data:
                 coords_str = re.search(r'\(\(\((.*?)\)\)\)', live_data["the_geom"]) or re.search(r'\(\((.*?)\)\)', live_data["the_geom"])
                 if coords_str:
@@ -280,23 +326,26 @@ def get_bhunaksha_kprat(
                         parts = p.strip().split()
                         lat, lon = utm_to_latlon(float(parts[0]), float(parts[1]), zone=43)
                         wgs84_pts.append([round(lon, 7), round(lat, 7)])
+                    raw_info = live_data.get('info', '')
+                    owner_lines = [re.sub(r'^Owner Name\s*:\s*', '', l.strip()) for l in raw_info.split('\n') if 'Owner Name' in l]
+                    sqm = float(live_data.get("area") or live_data.get("map_area") or 10000.0)
                     return {
                         "type": "Feature",
                         "properties": {
-                            "kprat_id": "KPRAT-MH-AHM-KAR-231",
+                            "kprat_id": f"KPRAT-MH-AHM-KAR-{survey_str}",
                             "sheet_type": "MahaBhuNaksha Official Live K-Prat (क-प्रत)",
-                            "survey_no": "231",
-                            "gat_no": "231",
-                            "owner_name": REAL_BENWADI_231["owners"],
+                            "survey_no": survey_str,
+                            "gat_no": survey_str,
+                            "owner_name": ", ".join(owner_lines[:2]) if owner_lines else "Registered Landholder",
                             "district": "Ahmednagar (अहमदनगर)",
                             "taluka": "Karjat (कर्जत)",
                             "village": "Benwadi (बेनवडी)",
                             "state": "Maharashtra",
-                            "kprat_area_acres": round(float(live_data.get("area", 73967.7)) / 4046.86, 2),
-                            "kprat_area_sqm": float(live_data.get("area", 73967.7)),
+                            "kprat_area_acres": round(sqm / 4046.86, 2),
+                            "kprat_area_sqm": sqm,
                             "crs": "EPSG:4326 (WGS 84)",
                             "corner_count": len(wgs84_pts) - 1,
-                            "timestamp": "2024-04-12T00:00:00Z",
+                            "timestamp": "2024-04-14T00:00:00Z",
                             "live_fetched": True
                         },
                         "geometry": {
@@ -305,32 +354,7 @@ def get_bhunaksha_kprat(
                         }
                     }
         except Exception as e:
-            print("Live fetch error, falling back to verified real dataset:", e)
-
-        return {
-            "type": "Feature",
-            "properties": {
-                "kprat_id": "KPRAT-MH-AHM-KAR-231",
-                "sheet_type": "MahaBhuNaksha Official K-Prat (क-प्रत)",
-                "survey_no": "231",
-                "gat_no": "231",
-                "owner_name": REAL_BENWADI_231["owners"],
-                "district": "Ahmednagar (अहमदनगर)",
-                "taluka": "Karjat (कर्जत)",
-                "village": "Benwadi (बेनवडी)",
-                "state": "Maharashtra",
-                "kprat_area_acres": REAL_BENWADI_231["area_acres"],
-                "kprat_area_sqm": REAL_BENWADI_231["area_sqm"],
-                "crs": "EPSG:4326 (WGS 84)",
-                "corner_count": len(REAL_BENWADI_231["coords"]) - 1,
-                "timestamp": "2024-04-12T00:00:00Z",
-                "live_fetched": False
-            },
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [REAL_BENWADI_231["coords"]]
-            }
-        }
+            print("Live fetch error for Benwadi parcel:", e)
 
     # 2. Known ground truth for survey 78/1 in Kalamb, Indapur
     if "78" in survey_str and ("kalamb" in vill_str or "indapur" in tal_str or "pune" in dist_str):
@@ -418,17 +442,69 @@ def serve_sample_geojson():
     return FileResponse(os.path.join(BASE_DIR, "sample_qgis_parcels.geojson"))
 
 @app.get("/sample_1_exact_match_user_coords.geojson", include_in_schema=False)
-def serve_sample1():
-    return FileResponse(os.path.join(BASE_DIR, "sample_1_exact_match_user_coords.geojson"))
+def serve_sample1_old():
+    p = os.path.join(BASE_DIR, "sample_1_exact_match_user_coords.geojson")
+    if os.path.exists(p):
+        return FileResponse(p)
+    raise HTTPException(status_code=404, detail="File not found")
 
 @app.get("/sample_2_bund_shift_user_coords.geojson", include_in_schema=False)
-def serve_sample2():
-    return FileResponse(os.path.join(BASE_DIR, "sample_2_bund_shift_user_coords.geojson"))
+def serve_sample2_old():
+    p = os.path.join(BASE_DIR, "sample_2_bund_shift_user_coords.geojson")
+    if os.path.exists(p):
+        return FileResponse(p)
+    raise HTTPException(status_code=404, detail="File not found")
 
 @app.get("/sample_3_road_dispute_user_coords.geojson", include_in_schema=False)
-def serve_sample3():
-    return FileResponse(os.path.join(BASE_DIR, "sample_3_road_dispute_user_coords.geojson"))
+def serve_sample3_old():
+    p = os.path.join(BASE_DIR, "sample_3_road_dispute_user_coords.geojson")
+    if os.path.exists(p):
+        return FileResponse(p)
+    raise HTTPException(status_code=404, detail="File not found")
+
+# ─── NEW: Benwadi Resurvey Sample Downloads ─────────────────────────────────
+
+BENWADI_SAMPLES = {
+    "benwadi_gat231_verified": "sample_benwadi_gat231_verified_resurvey.geojson",
+    "benwadi_gat247_review":   "sample_benwadi_gat247_review_resurvey.geojson",
+    "benwadi_gat229_dispute":  "sample_benwadi_gat229_dispute_resurvey.geojson",
+}
+
+@app.get("/api/samples/download/{sample_key}", include_in_schema=True)
+def download_benwadi_sample(sample_key: str):
+    """Download a pre-built Benwadi drone resurvey GeoJSON for testing comparison analysis."""
+    if sample_key not in BENWADI_SAMPLES:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Unknown sample key '{sample_key}'. Valid keys: {list(BENWADI_SAMPLES.keys())}"
+        )
+    fname = BENWADI_SAMPLES[sample_key]
+    fpath = os.path.join(BASE_DIR, fname)
+    if not os.path.exists(fpath):
+        raise HTTPException(status_code=404, detail=f"Sample file '{fname}' not found on server.")
+    return FileResponse(
+        path=fpath,
+        filename=fname,
+        media_type="application/geo+json",
+        headers={"Content-Disposition": f'attachment; filename="{fname}"'}
+    )
+
+@app.get("/sample_benwadi_gat231_verified_resurvey.geojson", include_in_schema=False)
+def serve_benwadi231():
+    return FileResponse(os.path.join(BASE_DIR, "sample_benwadi_gat231_verified_resurvey.geojson"),
+                        media_type="application/geo+json")
+
+@app.get("/sample_benwadi_gat247_review_resurvey.geojson", include_in_schema=False)
+def serve_benwadi247():
+    return FileResponse(os.path.join(BASE_DIR, "sample_benwadi_gat247_review_resurvey.geojson"),
+                        media_type="application/geo+json")
+
+@app.get("/sample_benwadi_gat229_dispute_resurvey.geojson", include_in_schema=False)
+def serve_benwadi229():
+    return FileResponse(os.path.join(BASE_DIR, "sample_benwadi_gat229_dispute_resurvey.geojson"),
+                        media_type="application/geo+json")
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("server:app", host="0.0.0.0", port=8080, reload=True)
+

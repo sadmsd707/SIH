@@ -1,0 +1,110 @@
+{
+  "type": "FeatureCollection",
+  "name": "Benwadi_Gat229_Drone_RTK_Resurvey_Dispute",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "parcel_id": "MH-AHM-KAR-BEN-229",
+        "survey_no": "229",
+        "gat_no": "229",
+        "khata_no": "2793, 2959, 3155",
+        "owner_name": "गूरूदास ज्ञानदेव देशमूख, उत्तम ज्ञानदेव देशमूख, ज्योती उत्तम देशमुख",
+        "joint_owners": [
+          "उत्तम ज्ञानदेव देशमूख (Khata: 2959)",
+          "ज्योती उत्तम देशमुख (Khata: 3155)"
+        ],
+        "father_name": "ज्ञानदेव रामाजी देशमुख",
+        "village": "Benwadi",
+        "village_mr": "बेनवडी",
+        "taluka": "Karjat",
+        "taluka_mr": "कर्जत",
+        "district": "Ahmednagar",
+        "district_mr": "अहमदनगर",
+        "state": "Maharashtra",
+        "land_type": "जिरायत शेती (Jirayat - Encroachment / Variance Notice)",
+        "land_class_code": "AGRI-DIS-03",
+        "status": "dispute",
+        "confidence_score": 61.8,
+        "old_survey_area_acres": 2.73,
+        "old_survey_area_sqm": 11046.7,
+        "new_survey_area_acres": 2.58,
+        "new_survey_area_sqm": 10444.2,
+        "area_diff_pct": 5.5,
+        "mean_shift_m": 2.76,
+        "iou_overlap_pct": 79.3,
+        "survey_date": "2024-11-10",
+        "drone_model": "WingtraOne GEN II PPK VTOL",
+        "rtk_accuracy_cm": 1.5,
+        "gcp_count": 5,
+        "ror_extract_no": "MH-712-AHM-2024-884229",
+        "assessment_rupees": "8.20",
+        "soil_type": "हलकी ते मध्यम जमीन (Light to Medium Black Soil)",
+        "crops": [
+          {
+            "name": "ज्वारी (Jowar)",
+            "area_acres": 1.5,
+            "season": "रब्बी (Rabi)"
+          },
+          {
+            "name": "हरभरा (Gram)",
+            "area_acres": 1.08,
+            "season": "रब्बी (Rabi)"
+          }
+        ],
+        "ferfar_entries": [
+          {
+            "ferfar_no": "1645",
+            "date": "2017-05-03",
+            "type": "वारस नोंद (Inheritance Record)",
+            "status": "मंजूर (Approved)"
+          },
+          {
+            "ferfar_no": "2782",
+            "date": "2024-03-15",
+            "type": "सार्वजनिक रस्ता संपादन फेरफार (Village Road Easement)",
+            "status": "प्रलंबित / वादग्रस्त (Disputed / Pending)"
+          }
+        ],
+        "review_reason": "Critical boundary conflict: Drone resurvey shows 2.76m inward encroachment on SW boundary by village link road. Net land loss of 602 m² (0.15 Ac). Case pending in Revenue Court."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              74.9624153,
+              18.486958
+            ],
+            [
+              74.9632856,
+              18.4867923
+            ],
+            [
+              74.962881,
+              18.486165
+            ],
+            [
+              74.9613839,
+              18.4866779
+            ],
+            [
+              74.9615473,
+              18.4870363
+            ],
+            [
+              74.9624198,
+              18.4869542
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -4362,11 +4362,236 @@ async function fetchAndRenderKPratBoundary() {
   }
 }
 
+// ==========================================================================
+// Benwadi Village Full Cadastre Layer (All 544 Plots from MahaBhuNaksha)
+// ==========================================================================
+let benwadiVillageLayerGroup = null;
+let benwadiVillageCadastreData = null;
+let isVillageCadastreVisible = false;
+let benwadiLabelsLayerGroup = null;
+
+/**
+ * Load and display all 544 cadastral plots of Benwadi village from MahaBhuNaksha
+ */
+async function loadAndDisplayBenwadiCadastre(fitBounds = true) {
+  const btnToggle = document.getElementById('btn-toggle-village-cadastre');
+  const btnLoad = document.getElementById('btn-load-all-benwadi');
+  const legendItem = document.getElementById('legend-village-cadastre');
+
+  if (btnLoad) {
+    btnLoad.disabled = true;
+    btnLoad.innerHTML = `<span>⏳</span> Loading 544 Plots...`;
+  }
+  if (btnToggle) {
+    btnToggle.innerHTML = `<span>⏳</span> Loading Benwadi...`;
+  }
+
+  try {
+    if (!benwadiVillageCadastreData) {
+      let res = await fetch('/api/bhunaksha/village/benwadi');
+      if (!res.ok) {
+        res = await fetch('benwadi_village_cadastre.geojson');
+      }
+      if (res.ok) {
+        benwadiVillageCadastreData = await res.json();
+      }
+    }
+
+    if (!benwadiVillageCadastreData || !benwadiVillageCadastreData.features || benwadiVillageCadastreData.features.length === 0) {
+      throw new Error('No cadastral features found for Benwadi village.');
+    }
+
+    // Populate Datalist with all 544 survey numbers
+    populateBenwadiPlotsDatalist(benwadiVillageCadastreData.features);
+
+    // Initialize or clear Layer Groups
+    if (!benwadiVillageLayerGroup) {
+      benwadiVillageLayerGroup = L.layerGroup();
+    } else {
+      benwadiVillageLayerGroup.clearLayers();
+    }
+
+    if (!benwadiLabelsLayerGroup) {
+      benwadiLabelsLayerGroup = L.layerGroup();
+    } else {
+      benwadiLabelsLayerGroup.clearLayers();
+    }
+
+    const currentActiveGat = document.getElementById('cmp-survey-no')?.value?.trim() || '';
+
+    // Render each feature
+    benwadiVillageCadastreData.features.forEach((feat) => {
+      const p = feat.properties;
+      const isCurrentGat = String(currentActiveGat) === String(p.survey_no);
+
+      const parcelLayer = L.geoJSON(feat, {
+        style: {
+          color: isCurrentGat ? '#00E5FF' : '#D97706',
+          weight: isCurrentGat ? 2.8 : 1.2,
+          opacity: 0.9,
+          fillColor: isCurrentGat ? '#0284C7' : '#FEF3C7',
+          fillOpacity: isCurrentGat ? 0.45 : 0.22,
+          dashArray: isCurrentGat ? '4, 4' : null
+        }
+      });
+      parcelLayer.feature = feat;
+
+      // Hover interactions
+      parcelLayer.on('mouseover', function () {
+        if (String(document.getElementById('cmp-survey-no')?.value?.trim()) !== String(p.survey_no)) {
+          this.setStyle({
+            color: '#F59E0B',
+            weight: 2.5,
+            fillColor: '#FDE68A',
+            fillOpacity: 0.55
+          });
+        }
+      });
+
+      parcelLayer.on('mouseout', function () {
+        if (String(document.getElementById('cmp-survey-no')?.value?.trim()) !== String(p.survey_no)) {
+          this.setStyle({
+            color: '#D97706',
+            weight: 1.2,
+            fillColor: '#FEF3C7',
+            fillOpacity: 0.22
+          });
+        }
+      });
+
+      // Click: Select this parcel!
+      parcelLayer.on('click', () => {
+        selectBenwadiCadastreParcel(feat);
+      });
+
+      // Rich Cadastral Tooltip
+      parcelLayer.bindTooltip(`
+        <div class="cadastre-parcel-tooltip">
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(245,158,11,0.3); padding-bottom:4px; margin-bottom:4px;">
+            <strong style="color:#F59E0B; font-size:13px;">🏛️ Gat / Survey: ${p.survey_no}</strong>
+            <span style="font-size:10px; background:rgba(245,158,11,0.25); color:#FCD34D; padding:2px 6px; border-radius:3px; font-weight:700;">${p.area_acres} Ac</span>
+          </div>
+          <div style="font-size:11px; line-height:1.5; color:#F8FAFC;">
+            <div><strong>खातेदार:</strong> ${p.owner_name || 'नोंदणीकृत धारक'}</div>
+            <div><strong>क्षेत्रफळ:</strong> ${p.area_guntha} गुंठे (${Math.round(p.area_sqm).toLocaleString()} m²)</div>
+            <div><strong>खाता क्र.:</strong> ${p.khata_no || '—'}</div>
+            <div><strong>गाव:</strong> बेनवडी &bull; <strong>तालुका:</strong> कर्जत &bull; <strong>जिल्हा:</strong> अहमदनगर</div>
+          </div>
+          <div style="margin-top:6px; font-size:10px; color:#38BDF8; font-weight:700; text-align:center; border-top:1px dashed rgba(56,189,248,0.3); padding-top:4px;">
+            👆 Click to select & load official 7/12 K-Prat
+          </div>
+        </div>
+      `, {
+        sticky: true,
+        direction: 'top',
+        className: 'cadastre-leaflet-tooltip',
+        opacity: 0.98
+      });
+
+      benwadiVillageLayerGroup.addLayer(parcelLayer);
+
+      // Centered permanent / zoom Gat label
+      try {
+        let centroidCoord = null;
+        if (typeof turf !== 'undefined') {
+          const centroid = turf.centroid(feat);
+          centroidCoord = centroid.geometry.coordinates;
+        } else if (feat.geometry.coordinates && feat.geometry.coordinates[0]) {
+          const pts = feat.geometry.coordinates[0];
+          centroidCoord = pts[0];
+        }
+        if (centroidCoord) {
+          const [cLng, cLat] = centroidCoord;
+          const labelIcon = L.divIcon({
+            className: 'cadastre-gat-label',
+            html: `<div class="cadastre-gat-label-inner">${p.survey_no}</div>`,
+            iconSize: [26, 14],
+            iconAnchor: [13, 7]
+          });
+          const labelMarker = L.marker([cLat, cLng], { icon: labelIcon, interactive: false });
+          benwadiLabelsLayerGroup.addLayer(labelMarker);
+        }
+      } catch (err) {}
+    });
+
+    // Add layers to Map
+    if (mapInstance) {
+      if (!mapInstance.hasLayer(benwadiVillageLayerGroup)) {
+        mapInstance.addLayer(benwadiVillageLayerGroup);
+      }
+      if (!mapInstance.hasLayer(benwadiLabelsLayerGroup)) {
+        mapInstance.addLayer(benwadiLabelsLayerGroup);
+      }
+
+      if (fitBounds && benwadiVillageLayerGroup.getLayers().length > 0) {
+        const bounds = L.featureGroup(benwadiVillageLayerGroup.getLayers()).getBounds();
+        mapInstance.fitBounds(bounds, { padding: [40, 40] });
+      }
+    }
+
+    isVillageCadastreVisible = true;
+    if (btnToggle) {
+      btnToggle.classList.add('active');
+      btnToggle.innerHTML = `<span>🏘️</span> Benwadi Cadastre (${benwadiVillageCadastreData.features.length} Plots: Visible)`;
+    }
+    if (legendItem) {
+      legendItem.style.display = 'flex';
+    }
+
+    showVillageToast(`🏘️ Successfully loaded all ${benwadiVillageCadastreData.features.length} real cadastre parcels of Benwadi village! Click any plot to inspect & load 7/12 K-Prat.`);
+
+  } catch (err) {
+    console.error('Error loading Benwadi village cadastre:', err);
+    alert('Failed to load Benwadi village cadastre: ' + err.message);
+  } finally {
+    if (btnLoad) {
+      btnLoad.disabled = false;
+      btnLoad.innerHTML = `🏘️ All Benwadi Plots (544)`;
+    }
+    if (btnToggle && !isVillageCadastreVisible) {
+      btnToggle.innerHTML = `<span>🏘️</span> Benwadi Cadastre (544 Plots)`;
+    }
+  }
+}
+
+/**
+ * Toggle visibility of Benwadi Village Cadastre Layer
+ */
+function toggleBenwadiVillageCadastre() {
+  const btnToggle = document.getElementById('btn-toggle-village-cadastre');
+  const legendItem = document.getElementById('legend-village-cadastre');
+
+  if (!isVillageCadastreVisible) {
+    loadAndDisplayBenwadiCadastre(true);
+  } else {
+    if (mapInstance) {
+      if (benwadiVillageLayerGroup && mapInstance.hasLayer(benwadiVillageLayerGroup)) {
+        mapInstance.removeLayer(benwadiVillageLayerGroup);
+      }
+      if (benwadiLabelsLayerGroup && mapInstance.hasLayer(benwadiLabelsLayerGroup)) {
+        mapInstance.removeLayer(benwadiLabelsLayerGroup);
+      }
+    }
+    isVillageCadastreVisible = false;
+    if (btnToggle) {
+      btnToggle.classList.remove('active');
+      btnToggle.innerHTML = `<span>🏘️</span> Benwadi Cadastre (544 Plots)`;
+    }
+    if (legendItem) {
+      legendItem.style.display = 'none';
+    }
+  }
+}
+
 const EMBEDDED_SAMPLE_GEOJSONS = {
-  1: {"type":"FeatureCollection","name":"Sample_1_Exact_Match_Resurvey","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"parcel_id":"MH-IND-KAL-078-1","survey_no":"78/1","gat_no":"78/1","khata_no":"245","owner_name":"तानाजी रावसाहेब मोरे (Tanaji Raosaheb More)","joint_owners":["सुमित्रा तानाजी मोरे (Sumitra T. More)","अमोल तानाजी मोरे (Amol T. More)"],"father_name":"रावसाहेब भिकू मोरे","village":"Kalamb","village_mr":"कळंब","taluka":"Indapur","taluka_mr":"इंदापूर","district":"Pune","district_mr":"पुणे","state":"Maharashtra","land_type":"बागायत शेती (Bagayat - Canal & Well Irrigated)","land_class_code":"AGRI-BAG-01","status":"verified","confidence_score":98.4,"old_survey_area_acres":3.39,"old_survey_area_sqm":13734.1,"new_survey_area_acres":3.4,"new_survey_area_sqm":13745.2,"area_diff_pct":0.1,"mean_shift_m":0.39,"iou_overlap_pct":98.8,"survey_date":"2024-04-10","drone_model":"DJI Matrice 350 RTK + Zenmuse P1 (35mm)","rtk_accuracy_cm":1.2,"gcp_count":6,"ror_extract_no":"MH-712-2024-551029","assessment_rupees":"14.20","soil_type":"काळी कसदार जमीन (Black Cotton Soil)","crops":[{"name":"ऊस (Sugarcane Co-86032)","area_acres":2.2,"season":"अडसाली (Adsali)"},{"name":"सोयाबीन (Soybean)","area_acres":1.2,"season":"खरीप (Kharif)"}],"ferfar_entries":[{"ferfar_no":"1842","date":"2019-11-04","type":"वारस नोंद (Inheritance)","status":"मंजूर (Approved)"},{"ferfar_no":"2310","date":"2023-08-14","type":"ठिबक सिंचन अनुदान नोंद (Drip Irrigation Subsidy)","status":"प्रमाणित (Certified)"}],"review_reason":"High-precision RTK drone resurvey coincides with original 1978 BhuNaksha cadastral boundary within 0.39m tolerance. Title cleared."},"geometry":{"type":"Polygon","coordinates":[[[74.962734,18.488046],[74.961098,18.488248],[74.961392,18.489664],[74.963081,18.489328],[74.962734,18.488046]]]}}]},
-  2: {"type":"FeatureCollection","name":"Sample_2_North_Bund_Shift_Resurvey","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"parcel_id":"MH-IND-KAL-078-2","survey_no":"78/2","gat_no":"78/2","khata_no":"312","owner_name":"अंकुश महादेव सावंत (Ankush Mahadev Sawant)","joint_owners":["लता अंकुश सावंत (Lata A. Sawant)"],"father_name":"महादेव विठोबा सावंत","village":"Kalamb","village_mr":"कळंब","taluka":"Indapur","taluka_mr":"इंदापूर","district":"Pune","district_mr":"पुणे","state":"Maharashtra","land_type":"जिरायत शेती (Jirayat - Rainfed Agricultural)","land_class_code":"AGRI-JIR-02","status":"needs_review","confidence_score":83.5,"old_survey_area_acres":3.39,"old_survey_area_sqm":13734.1,"new_survey_area_acres":3.46,"new_survey_area_sqm":14002.5,"area_diff_pct":2,"mean_shift_m":1.26,"iou_overlap_pct":91.2,"survey_date":"2024-04-11","drone_model":"DJI Mavic 3 Enterprise RTK","rtk_accuracy_cm":1.8,"gcp_count":5,"ror_extract_no":"MH-712-2024-551088","assessment_rupees":"11.80","soil_type":"मध्यम काळी जमीन (Medium Black)","crops":[{"name":"ज्वारी (Maldandi Jowar)","area_acres":2,"season":"रब्बी (Rabi)"},{"name":"बाजरी (Bajra)","area_acres":1.46,"season":"खरीप (Kharif)"}],"ferfar_entries":[{"ferfar_no":"1910","date":"2020-03-22","type":"खरेदी खत नोंद (Registered Sale Deed)","status":"मंजूर (Approved)"}],"review_reason":"Drone RTK resurvey detects a 1.26m outward shift on the northern stone bund bordering Gat 79. Recommended for Joint Measurement (संयुक्त मोजणी) with Taluka Inspector of Land Records (TILR)."},"geometry":{"type":"Polygon","coordinates":[[[74.962731,18.488044],[74.9611,18.488245],[74.961375,18.489685],[74.963098,18.489348],[74.962731,18.488044]]]}}]},
-  3: {"type":"FeatureCollection","name":"Sample_3_Road_Dispute_Resurvey","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"parcel_id":"MH-IND-KAL-078-3","survey_no":"78/3","gat_no":"78/3","khata_no":"194","owner_name":"विठ्ठल किसन कदम (Vitthal Kisan Kadam)","joint_owners":["मारुती किसन कदम (Maruti K. Kadam)"],"father_name":"किसन बापू कदम","village":"Kalamb","village_mr":"कळंब","taluka":"Indapur","taluka_mr":"इंदापूर","district":"Pune","district_mr":"पुणे","state":"Maharashtra","land_type":"जिरायत शेती (Jirayat - Encroachment / Variance Notice)","land_class_code":"AGRI-DIS-03","status":"dispute","confidence_score":61.2,"old_survey_area_acres":3.39,"old_survey_area_sqm":13734.1,"new_survey_area_acres":3.26,"new_survey_area_sqm":13192.4,"area_diff_pct":3.9,"mean_shift_m":2.66,"iou_overlap_pct":82.4,"survey_date":"2024-04-12","drone_model":"WingtraOne GEN II PPK VTOL","rtk_accuracy_cm":1.5,"gcp_count":8,"ror_extract_no":"MH-712-2024-551142","assessment_rupees":"10.50","soil_type":"हलकी ते मध्यम जमीन (Light to Medium Soil)","crops":[{"name":"मका (Maize)","area_acres":1.8,"season":"खरीप (Kharif)"},{"name":"हरभरा (Gram / Chana)","area_acres":1.46,"season":"रब्बी (Rabi)"}],"ferfar_entries":[{"ferfar_no":"1730","date":"2018-02-19","type":"वारस नोंद (Inheritance Record)","status":"मंजूर (Approved)"},{"ferfar_no":"2405","date":"2024-01-10","type":"सार्वजनिक रस्ता संपादन फेरफार (Road Easement Notice)","status":"प्रलंबित / वादग्रस्त (Disputed / Pending)"}],"review_reason":"Severe boundary conflict: Drone resurvey shows 2.66m inward reduction along the southern village link road. Discrepancy of 541 m² (0.13 Ac) requires revenue court settlement & revised 7/12 area entry."},"geometry":{"type":"Polygon","coordinates":[[[74.962695,18.488078],[74.961135,18.488279],[74.961389,18.489667],[74.963083,18.48933],[74.962695,18.488078]]]}}]},
-  4: {"type":"FeatureCollection","name":"Sample_4_Benwadi_231_MahaBhuNaksha_Resurvey","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"parcel_id":"MH-AHM-KAR-231","survey_no":"231","gat_no":"231","khata_no":"141, 149, 184, 3004","owner_name":"पंढरीनाथ शंकर देशमूख व इतर (Pandharinath S. Deshmukh & Others)","joint_owners":["पार्वती शंकर देशमूख","बूवासाहेब शंकर देशमूख","श्वेता कल्याण देशमुख","सारिका प्रशांत शिंदे","हनुमंत दिगांबर देशमुख"],"father_name":"शंकर देशमुख","village":"Benwadi","village_mr":"बेनवडी","taluka":"Karjat","taluka_mr":"कर्जत","district":"Ahmednagar","district_mr":"अहमदनगर","state":"Maharashtra","land_type":"जिरायत व बागायत शेती (Jirayat & Bagayat - Mixed Agricultural)","land_class_code":"AGRI-JIR-01","status":"verified","confidence_score":98.6,"old_survey_area_acres":18.28,"old_survey_area_sqm":73967.7,"new_survey_area_acres":18.29,"new_survey_area_sqm":74012.3,"area_diff_pct":0.06,"mean_shift_m":0.42,"iou_overlap_pct":98.9,"survey_date":"2024-04-14","drone_model":"DJI Matrice 350 RTK + Zenmuse P1 (35mm)","rtk_accuracy_cm":1.2,"gcp_count":8,"ror_extract_no":"MH-712-AHM-2024-884210","assessment_rupees":"48.50","soil_type":"काळी कसदार जमीन (Black Cotton Soil)","crops":[{"name":"ज्वारी (Maldandi Jowar)","area_acres":8.0,"season":"रब्बी (Rabi)"},{"name":"कांदा (Onion)","area_acres":6.0,"season":"रब्बी (Rabi)"},{"name":"सोयाबीन (Soybean)","area_acres":4.28,"season":"खरीप (Kharif)"}],"ferfar_entries":[{"ferfar_no":"2140","date":"2021-06-18","type":"वारस नोंद (Inheritance Record)","status":"मंजूर (Approved)"},{"ferfar_no":"2890","date":"2023-11-05","type":"डिजिटल ड्रोन प्रमाणीकरण (Digital Drone Cadastral Certification)","status":"प्रमाणित (Certified)"}],"review_reason":"Centimeter-accurate resurvey: Uploaded GeoJSON boundary coincides with MahaBhuNaksha K-Prat Ground Record within 0.42m tolerance."},"geometry":{"type":"Polygon","coordinates":[[[74.962985,18.489002],[74.964493,18.488310],[74.963820,18.487460],[74.963402,18.486903],[74.963303,18.486811],[74.962438,18.486978],[74.962578,18.487766],[74.960478,18.487890],[74.960267,18.487912],[74.960146,18.488728],[74.960067,18.489558],[74.961640,18.489238],[74.962940,18.488988],[74.962985,18.489002]]]}}]}
+  // ── Benwadi Gat 231 — VERIFIED (drone perfectly matches K-Prat within 0.42m) ──
+  1: {"type":"FeatureCollection","name":"Benwadi_Gat231_Drone_RTK_Resurvey_Verified","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"parcel_id":"MH-AHM-KAR-BEN-231","survey_no":"231","gat_no":"231","khata_no":"141, 149, 184, 3004","owner_name":"पंढरीनाथ शंकर देशमूख, पार्वती शंकर देशमूख, बूवासाहेब शंकर देशमूख व इतर","joint_owners":["पार्वती शंकर देशमूख (Khata: 149)","बूवासाहेब शंकर देशमूख (Khata: 184)","श्वेता कल्याण देशमुख","सारिका प्रशांत शिंदे","हनुमंत दिगांबर देशमुख"],"father_name":"शंकर रामजी देशमुख","village":"Benwadi","village_mr":"बेनवडी","taluka":"Karjat","taluka_mr":"कर्जत","district":"Ahmednagar","district_mr":"अहमदनगर","state":"Maharashtra","land_type":"जिरायत व बागायत शेती (Jirayat & Bagayat - Mixed Agricultural)","land_class_code":"AGRI-JIR-01","status":"verified","confidence_score":98.6,"old_survey_area_acres":18.28,"old_survey_area_sqm":73967.7,"new_survey_area_acres":18.29,"new_survey_area_sqm":74013.5,"area_diff_pct":0.06,"mean_shift_m":0.42,"iou_overlap_pct":98.9,"survey_date":"2024-11-08","drone_model":"DJI Matrice 350 RTK + Zenmuse P1 (35mm)","rtk_accuracy_cm":1.2,"gcp_count":8,"ror_extract_no":"MH-712-AHM-2024-884210","assessment_rupees":"48.50","soil_type":"काळी कसदार जमीन (Black Cotton Soil)","crops":[{"name":"ज्वारी (Maldandi Jowar)","area_acres":8.0,"season":"रब्बी (Rabi)"},{"name":"कांदा (Onion)","area_acres":6.0,"season":"रब्बी (Rabi)"},{"name":"सोयाबीन (Soybean)","area_acres":4.28,"season":"खरीप (Kharif)"}],"ferfar_entries":[{"ferfar_no":"2140","date":"2021-06-18","type":"वारस नोंद (Inheritance Record)","status":"मंजूर (Approved)"},{"ferfar_no":"2890","date":"2023-11-05","type":"डिजिटल ड्रोन प्रमाणीकरण (Digital Drone Cadastral Certification)","status":"प्रमाणित (Certified)"}],"review_reason":"Centimeter-accurate RTK resurvey: Uploaded GeoJSON boundary coincides with MahaBhuNaksha K-Prat Ground Record within 0.42m tolerance. Title cleared."},"geometry":{"type":"Polygon","coordinates":[[[74.9629868,18.4890026],[74.9644941,18.4883145],[74.9638252,18.4874613],[74.9634034,18.4869037],[74.9633077,18.4868153],[74.9624401,18.4869774],[74.9625792,18.4877665],[74.9604828,18.4878907],[74.9602691,18.4879119],[74.9601512,18.4887294],[74.9600691,18.489559],[74.9616447,18.4892381],[74.9629414,18.4889892],[74.9629869,18.4890018]]]}}]},
+  // ── Benwadi Gat 247 — NEEDS REVIEW (NE bund shifted 1.82m, 84.2% score) ────────
+  2: {"type":"FeatureCollection","name":"Benwadi_Gat247_Drone_RTK_Resurvey_NeedsReview","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"parcel_id":"MH-AHM-KAR-BEN-247","survey_no":"247","gat_no":"247","khata_no":"45, 49, 273, 274, 2324, 2942","owner_name":"खंडु रामभाऊ भिताडे, लक्ष्मण अंकुश भिताडे, रमाबाई लक्ष्मण भिताडे","joint_owners":["लक्ष्मण अंकुश भिताडे (Khata: 49)","रमाबाई लक्ष्मण भिताडे (Khata: 274)","विठ्ठल खंडु भिताडे (Khata: 273)","तुळसा रामभाऊ भिताडे (Khata: 2324)"],"father_name":"रामभाऊ बाबाजी भिताडे","village":"Benwadi","village_mr":"बेनवडी","taluka":"Karjat","taluka_mr":"कर्जत","district":"Ahmednagar","district_mr":"अहमदनगर","state":"Maharashtra","land_type":"जिरायत शेती (Jirayat - Rainfed Agricultural)","land_class_code":"AGRI-JIR-02","status":"needs_review","confidence_score":84.2,"old_survey_area_acres":20.64,"old_survey_area_sqm":83525.8,"new_survey_area_acres":20.91,"new_survey_area_sqm":84617.3,"area_diff_pct":1.3,"mean_shift_m":1.82,"iou_overlap_pct":91.4,"survey_date":"2024-11-09","drone_model":"DJI Mavic 3 Enterprise RTK","rtk_accuracy_cm":1.8,"gcp_count":6,"ror_extract_no":"MH-712-AHM-2024-884247","assessment_rupees":"62.30","soil_type":"मध्यम काळी जमीन (Medium Black Cotton Soil)","crops":[{"name":"ज्वारी (Jowar)","area_acres":10.0,"season":"रब्बी (Rabi)"},{"name":"बाजरी (Bajra)","area_acres":6.0,"season":"खरीप (Kharif)"},{"name":"तूर (Pigeonpea)","area_acres":4.64,"season":"खरीप (Kharif)"}],"ferfar_entries":[{"ferfar_no":"1823","date":"2018-09-12","type":"वारस नोंद (Inheritance)","status":"मंजूर (Approved)"},{"ferfar_no":"2654","date":"2023-07-20","type":"बांध दुरुस्ती नोंद (Bund Repair Entry)","status":"प्रलंबित (Pending)"}],"review_reason":"Drone RTK resurvey detects 1.82m outward shift on NE boundary (bordering Gat 248 canal strip). Recommended for Joint Measurement (संयुक्त मोजणी) with Taluka Inspector of Land Records (TILR)."},"geometry":{"type":"Polygon","coordinates":[[[74.9635377,18.4915621],[74.9634495,18.4911486],[74.9631579,18.4897591],[74.9629947,18.489013],[74.9629484,18.4889967],[74.9616547,18.4892454],[74.9600765,18.4895645],[74.9606419,18.4903153],[74.9608907,18.4906563],[74.9606414,18.4907547],[74.9613151,18.4922818],[74.9621186,18.4920117],[74.9634121,18.4915892],[74.9635381,18.4915591]]]}}]},
+  // ── Benwadi Gat 229 — DISPUTE (road encroachment 2.76m, 61.8% score) ──────────
+  3: {"type":"FeatureCollection","name":"Benwadi_Gat229_Drone_RTK_Resurvey_Dispute","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"parcel_id":"MH-AHM-KAR-BEN-229","survey_no":"229","gat_no":"229","khata_no":"2793, 2959, 3155","owner_name":"गूरूदास ज्ञानदेव देशमूख, उत्तम ज्ञानदेव देशमूख, ज्योती उत्तम देशमुख","joint_owners":["उत्तम ज्ञानदेव देशमूख (Khata: 2959)","ज्योती उत्तम देशमुख (Khata: 3155)"],"father_name":"ज्ञानदेव रामाजी देशमुख","village":"Benwadi","village_mr":"बेनवडी","taluka":"Karjat","taluka_mr":"कर्जत","district":"Ahmednagar","district_mr":"अहमदनगर","state":"Maharashtra","land_type":"जिरायत शेती (Jirayat - Encroachment / Variance Notice)","land_class_code":"AGRI-DIS-03","status":"dispute","confidence_score":61.8,"old_survey_area_acres":2.73,"old_survey_area_sqm":11046.7,"new_survey_area_acres":2.58,"new_survey_area_sqm":10444.2,"area_diff_pct":5.5,"mean_shift_m":2.76,"iou_overlap_pct":79.3,"survey_date":"2024-11-10","drone_model":"WingtraOne GEN II PPK VTOL","rtk_accuracy_cm":1.5,"gcp_count":5,"ror_extract_no":"MH-712-AHM-2024-884229","assessment_rupees":"8.20","soil_type":"हलकी ते मध्यम जमीन (Light to Medium Black Soil)","crops":[{"name":"ज्वारी (Jowar)","area_acres":1.5,"season":"रब्बी (Rabi)"},{"name":"हरभरा (Gram)","area_acres":1.08,"season":"रब्बी (Rabi)"}],"ferfar_entries":[{"ferfar_no":"1645","date":"2017-05-03","type":"वारस नोंद (Inheritance Record)","status":"मंजूर (Approved)"},{"ferfar_no":"2782","date":"2024-03-15","type":"सार्वजनिक रस्ता संपादन फेरफार (Village Road Easement)","status":"प्रलंबित / वादग्रस्त (Disputed / Pending)"}],"review_reason":"Critical boundary conflict: Drone resurvey shows 2.76m inward encroachment on SW boundary by village link road. Net land loss of 602 m² (0.15 Ac). Case pending in Revenue Court."},"geometry":{"type":"Polygon","coordinates":[[[74.9624153,18.486958],[74.9632856,18.4867923],[74.962881,18.486165],[74.9613839,18.4866779],[74.9615473,18.4870363],[74.9624198,18.4869542]]]}}]},
+  // ── Benwadi Gat 231 — REFERENCE (matches loaded K-Prat exactly) ────────────────
+  4: {"type":"FeatureCollection","name":"Benwadi_Gat231_KPrat_Reference","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"parcel_id":"MH-AHM-KAR-BEN-231","survey_no":"231","gat_no":"231","khata_no":"141, 149, 184, 3004","owner_name":"पंढरीनाथ शंकर देशमूख, पार्वती शंकर देशमूख, बूवासाहेब शंकर देशमूख व इतर","joint_owners":["पार्वती शंकर देशमूख (Khata: 149)","बूवासाहेब शंकर देशमूख (Khata: 184)","श्वेता कल्याण देशमुख","सारिका प्रशांत शिंदे","हनुमंत दिगांबर देशमुख"],"father_name":"शंकर रामजी देशमुख","village":"Benwadi","village_mr":"बेनवडी","taluka":"Karjat","taluka_mr":"कर्जत","district":"Ahmednagar","district_mr":"अहमदनगर","state":"Maharashtra","land_type":"जिरायत व बागायत शेती (Jirayat & Bagayat - Mixed Agricultural)","land_class_code":"AGRI-JIR-01","status":"verified","confidence_score":98.6,"old_survey_area_acres":18.28,"old_survey_area_sqm":73967.7,"new_survey_area_acres":18.29,"new_survey_area_sqm":74013.5,"area_diff_pct":0.06,"mean_shift_m":0.42,"iou_overlap_pct":98.9,"survey_date":"2024-11-08","drone_model":"DJI Matrice 350 RTK + Zenmuse P1 (35mm)","rtk_accuracy_cm":1.2,"gcp_count":8,"ror_extract_no":"MH-712-AHM-2024-884210","assessment_rupees":"48.50","soil_type":"काळी कसदार जमीन (Black Cotton Soil)","crops":[{"name":"ज्वारी (Maldandi Jowar)","area_acres":8.0,"season":"रब्बी (Rabi)"},{"name":"कांदा (Onion)","area_acres":6.0,"season":"रब्बी (Rabi)"},{"name":"सोयाबीन (Soybean)","area_acres":4.28,"season":"खरीप (Kharif)"}],"ferfar_entries":[{"ferfar_no":"2140","date":"2021-06-18","type":"वारस नोंद (Inheritance Record)","status":"मंजूर (Approved)"},{"ferfar_no":"2890","date":"2023-11-05","type":"डिजिटल ड्रोन प्रमाणीकरण (Digital Drone Cadastral Certification)","status":"प्रमाणित (Certified)"}],"review_reason":"Centimeter-accurate RTK resurvey: Uploaded GeoJSON boundary coincides with MahaBhuNaksha K-Prat Ground Record within 0.42m tolerance. Title cleared."},"geometry":{"type":"Polygon","coordinates":[[[74.9629844,18.4890001],[74.9644914,18.4883126],[74.9638218,18.4874587],[74.9634009,18.4869009],[74.9633053,18.4868132],[74.9624369,18.4869756],[74.9625765,18.4877649],[74.9604796,18.4878882],[74.9602658,18.4879101],[74.9601488,18.4887267],[74.9600656,18.4895563],[74.9616421,18.4892361],[74.9629385,18.4889863],[74.9629844,18.4890001]]]}}]}
 };
 
 function validateStep1Form() {
@@ -4928,6 +5153,42 @@ function setupComparisonStationHandlers() {
     fetchAndRenderKPratBoundary();
   });
 
+  // Load All 544 Benwadi Plots Button
+  document.getElementById('btn-load-all-benwadi')?.addEventListener('click', () => {
+    const distEl = document.getElementById('cmp-district');
+    const talukaEl = document.getElementById('cmp-taluka');
+    const villEl = document.getElementById('cmp-village');
+    if (distEl) distEl.value = 'Ahmednagar';
+    if (talukaEl) {
+      talukaEl.innerHTML = `<option value="Karjat" selected>Karjat (कर्जत)</option>`;
+      talukaEl.value = 'Karjat';
+    }
+    if (villEl) villEl.value = 'Benwadi (बेनवडी)';
+    loadAndDisplayBenwadiCadastre(true);
+  });
+
+  // Toggle Benwadi Village Cadastre Layer on Map
+  document.getElementById('btn-toggle-village-cadastre')?.addEventListener('click', () => {
+    toggleBenwadiVillageCadastre();
+  });
+
+  // Autocomplete / Autofill Survey Number from Benwadi Cadastre
+  document.getElementById('cmp-survey-no')?.addEventListener('input', (e) => {
+    const val = e.target.value.trim();
+    if (!val) return;
+    if (benwadiVillageCadastreData && benwadiVillageCadastreData.features) {
+      const match = benwadiVillageCadastreData.features.find(f => String(f.properties.survey_no) === val);
+      if (match) {
+        const ownEl = document.getElementById('cmp-owner-name');
+        const acEl = document.getElementById('cmp-area-acres');
+        const gnEl = document.getElementById('cmp-area-guntha');
+        if (ownEl) ownEl.value = match.properties.owner_name;
+        if (acEl) acEl.value = match.properties.area_acres;
+        if (gnEl) gnEl.value = match.properties.area_guntha;
+      }
+    }
+  });
+
   // Dynamic District -> Taluka cascading for Step 1
   const cmpDist = document.getElementById('cmp-district');
   const cmpTal = document.getElementById('cmp-taluka');
@@ -5082,7 +5343,10 @@ window.GeoLand = {
   executeCoordinateSearch,
   MAHARASHTRA_HIERARCHY,
   MAHARASHTRA_DISTRICT_BOUNDARIES,
-  MAHARASHTRA_VILLAGE_BOUNDARIES
+  MAHARASHTRA_VILLAGE_BOUNDARIES,
+  loadAndDisplayBenwadiCadastre,
+  toggleBenwadiVillageCadastre,
+  selectBenwadiCadastreParcel
 };
 
 // Direct window exports for inline onclick handlers in HTML
@@ -5100,3 +5364,6 @@ window.loadSampleGeoJson = loadSampleGeoJson;
 window.getFormCoordinates = getFormCoordinates;
 window.fetchAndRenderKPratBoundary = fetchAndRenderKPratBoundary;
 window.renderKPratReferenceOnMap = renderKPratReferenceOnMap;
+window.loadAndDisplayBenwadiCadastre = loadAndDisplayBenwadiCadastre;
+window.toggleBenwadiVillageCadastre = toggleBenwadiVillageCadastre;
+window.selectBenwadiCadastreParcel = selectBenwadiCadastreParcel;
