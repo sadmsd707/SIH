@@ -974,12 +974,12 @@ body {
    Inspector Dedicated Active QR Code Module
    ========================================================================== */
 .inspector-qr-card-block {
-  background: linear-gradient(145deg, rgba(17, 34, 64, 0.95), rgba(10, 25, 47, 0.95));
-  border: 1px solid rgba(100, 255, 218, 0.25);
+  background: linear-gradient(145deg, rgba(17, 34, 64, 0.96), rgba(10, 25, 47, 0.98));
+  border: 1px solid rgba(100, 255, 218, 0.28);
   border-radius: var(--radius-sm);
-  padding: 0.75rem 0.85rem;
+  padding: 0.85rem;
   margin-bottom: 0.75rem;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
   position: relative;
   overflow: hidden;
 }
@@ -998,7 +998,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.55rem;
+  margin-bottom: 0.75rem;
 }
 
 .insp-qr-live-pill {
@@ -1067,63 +1067,79 @@ body {
   border: 1px solid rgba(100, 255, 218, 0.2);
 }
 
-.insp-qr-main-flex {
+/* Vertical Stacked Layout: QR Code Centered, Details Underneath - ZERO OVERLAP */
+.insp-qr-content-col {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
+  text-align: center;
+  gap: 0.65rem;
+  width: 100%;
 }
 
 .insp-qr-display {
-  flex-shrink: 0;
+  width: 120px;
+  height: 120px;
   background: #ffffff;
-  padding: 5px;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+  padding: 6px;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.15);
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 0.25rem auto 0.4rem auto;
+  box-sizing: border-box;
 }
 
 .insp-qr-display:hover {
   transform: scale(1.04);
-  box-shadow: 0 6px 20px rgba(100, 255, 218, 0.35);
+  box-shadow: 0 6px 22px rgba(100, 255, 218, 0.4);
 }
 
 .insp-qr-target-surface {
-  width: 95px;
-  height: 95px;
+  width: 108px;
+  height: 108px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: #ffffff;
+  overflow: hidden;
 }
 
 .insp-qr-target-surface canvas,
 .insp-qr-target-surface img {
   display: block !important;
-  width: 95px !important;
-  height: 95px !important;
+  width: 108px !important;
+  height: 108px !important;
+  margin: 0 auto !important;
 }
 
 .insp-qr-details {
-  flex: 1;
-  min-width: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .insp-qr-header-title {
-  font-size: 0.8rem;
-  font-weight: 700;
+  font-size: 0.85rem;
+  font-weight: 800;
   color: var(--text-main);
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.25rem;
+  letter-spacing: 0.3px;
+  text-align: center;
 }
 
 .insp-qr-desc {
-  font-size: 0.68rem;
-  line-height: 1.35;
+  font-size: 0.72rem;
+  line-height: 1.4;
   color: var(--text-muted);
-  margin-bottom: 0.45rem;
+  margin-bottom: 0.65rem;
+  text-align: center;
+  max-width: 320px;
 }
 
 .insp-qr-desc strong {
@@ -1132,7 +1148,10 @@ body {
 
 .insp-qr-btn-group {
   display: flex;
-  gap: 0.3rem;
+  justify-content: center;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
   flex-wrap: wrap;
 }
 
@@ -1140,14 +1159,14 @@ body {
   background: rgba(100, 255, 218, 0.08);
   border: 1px solid rgba(100, 255, 218, 0.3);
   color: var(--accent-cyan);
-  font-size: 0.65rem;
+  font-size: 0.7rem;
   font-weight: 700;
-  padding: 0.25rem 0.5rem;
+  padding: 0.32rem 0.65rem;
   border-radius: 4px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.3rem;
   transition: all 0.18s ease;
 }
 

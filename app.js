@@ -1418,12 +1418,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Show empty-state if no parcels
   updateEmptyState();
 
-    // Initialize Parcel Inspector with the first active parcel so it is not empty on load!
-  if (appParcels && appParcels.features && appParcels.features.length > 0) {
-    selectParcelForInspector(appParcels.features[0]);
-  }
+  // Initialize Parcel Inspector in clean Standby Mode (do not auto-select mock parcel)
+  resetInspectorPanel();
 
-// Check if opened via QR code scan (shows standalone parcel inspector certificate)
+  // Check if opened via QR code scan (shows standalone parcel inspector certificate)
   checkUrlInspectionMode();
 });
 
@@ -2573,15 +2571,16 @@ function resetInspectorPanel() {
   if (idEl) idEl.textContent = '—';
   if (tagEl) {
     tagEl.className = 'badge-tag';
-    tagEl.textContent = 'WAITING FOR UPLOAD';
+    tagEl.textContent = 'STANDBY';
     tagEl.style.background = 'rgba(100, 116, 139, 0.2)';
     tagEl.style.color = 'var(--text-muted)';
+    tagEl.style.borderColor = 'var(--surface-border)';
   }
-  if (ownerEl) ownerEl.textContent = 'No Parcel Loaded';
-  if (metaEl) metaEl.textContent = 'Upload a GeoJSON file in Step 2 or click a boundary on the map to inspect.';
+  if (ownerEl) ownerEl.textContent = 'No Parcel Selected';
+  if (metaEl) metaEl.textContent = 'Click any parcel on the cadastral map, choose a Gat number in Step 1, or upload a resurvey GeoJSON to inspect.';
   if (bhunakshaRef) bhunakshaRef.textContent = 'Standby Mode';
-  if (scoreValEl) scoreValEl.textContent = '0%';
-  if (scoreFillEl) { scoreFillEl.style.width = '0%'; scoreFillEl.style.background = 'var(--text-muted)'; }
+  if (scoreValEl) scoreValEl.textContent = '—';
+  if (scoreFillEl) { scoreFillEl.style.width = '0%'; scoreFillEl.style.background = 'var(--surface-border)'; }
   if (oldAreaEl) oldAreaEl.textContent = '—';
   if (oldSqmEl) oldSqmEl.textContent = 'No record loaded';
   if (newAreaEl) newAreaEl.textContent = '—';
@@ -2593,9 +2592,19 @@ function resetInspectorPanel() {
   if (rtkAccEl) rtkAccEl.textContent = '—';
   if (gcpsEl) gcpsEl.textContent = '—';
 
+  // Hide the QR block on standby
+  const qrBlock = document.getElementById('insp-qr-card-block');
+  if (qrBlock) qrBlock.style.display = 'none';
+
   const openModalBtn = document.getElementById('btn-open-inspector-modal');
   if (openModalBtn) {
-    openModalBtn.onclick = () => alert('Please upload a GeoJSON file or select a parcel boundary on the map first.');
+    openModalBtn.onclick = () => {
+      if (typeof showVillageToast === 'function') {
+        showVillageToast('ℹ️ Please click a plot on the map or enter a Gat number first.');
+      } else {
+        alert('Please click a plot on the map or enter a Gat number first.');
+      }
+    };
   }
 }
 
@@ -2701,7 +2710,10 @@ function selectParcelForInspector(feature) {
     openModalBtn.onclick = () => openParcelModal(feature);
   }
 
-  // 6. Generate the Unique Active QR Code immediately for this inspected parcel!
+  // 6. Show the QR code block and generate the Unique Active QR Code immediately!
+  const qrBlock = document.getElementById('insp-qr-card-block');
+  if (qrBlock) qrBlock.style.display = 'block';
+
   generateParcelQRCode(feature);
 }
 
@@ -3230,7 +3242,7 @@ https://maps.google.com/?q=${Number(cLat).toFixed(6)},${Number(cLng).toFixed(6)}
 
   // Render QR into Card and Modal
   if (cardTarget) {
-    renderQRIntoElement(cardTarget, activePayload, 95);
+    renderQRIntoElement(cardTarget, activePayload, 108);
   }
   if (modalTarget) {
     renderQRIntoElement(modalTarget, activePayload, 140);
@@ -4792,17 +4804,18 @@ async function fetchAndRenderKPratBoundary() {
   const surveyEl = document.getElementById('cmp-survey-no');
   const gatEl = document.getElementById('cmp-gat-no');
   const ownerEl = document.getElementById('cmp-owner-name');
-  const acresEl = document.getElementById('cmp-area-acres');
-  const gunthaEl = document.getElementById('cmp-area-guntha');
-
-  const district = districtEl?.value?.trim() || 'Pune';
-  const taluka = talukaEl?.value?.trim() || 'Indapur';
-  const village = villageEl?.value?.trim() || 'Kalamb';
-  const surveyNo = surveyEl?.value?.trim() || '78/1';
+  const district = districtEl?.value?.trim() || 'Ahmednagar';
+  const taluka = talukaEl?.value?.trim() || 'Karjat';
+  const village = villageEl?.value?.trim() || 'Benwadi (बेनवडी)';
+  let surveyNo = surveyEl?.value?.trim();
+  if (!surveyNo) {
+    surveyNo = '231';
+    if (surveyEl) surveyEl.value = '231';
+  }
   const gatNo = gatEl?.value?.trim() || surveyNo;
-  const ownerName = ownerEl?.value?.trim() || 'तानाजी रावसाहेब मोरे';
-  const acresVal = parseFloat(acresEl?.value) || 3.0;
-  const gunthaVal = parseFloat(gunthaEl?.value) || 16.0;
+  const ownerName = ownerEl?.value?.trim() || 'नोंदणीकृत खातेदार';
+  const acresVal = parseFloat(acresEl?.value) || 0;
+  const gunthaVal = parseFloat(gunthaEl?.value) || 0;
   const totalAcres = parseFloat((acresVal + (gunthaVal / 40.0)).toFixed(2));
 
   const btn = document.getElementById('btn-fetch-kprat');
@@ -5402,12 +5415,12 @@ function executeDualBoundaryComparison(targetGeojson = null) {
   }
 
   // Read form metadata
-  const district = document.getElementById('cmp-district')?.value?.trim() || 'Pune';
-  const taluka = document.getElementById('cmp-taluka')?.value?.trim() || 'Indapur';
-  const village = document.getElementById('cmp-village')?.value?.trim() || 'कळंब (Kalamb)';
-  const surveyNo = document.getElementById('cmp-survey-no')?.value?.trim() || '78/1';
+  const district = document.getElementById('cmp-district')?.value?.trim() || 'Ahmednagar';
+  const taluka = document.getElementById('cmp-taluka')?.value?.trim() || 'Karjat';
+  const village = document.getElementById('cmp-village')?.value?.trim() || 'Benwadi (बेनवडी)';
+  const surveyNo = document.getElementById('cmp-survey-no')?.value?.trim() || (uploadedFeature.properties?.survey_no || uploadedFeature.properties?.gat_no || '231');
   const gatNo = document.getElementById('cmp-gat-no')?.value?.trim() || surveyNo;
-  const ownerName = document.getElementById('cmp-owner-name')?.value?.trim() || 'तानाजी रावसाहेब मोरे (Tanaji R. More)';
+  const ownerName = document.getElementById('cmp-owner-name')?.value?.trim() || (uploadedFeature.properties?.owner_name || 'नोंदणीकृत खातेदार');
 
   // 7. Assemble Unified Compared Parcel (Unique ID and Timestamp per search)
   const uniqueSuffix = Math.floor(1000 + Math.random() * 9000);
