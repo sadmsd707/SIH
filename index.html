@@ -201,11 +201,18 @@
                 </div>
                 <div class="meta-input-item">
                   <label>Village (गाव)</label>
-                  <input type="text" id="cmp-village" value="" placeholder="e.g. Benwadi (बेनवडी)">
+                  <select id="cmp-village" class="search-select" style="background: var(--tertiary-navy); color: var(--text-main); border: 1px solid var(--surface-border); border-radius: 4px; padding: 0.35rem 0.5rem; font-size: 0.8rem;">
+                    <option value="" selected>-- Select Village (गाव निवडा) --</option>
+                    <option value="Benwadi (बेनवडी)">Benwadi (बेनवडी)</option>
+                    <option value="Karjat (City)">Karjat (City)</option>
+                    <option value="Mirajgaon">Mirajgaon</option>
+                    <option value="Rashin">Rashin</option>
+                    <option value="Kuldharan">Kuldharan</option>
+                  </select>
                 </div>
                 <div class="meta-input-item">
                   <label>Survey / Gat No. (गट)</label>
-                  <input type="text" id="cmp-survey-no" value="" placeholder="e.g. 231" list="benwadi-plots-datalist">
+                  <input type="text" id="cmp-survey-no" value="" placeholder="Select Village first" list="benwadi-plots-datalist">
                   <datalist id="benwadi-plots-datalist"></datalist>
                 </div>
                 <div class="meta-input-item" style="grid-column: span 2;">

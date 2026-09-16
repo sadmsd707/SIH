@@ -968,7 +968,7 @@ const MAHARASHTRA_HIERARCHY = {
       "Mulshi": ["Pirangut", "Paud", "Lavale", "Hinjewadi"],
       "Bhor": ["Bhor", "Nasrapur", "Kikvi"],
       "Baramati": ["Baramati (City)", "Morgaon", "Supa", "Jejuri"],
-      "Indapur": ["Indapur", "Nimgaon Ketki", "Bhigwan"],
+      "Indapur": ["Kalamb (कळंब)", "Indapur", "Nimgaon Ketki", "Bhigwan"],
       "Shirur": ["Shirur", "Talegaon Dabhade", "Khed"]
     }
   },
@@ -1403,14 +1403,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Setup Dynamic District-Taluka-Village Hierarchy
   setupRevenueHierarchyDropdowns();
+  setupStep1RevenueHierarchy();
 
-  // Preload Benwadi Cadastre data to populate datalists immediately
+  // Preload Benwadi Cadastre data (datalist populated only when Benwadi village selected)
   fetch('benwadi_village_cadastre.geojson')
     .then(r => r.ok ? r.json() : null)
     .then(data => {
       if (data && data.features) {
         benwadiVillageCadastreData = data;
-        populateBenwadiPlotsDatalist(data.features);
       }
     })
     .catch(() => {});
@@ -4514,6 +4514,161 @@ function setupRevenueHierarchyDropdowns() {
 }
 
 // ==========================================================================
+// 10b. Step 1 Dynamic 3-Level Hierarchy & Village Guard
+// ==========================================================================
+function clearStep1OwnerAndArea() {
+  const ownEl = document.getElementById('cmp-owner-name');
+  const acEl = document.getElementById('cmp-area-acres');
+  const gnEl = document.getElementById('cmp-area-guntha');
+  if (ownEl) ownEl.value = '';
+  if (acEl) acEl.value = '';
+  if (gnEl) gnEl.value = '';
+}
+
+function setupStep1RevenueHierarchy() {
+  const cmpDist = document.getElementById('cmp-district');
+  const cmpTal = document.getElementById('cmp-taluka');
+  const cmpVill = document.getElementById('cmp-village');
+  const cmpSurv = document.getElementById('cmp-survey-no');
+  const dataList = document.getElementById('benwadi-plots-datalist');
+
+  if (!cmpDist || !cmpTal || !cmpVill) return;
+
+  function populateTalukasForStep1(districtName, selectedTaluka = '') {
+    cmpTal.innerHTML = '<option value="">-- Select Taluka (तालुका निवडा) --</option>';
+    cmpVill.innerHTML = '<option value="">-- Select Village (गाव निवडा) --</option>';
+    if (cmpSurv) {
+      cmpSurv.value = '';
+      cmpSurv.placeholder = 'Select Village first';
+    }
+    if (dataList) dataList.innerHTML = '';
+    clearStep1OwnerAndArea();
+    resetInspectorPanel();
+
+    if (!districtName || !MAHARASHTRA_HIERARCHY[districtName]) return;
+    const talukaObj = MAHARASHTRA_HIERARCHY[districtName].talukas;
+    Object.keys(talukaObj).forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t;
+      opt.textContent = `${t}`;
+      if (selectedTaluka && t === selectedTaluka) opt.selected = true;
+      cmpTal.appendChild(opt);
+    });
+  }
+
+  function populateVillagesForStep1(districtName, talukaName, selectedVillage = '') {
+    cmpVill.innerHTML = '<option value="">-- Select Village (गाव निवडा) --</option>';
+    if (cmpSurv) {
+      cmpSurv.value = '';
+      cmpSurv.placeholder = 'Select Village first';
+    }
+    if (dataList) dataList.innerHTML = '';
+    clearStep1OwnerAndArea();
+    resetInspectorPanel();
+
+    if (!districtName || !talukaName || !MAHARASHTRA_HIERARCHY[districtName]) return;
+    const villages = MAHARASHTRA_HIERARCHY[districtName].talukas[talukaName] || [];
+
+    villages.forEach(v => {
+      const opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = `${v}`;
+      if (selectedVillage && v === selectedVillage) opt.selected = true;
+      cmpVill.appendChild(opt);
+    });
+  }
+
+  function handleVillageChange() {
+    const v = cmpVill.value.trim();
+    if (cmpSurv) cmpSurv.value = '';
+    clearStep1OwnerAndArea();
+    resetInspectorPanel();
+
+    if (!v) {
+      if (dataList) dataList.innerHTML = '';
+      if (cmpSurv) cmpSurv.placeholder = 'Select Village first';
+      return;
+    }
+
+    const isBenwadi = v.toLowerCase().includes('benwadi') || v.includes('बेनवडी');
+    if (isBenwadi) {
+      if (benwadiVillageCadastreData && benwadiVillageCadastreData.features) {
+        populateBenwadiPlotsDatalist(benwadiVillageCadastreData.features);
+      }
+      if (cmpSurv) cmpSurv.placeholder = 'e.g. 231 (select from 544 plots)';
+      if (typeof showVillageToast === 'function') {
+        showVillageToast('🏘️ Benwadi selected: 544 official cadastral plots ready for query.');
+      }
+    } else {
+      if (dataList) dataList.innerHTML = '';
+      if (cmpSurv) cmpSurv.placeholder = 'e.g. Survey / Gat No.';
+    }
+  }
+
+  cmpDist.addEventListener('change', () => {
+    populateTalukasForStep1(cmpDist.value);
+  });
+
+  cmpTal.addEventListener('change', () => {
+    populateVillagesForStep1(cmpDist.value, cmpTal.value);
+  });
+
+  cmpVill.addEventListener('change', handleVillageChange);
+
+  // Autocomplete / Autofill Survey Number ONLY when Village is chosen
+  cmpSurv?.addEventListener('input', (e) => {
+    const selectedVillage = cmpVill?.value?.trim();
+
+    // STRICT: Do not give details without selecting a village!
+    if (!selectedVillage) {
+      e.target.value = '';
+      clearStep1OwnerAndArea();
+      resetInspectorPanel();
+      if (typeof showVillageToast === 'function') {
+        showVillageToast('⚠️ Please select a Village (गाव) first before querying Survey / Gat Number.');
+      } else {
+        alert('Please select a Village (गाव) first before querying Survey / Gat Number.');
+      }
+      cmpVill?.focus();
+      return;
+    }
+
+    const val = e.target.value.trim();
+    if (!val) {
+      clearStep1OwnerAndArea();
+      resetInspectorPanel();
+      return;
+    }
+
+    // Only query Benwadi cadastre if the selected village is Benwadi!
+    const isBenwadi = selectedVillage.toLowerCase().includes('benwadi') || selectedVillage.includes('बेनवडी');
+    if (isBenwadi && benwadiVillageCadastreData && benwadiVillageCadastreData.features) {
+      const match = benwadiVillageCadastreData.features.find(f => String(f.properties.survey_no) === val || String(f.properties.gat_no) === val);
+      if (match) {
+        const ownEl = document.getElementById('cmp-owner-name');
+        const acEl = document.getElementById('cmp-area-acres');
+        const gnEl = document.getElementById('cmp-area-guntha');
+        if (ownEl) ownEl.value = match.properties.owner_name || '';
+        if (acEl) acEl.value = match.properties.area_acres || '';
+        if (gnEl) gnEl.value = match.properties.area_guntha || '';
+
+        // Immediately show the matched plot in Parcel Inspector!
+        selectParcelForInspector(match);
+      }
+    }
+  });
+
+  // Warn on focus if no village selected
+  cmpSurv?.addEventListener('focus', () => {
+    if (!cmpVill?.value?.trim()) {
+      if (typeof showVillageToast === 'function') {
+        showVillageToast('⚠️ Please select a Village (गाव) from the dropdown first.');
+      }
+    }
+  });
+}
+
+// ==========================================================================
 // 11. ISRO Bhuvan & Maharashtra Administrative Overlays
 // ==========================================================================
 function toggleBhuvanOverlay(key) {
@@ -4807,11 +4962,23 @@ async function fetchAndRenderKPratBoundary() {
   const acresEl = document.getElementById('cmp-area-acres');
   const gunthaEl = document.getElementById('cmp-area-guntha');
 
-  const district = districtEl?.value?.trim() || 'Ahmednagar';
-  const taluka = talukaEl?.value?.trim() || 'Karjat';
-  const village = villageEl?.value?.trim() || 'Benwadi (बेनवडी)';
+  const district = districtEl?.value?.trim();
+  const taluka = talukaEl?.value?.trim();
+  const village = villageEl?.value?.trim();
   const surveyNo = surveyEl?.value?.trim();
 
+  // STRICT VALIDATION: Require village selection!
+  if (!village) {
+    if (typeof showVillageToast === 'function') {
+      showVillageToast('⚠️ Please select a Village (गाव) from the dropdown first before querying.');
+    } else {
+      alert('⚠️ Please select a Village (गाव) from the dropdown first before querying.');
+    }
+    if (villageEl) villageEl.focus();
+    return;
+  }
+
+  // STRICT VALIDATION: Require survey / gat number!
   if (!surveyNo) {
     if (typeof showVillageToast === 'function') {
       showVillageToast('⚠️ Please enter a Survey / Gat No. or click one of the presets above (e.g. Benwadi Gat 231)');
@@ -5820,6 +5987,7 @@ function setupComparisonStationHandlers() {
     if (distEl) distEl.value = 'Pune';
     if (talukaEl) {
       talukaEl.innerHTML = `
+        <option value="">-- Select Taluka (तालुका निवडा) --</option>
         <option value="Indapur" selected>Indapur (इंदापूर)</option>
         <option value="Haveli">Haveli (हवेली)</option>
         <option value="Baramati">Baramati (बारामती)</option>
@@ -5827,7 +5995,16 @@ function setupComparisonStationHandlers() {
       `;
       talukaEl.value = 'Indapur';
     }
-    if (villEl) villEl.value = 'Kalamb (कळंब)';
+    if (villEl) {
+      villEl.innerHTML = `
+        <option value="">-- Select Village (गाव निवडा) --</option>
+        <option value="Kalamb (कळंब)" selected>Kalamb (कळंब)</option>
+        <option value="Indapur">Indapur</option>
+        <option value="Nimgaon Ketki">Nimgaon Ketki</option>
+        <option value="Bhigwan">Bhigwan</option>
+      `;
+      villEl.value = 'Kalamb (कळंब)';
+    }
     if (survEl) survEl.value = '78/1';
     if (ownEl) ownEl.value = 'तानाजी रावसाहेब मोरे (Tanaji R. More)';
     if (acEl) acEl.value = '3.39';
@@ -5849,6 +6026,7 @@ function setupComparisonStationHandlers() {
     if (distEl) distEl.value = 'Ahmednagar';
     if (talukaEl) {
       talukaEl.innerHTML = `
+        <option value="">-- Select Taluka (तालुका निवडा) --</option>
         <option value="Karjat" selected>Karjat (कर्जत)</option>
         <option value="Sangamner">Sangamner (संगमनेर)</option>
         <option value="Rahata">Rahata (राहाता)</option>
@@ -5857,7 +6035,20 @@ function setupComparisonStationHandlers() {
       `;
       talukaEl.value = 'Karjat';
     }
-    if (villEl) villEl.value = 'Benwadi (बेनवडी)';
+    if (villEl) {
+      villEl.innerHTML = `
+        <option value="">-- Select Village (गाव निवडा) --</option>
+        <option value="Benwadi (बेनवडी)" selected>Benwadi (बेनवडी)</option>
+        <option value="Karjat (City)">Karjat (City)</option>
+        <option value="Mirajgaon">Mirajgaon</option>
+        <option value="Rashin">Rashin</option>
+        <option value="Kuldharan">Kuldharan</option>
+      `;
+      villEl.value = 'Benwadi (बेनवडी)';
+    }
+    if (benwadiVillageCadastreData && benwadiVillageCadastreData.features) {
+      populateBenwadiPlotsDatalist(benwadiVillageCadastreData.features);
+    }
     if (survEl) survEl.value = '231';
     if (ownEl) ownEl.value = 'पंढरीनाथ शंकर देशमूख, पार्वती शंकर देशमूख, बूवासाहेब शंकर देशमूख व इतर';
     if (acEl) acEl.value = '18.28';
@@ -5873,10 +6064,16 @@ function setupComparisonStationHandlers() {
     const villEl = document.getElementById('cmp-village');
     if (distEl) distEl.value = 'Ahmednagar';
     if (talukaEl) {
-      talukaEl.innerHTML = `<option value="Karjat" selected>Karjat (कर्जत)</option>`;
+      talukaEl.innerHTML = `<option value="">-- Select Taluka (तालुका निवडा) --</option><option value="Karjat" selected>Karjat (कर्जत)</option>`;
       talukaEl.value = 'Karjat';
     }
-    if (villEl) villEl.value = 'Benwadi (बेनवडी)';
+    if (villEl) {
+      villEl.innerHTML = `<option value="">-- Select Village (गाव निवडा) --</option><option value="Benwadi (बेनवडी)" selected>Benwadi (बेनवडी)</option>`;
+      villEl.value = 'Benwadi (बेनवडी)';
+    }
+    if (benwadiVillageCadastreData && benwadiVillageCadastreData.features) {
+      populateBenwadiPlotsDatalist(benwadiVillageCadastreData.features);
+    }
     loadAndDisplayBenwadiCadastre(true);
   });
 
@@ -5885,49 +6082,8 @@ function setupComparisonStationHandlers() {
     toggleBenwadiVillageCadastre();
   });
 
-  // Autocomplete / Autofill Survey Number from Benwadi Cadastre
-  document.getElementById('cmp-survey-no')?.addEventListener('input', (e) => {
-    const val = e.target.value.trim();
-    if (!val) return;
-    if (benwadiVillageCadastreData && benwadiVillageCadastreData.features) {
-      const match = benwadiVillageCadastreData.features.find(f => String(f.properties.survey_no) === val);
-      if (match) {
-        const ownEl = document.getElementById('cmp-owner-name');
-        const acEl = document.getElementById('cmp-area-acres');
-        const gnEl = document.getElementById('cmp-area-guntha');
-        if (ownEl) ownEl.value = match.properties.owner_name;
-        if (acEl) acEl.value = match.properties.area_acres;
-        if (gnEl) gnEl.value = match.properties.area_guntha;
-
-        // Immediately show the matched plot in Parcel Inspector!
-        selectParcelForInspector(match);
-      }
-    }
-  });
-
-  // Dynamic District -> Taluka cascading for Step 1
-  const cmpDist = document.getElementById('cmp-district');
-  const cmpTal = document.getElementById('cmp-taluka');
-  if (cmpDist && cmpTal) {
-    cmpDist.addEventListener('change', () => {
-      const d = cmpDist.value;
-      cmpTal.innerHTML = '';
-      if (typeof MAHARASHTRA_HIERARCHY !== 'undefined' && MAHARASHTRA_HIERARCHY[d]) {
-        Object.keys(MAHARASHTRA_HIERARCHY[d].talukas).forEach((t, idx) => {
-          const opt = document.createElement('option');
-          opt.value = t;
-          opt.textContent = `${t}`;
-          if (idx === 0) opt.selected = true;
-          cmpTal.appendChild(opt);
-        });
-      } else {
-        const opt = document.createElement('option');
-        opt.value = 'Taluka 1';
-        opt.textContent = 'Taluka 1';
-        cmpTal.appendChild(opt);
-      }
-    });
-  }
+  // Dynamic 3-Level Cascading (District -> Taluka -> Village) & Village-Guarded Survey Query
+  setupStep1RevenueHierarchy();
 
   // Preset Button: Load 4 User Coords
   document.getElementById('btn-load-user-coords')?.addEventListener('click', () => {
