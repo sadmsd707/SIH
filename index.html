@@ -328,17 +328,17 @@
                   <span>📂</span> Download Sample GeoJSON Files (Real Benwadi Cadastre Data)
                 </div>
                 <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
-                  <a href="/sample_benwadi_gat231_verified_resurvey.geojson" download="sample_benwadi_gat231_verified_resurvey.geojson"
+                  <a href="sample_benwadi_gat231_verified_resurvey.geojson" download="sample_benwadi_gat231_verified_resurvey.geojson"
                      style="display: inline-flex; align-items: center; gap: 0.3rem; background: rgba(16,185,129,0.1); border: 1px solid #10B981; color: #10B981; border-radius: 6px; padding: 0.3rem 0.6rem; font-size: 0.68rem; text-decoration: none; font-weight: 700; transition: all 0.2s;"
                      onmouseover="this.style.background='rgba(16,185,129,0.25)'" onmouseout="this.style.background='rgba(16,185,129,0.1)'">
                     ⬇️ Gat 231 Verified
                   </a>
-                  <a href="/sample_benwadi_gat247_review_resurvey.geojson" download="sample_benwadi_gat247_review_resurvey.geojson"
+                  <a href="sample_benwadi_gat247_review_resurvey.geojson" download="sample_benwadi_gat247_review_resurvey.geojson"
                      style="display: inline-flex; align-items: center; gap: 0.3rem; background: rgba(245,158,11,0.1); border: 1px solid #F59E0B; color: #F59E0B; border-radius: 6px; padding: 0.3rem 0.6rem; font-size: 0.68rem; text-decoration: none; font-weight: 700; transition: all 0.2s;"
                      onmouseover="this.style.background='rgba(245,158,11,0.25)'" onmouseout="this.style.background='rgba(245,158,11,0.1)'">
                     ⬇️ Gat 247 Review
                   </a>
-                  <a href="/sample_benwadi_gat229_dispute_resurvey.geojson" download="sample_benwadi_gat229_dispute_resurvey.geojson"
+                  <a href="sample_benwadi_gat229_dispute_resurvey.geojson" download="sample_benwadi_gat229_dispute_resurvey.geojson"
                      style="display: inline-flex; align-items: center; gap: 0.3rem; background: rgba(239,68,68,0.1); border: 1px solid #EF4444; color: #EF4444; border-radius: 6px; padding: 0.3rem 0.6rem; font-size: 0.68rem; text-decoration: none; font-weight: 700; transition: all 0.2s;"
                      onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.1)'">
                     ⬇️ Gat 229 Dispute
@@ -1423,11 +1423,7 @@
   <script src="https://unpkg.com/@turf/turf@6.5.0/turf.min.js"></script>
   <!-- QRCode.js (Local copy first, fallback to CDN) -->
   <script src="qrcode.min.js"></script>
-  <script>
-    if (typeof QRCode === 'undefined') {
-      document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\\/script>');
-    }
-  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <!-- Main Application Script -->
   <script src="app.js"></script>
 </body>

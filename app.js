@@ -5143,12 +5143,19 @@ async function loadAndDisplayBenwadiCadastre(fitBounds = true) {
 
   try {
     if (!benwadiVillageCadastreData) {
-      let res = await fetch('/api/bhunaksha/village/benwadi');
-      if (!res.ok) {
-        res = await fetch('benwadi_village_cadastre.geojson');
-      }
-      if (res.ok) {
-        benwadiVillageCadastreData = await res.json();
+      try {
+        let res = await fetch('benwadi_village_cadastre.geojson');
+        if (!res.ok) {
+          res = await fetch('./benwadi_village_cadastre.geojson');
+        }
+        if (!res.ok && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && !window.location.hostname.endsWith('github.io')) {
+          res = await fetch('/api/bhunaksha/village/benwadi');
+        }
+        if (res && res.ok) {
+          benwadiVillageCadastreData = await res.json();
+        }
+      } catch (e) {
+        console.warn('Could not load benwadi_village_cadastre.geojson:', e);
       }
     }
 
