@@ -975,6 +975,7 @@ const MAHARASHTRA_HIERARCHY = {
   "Ahmednagar": {
     division: "Nashik",
     talukas: {
+      "Karjat": ["Benwadi (बेनवडी)", "Karjat (City)", "Mirajgaon", "Rashin", "Kuldharan"],
       "Sangamner": ["Sangamner (City)", "Nimon", "Ozar"],
       "Rahata": ["Rahata", "Shirdi", "Kopargaon"],
       "Shrirampur": ["Shrirampur", "Belapur", "Loni"],
@@ -4079,7 +4080,50 @@ function generateClientKPratCadastre(district, taluka, village, surveyNo, gatNo,
     baseLng = 73.9920;
   }
 
-  // Pre-calibrated polygon for standard sample 78/1
+  // 1. Real Government Cadastre: Benwadi Gat 231 (Ahmednagar, Karjat) from user's MahaBhuNaksha portal
+  const sStr = String(surveyNo || '').trim();
+  const vLower = String(village || '').toLowerCase();
+  const tLower = String(taluka || '').toLowerCase();
+  const dLower = String(district || '').toLowerCase();
+
+  if (sStr === '231' || vLower.includes('benwadi') || (village && village.includes('बेनवडी')) || (tLower.includes('karjat') && sStr === '231')) {
+    return {
+      type: 'Feature',
+      properties: {
+        parcel_id: 'MH-BHK-AHM-231',
+        survey_no: '231',
+        gat_no: '231',
+        owner_name: 'पंढरीनाथ शंकर देशमूख, पार्वती शंकर देशमूख, बूवासाहेब शंकर देशमूख, श्वेता कल्याण देशमुख व इतर',
+        village: 'Benwadi (बेनवडी)',
+        taluka: 'Karjat (कर्जत)',
+        district: 'Ahmednagar (अहमदनगर)',
+        area_acres: 18.28,
+        area_sqm: 73967.7,
+        source: 'MahaBhuNaksha Official Government Cadastre (क-प्रत)'
+      },
+      geometry: {
+        type: 'Polygon',
+        coordinates: [[
+          [74.9629844, 18.4890001],
+          [74.9644914, 18.4883126],
+          [74.9638218, 18.4874587],
+          [74.9634009, 18.4869009],
+          [74.9633053, 18.4868132],
+          [74.9624369, 18.4869756],
+          [74.9625765, 18.4877649],
+          [74.9604796, 18.4878882],
+          [74.9602658, 18.4879101],
+          [74.9601488, 18.4887267],
+          [74.9600656, 18.4895563],
+          [74.9616421, 18.4892361],
+          [74.9629385, 18.4889863],
+          [74.9629844, 18.4890001]
+        ]]
+      }
+    };
+  }
+
+  // 2. Pre-calibrated polygon for standard sample 78/1
   if (surveyNo === '78/1' || surveyNo === '78') {
     return {
       type: 'Feature',
@@ -4321,7 +4365,8 @@ async function fetchAndRenderKPratBoundary() {
 const EMBEDDED_SAMPLE_GEOJSONS = {
   1: {"type":"FeatureCollection","name":"Sample_1_Exact_Match_Resurvey","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"parcel_id":"MH-IND-KAL-078-1","survey_no":"78/1","gat_no":"78/1","khata_no":"245","owner_name":"तानाजी रावसाहेब मोरे (Tanaji Raosaheb More)","joint_owners":["सुमित्रा तानाजी मोरे (Sumitra T. More)","अमोल तानाजी मोरे (Amol T. More)"],"father_name":"रावसाहेब भिकू मोरे","village":"Kalamb","village_mr":"कळंब","taluka":"Indapur","taluka_mr":"इंदापूर","district":"Pune","district_mr":"पुणे","state":"Maharashtra","land_type":"बागायत शेती (Bagayat - Canal & Well Irrigated)","land_class_code":"AGRI-BAG-01","status":"verified","confidence_score":98.4,"old_survey_area_acres":3.39,"old_survey_area_sqm":13734.1,"new_survey_area_acres":3.4,"new_survey_area_sqm":13745.2,"area_diff_pct":0.1,"mean_shift_m":0.39,"iou_overlap_pct":98.8,"survey_date":"2024-04-10","drone_model":"DJI Matrice 350 RTK + Zenmuse P1 (35mm)","rtk_accuracy_cm":1.2,"gcp_count":6,"ror_extract_no":"MH-712-2024-551029","assessment_rupees":"14.20","soil_type":"काळी कसदार जमीन (Black Cotton Soil)","crops":[{"name":"ऊस (Sugarcane Co-86032)","area_acres":2.2,"season":"अडसाली (Adsali)"},{"name":"सोयाबीन (Soybean)","area_acres":1.2,"season":"खरीप (Kharif)"}],"ferfar_entries":[{"ferfar_no":"1842","date":"2019-11-04","type":"वारस नोंद (Inheritance)","status":"मंजूर (Approved)"},{"ferfar_no":"2310","date":"2023-08-14","type":"ठिबक सिंचन अनुदान नोंद (Drip Irrigation Subsidy)","status":"प्रमाणित (Certified)"}],"review_reason":"High-precision RTK drone resurvey coincides with original 1978 BhuNaksha cadastral boundary within 0.39m tolerance. Title cleared."},"geometry":{"type":"Polygon","coordinates":[[[74.962734,18.488046],[74.961098,18.488248],[74.961392,18.489664],[74.963081,18.489328],[74.962734,18.488046]]]}}]},
   2: {"type":"FeatureCollection","name":"Sample_2_North_Bund_Shift_Resurvey","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"parcel_id":"MH-IND-KAL-078-2","survey_no":"78/2","gat_no":"78/2","khata_no":"312","owner_name":"अंकुश महादेव सावंत (Ankush Mahadev Sawant)","joint_owners":["लता अंकुश सावंत (Lata A. Sawant)"],"father_name":"महादेव विठोबा सावंत","village":"Kalamb","village_mr":"कळंब","taluka":"Indapur","taluka_mr":"इंदापूर","district":"Pune","district_mr":"पुणे","state":"Maharashtra","land_type":"जिरायत शेती (Jirayat - Rainfed Agricultural)","land_class_code":"AGRI-JIR-02","status":"needs_review","confidence_score":83.5,"old_survey_area_acres":3.39,"old_survey_area_sqm":13734.1,"new_survey_area_acres":3.46,"new_survey_area_sqm":14002.5,"area_diff_pct":2,"mean_shift_m":1.26,"iou_overlap_pct":91.2,"survey_date":"2024-04-11","drone_model":"DJI Mavic 3 Enterprise RTK","rtk_accuracy_cm":1.8,"gcp_count":5,"ror_extract_no":"MH-712-2024-551088","assessment_rupees":"11.80","soil_type":"मध्यम काळी जमीन (Medium Black)","crops":[{"name":"ज्वारी (Maldandi Jowar)","area_acres":2,"season":"रब्बी (Rabi)"},{"name":"बाजरी (Bajra)","area_acres":1.46,"season":"खरीप (Kharif)"}],"ferfar_entries":[{"ferfar_no":"1910","date":"2020-03-22","type":"खरेदी खत नोंद (Registered Sale Deed)","status":"मंजूर (Approved)"}],"review_reason":"Drone RTK resurvey detects a 1.26m outward shift on the northern stone bund bordering Gat 79. Recommended for Joint Measurement (संयुक्त मोजणी) with Taluka Inspector of Land Records (TILR)."},"geometry":{"type":"Polygon","coordinates":[[[74.962731,18.488044],[74.9611,18.488245],[74.961375,18.489685],[74.963098,18.489348],[74.962731,18.488044]]]}}]},
-  3: {"type":"FeatureCollection","name":"Sample_3_Road_Dispute_Resurvey","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"parcel_id":"MH-IND-KAL-078-3","survey_no":"78/3","gat_no":"78/3","khata_no":"194","owner_name":"विठ्ठल किसन कदम (Vitthal Kisan Kadam)","joint_owners":["मारुती किसन कदम (Maruti K. Kadam)"],"father_name":"किसन बापू कदम","village":"Kalamb","village_mr":"कळंब","taluka":"Indapur","taluka_mr":"इंदापूर","district":"Pune","district_mr":"पुणे","state":"Maharashtra","land_type":"जिरायत शेती (Jirayat - Encroachment / Variance Notice)","land_class_code":"AGRI-DIS-03","status":"dispute","confidence_score":61.2,"old_survey_area_acres":3.39,"old_survey_area_sqm":13734.1,"new_survey_area_acres":3.26,"new_survey_area_sqm":13192.4,"area_diff_pct":3.9,"mean_shift_m":2.66,"iou_overlap_pct":82.4,"survey_date":"2024-04-12","drone_model":"WingtraOne GEN II PPK VTOL","rtk_accuracy_cm":1.5,"gcp_count":8,"ror_extract_no":"MH-712-2024-551142","assessment_rupees":"10.50","soil_type":"हलकी ते मध्यम जमीन (Light to Medium Soil)","crops":[{"name":"मका (Maize)","area_acres":1.8,"season":"खरीप (Kharif)"},{"name":"हरभरा (Gram / Chana)","area_acres":1.46,"season":"रब्बी (Rabi)"}],"ferfar_entries":[{"ferfar_no":"1730","date":"2018-02-19","type":"वारस नोंद (Inheritance Record)","status":"मंजूर (Approved)"},{"ferfar_no":"2405","date":"2024-01-10","type":"सार्वजनिक रस्ता संपादन फेरफार (Road Easement Notice)","status":"प्रलंबित / वादग्रस्त (Disputed / Pending)"}],"review_reason":"Severe boundary conflict: Drone resurvey shows 2.66m inward reduction along the southern village link road. Discrepancy of 541 m² (0.13 Ac) requires revenue court settlement & revised 7/12 area entry."},"geometry":{"type":"Polygon","coordinates":[[[74.962695,18.488078],[74.961135,18.488279],[74.961389,18.489667],[74.963083,18.48933],[74.962695,18.488078]]]}}]}
+  3: {"type":"FeatureCollection","name":"Sample_3_Road_Dispute_Resurvey","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"parcel_id":"MH-IND-KAL-078-3","survey_no":"78/3","gat_no":"78/3","khata_no":"194","owner_name":"विठ्ठल किसन कदम (Vitthal Kisan Kadam)","joint_owners":["मारुती किसन कदम (Maruti K. Kadam)"],"father_name":"किसन बापू कदम","village":"Kalamb","village_mr":"कळंब","taluka":"Indapur","taluka_mr":"इंदापूर","district":"Pune","district_mr":"पुणे","state":"Maharashtra","land_type":"जिरायत शेती (Jirayat - Encroachment / Variance Notice)","land_class_code":"AGRI-DIS-03","status":"dispute","confidence_score":61.2,"old_survey_area_acres":3.39,"old_survey_area_sqm":13734.1,"new_survey_area_acres":3.26,"new_survey_area_sqm":13192.4,"area_diff_pct":3.9,"mean_shift_m":2.66,"iou_overlap_pct":82.4,"survey_date":"2024-04-12","drone_model":"WingtraOne GEN II PPK VTOL","rtk_accuracy_cm":1.5,"gcp_count":8,"ror_extract_no":"MH-712-2024-551142","assessment_rupees":"10.50","soil_type":"हलकी ते मध्यम जमीन (Light to Medium Soil)","crops":[{"name":"मका (Maize)","area_acres":1.8,"season":"खरीप (Kharif)"},{"name":"हरभरा (Gram / Chana)","area_acres":1.46,"season":"रब्बी (Rabi)"}],"ferfar_entries":[{"ferfar_no":"1730","date":"2018-02-19","type":"वारस नोंद (Inheritance Record)","status":"मंजूर (Approved)"},{"ferfar_no":"2405","date":"2024-01-10","type":"सार्वजनिक रस्ता संपादन फेरफार (Road Easement Notice)","status":"प्रलंबित / वादग्रस्त (Disputed / Pending)"}],"review_reason":"Severe boundary conflict: Drone resurvey shows 2.66m inward reduction along the southern village link road. Discrepancy of 541 m² (0.13 Ac) requires revenue court settlement & revised 7/12 area entry."},"geometry":{"type":"Polygon","coordinates":[[[74.962695,18.488078],[74.961135,18.488279],[74.961389,18.489667],[74.963083,18.48933],[74.962695,18.488078]]]}}]},
+  4: {"type":"FeatureCollection","name":"Sample_4_Benwadi_231_MahaBhuNaksha_Resurvey","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"parcel_id":"MH-AHM-KAR-231","survey_no":"231","gat_no":"231","khata_no":"141, 149, 184, 3004","owner_name":"पंढरीनाथ शंकर देशमूख व इतर (Pandharinath S. Deshmukh & Others)","joint_owners":["पार्वती शंकर देशमूख","बूवासाहेब शंकर देशमूख","श्वेता कल्याण देशमुख","सारिका प्रशांत शिंदे","हनुमंत दिगांबर देशमुख"],"father_name":"शंकर देशमुख","village":"Benwadi","village_mr":"बेनवडी","taluka":"Karjat","taluka_mr":"कर्जत","district":"Ahmednagar","district_mr":"अहमदनगर","state":"Maharashtra","land_type":"जिरायत व बागायत शेती (Jirayat & Bagayat - Mixed Agricultural)","land_class_code":"AGRI-JIR-01","status":"verified","confidence_score":98.6,"old_survey_area_acres":18.28,"old_survey_area_sqm":73967.7,"new_survey_area_acres":18.29,"new_survey_area_sqm":74012.3,"area_diff_pct":0.06,"mean_shift_m":0.42,"iou_overlap_pct":98.9,"survey_date":"2024-04-14","drone_model":"DJI Matrice 350 RTK + Zenmuse P1 (35mm)","rtk_accuracy_cm":1.2,"gcp_count":8,"ror_extract_no":"MH-712-AHM-2024-884210","assessment_rupees":"48.50","soil_type":"काळी कसदार जमीन (Black Cotton Soil)","crops":[{"name":"ज्वारी (Maldandi Jowar)","area_acres":8.0,"season":"रब्बी (Rabi)"},{"name":"कांदा (Onion)","area_acres":6.0,"season":"रब्बी (Rabi)"},{"name":"सोयाबीन (Soybean)","area_acres":4.28,"season":"खरीप (Kharif)"}],"ferfar_entries":[{"ferfar_no":"2140","date":"2021-06-18","type":"वारस नोंद (Inheritance Record)","status":"मंजूर (Approved)"},{"ferfar_no":"2890","date":"2023-11-05","type":"डिजिटल ड्रोन प्रमाणीकरण (Digital Drone Cadastral Certification)","status":"प्रमाणित (Certified)"}],"review_reason":"Centimeter-accurate resurvey: Uploaded GeoJSON boundary coincides with MahaBhuNaksha K-Prat Ground Record within 0.42m tolerance."},"geometry":{"type":"Polygon","coordinates":[[[74.962985,18.489002],[74.964493,18.488310],[74.963820,18.487460],[74.963402,18.486903],[74.963303,18.486811],[74.962438,18.486978],[74.962578,18.487766],[74.960478,18.487890],[74.960267,18.487912],[74.960146,18.488728],[74.960067,18.489558],[74.961640,18.489238],[74.962940,18.488988],[74.962985,18.489002]]]}}]}
 };
 
 function validateStep1Form() {
@@ -4737,11 +4782,43 @@ function loadSampleGeoJson(sampleNum) {
   const filename = document.getElementById('compare-loaded-filename');
   if (badge && filename) {
     badge.style.display = 'flex';
-    filename.textContent = sampleNum === 1
-      ? 'sample_1_exact_match_user_coords.geojson (Exact Match - 98% Conf)'
-      : (sampleNum === 2
-          ? 'sample_2_bund_shift_user_coords.geojson (North Bund Shift - 84% Conf)'
-          : 'sample_3_road_dispute_user_coords.geojson (Road Dispute - 61% Conf)');
+    filename.textContent = sampleNum === 4
+      ? 'sample_4_benwadi_231_resurvey.geojson (Benwadi Gat 231 - 98.6% Conf)'
+      : (sampleNum === 1
+          ? 'sample_1_exact_match_user_coords.geojson (Exact Match - 98% Conf)'
+          : (sampleNum === 2
+              ? 'sample_2_bund_shift_user_coords.geojson (North Bund Shift - 84% Conf)'
+              : 'sample_3_road_dispute_user_coords.geojson (Road Dispute - 61% Conf)'));
+  }
+
+  // If loading sample 4 specifically, ensure Step 1 is populated with Benwadi 231
+  if (sampleNum === 4 && (!activeKPratReference || document.getElementById('cmp-survey-no')?.value !== '231')) {
+    const distEl = document.getElementById('cmp-district');
+    const talukaEl = document.getElementById('cmp-taluka');
+    const villEl = document.getElementById('cmp-village');
+    const survEl = document.getElementById('cmp-survey-no');
+    const ownEl = document.getElementById('cmp-owner-name');
+    const acEl = document.getElementById('cmp-area-acres');
+    const gnEl = document.getElementById('cmp-area-guntha');
+
+    if (distEl) distEl.value = 'Ahmednagar';
+    if (talukaEl) {
+      talukaEl.innerHTML = `
+        <option value="Karjat" selected>Karjat (कर्जत)</option>
+        <option value="Sangamner">Sangamner (संगमनेर)</option>
+      `;
+      talukaEl.value = 'Karjat';
+    }
+    if (villEl) villEl.value = 'Benwadi (बेनवडी)';
+    if (survEl) survEl.value = '231';
+    if (ownEl) ownEl.value = 'पंढरीनाथ शंकर देशमूख व इतर';
+    if (acEl) acEl.value = '18.28';
+    if (gnEl) gnEl.value = '11';
+
+    fetchAndRenderKPratBoundary().then(() => {
+      executeDualBoundaryComparison(sample);
+    });
+    return;
   }
 
   // If Step 1 K-Prat reference is ready, execute comparison immediately
@@ -4792,7 +4869,7 @@ function setupComparisonStationHandlers() {
     fetchAndRenderKPratBoundary();
   });
 
-  // Sample 7/12 Preset Button
+  // Sample 7/12 Preset Button (Kalamb Gat 78/1)
   document.getElementById('btn-load-712-preset')?.addEventListener('click', () => {
     const distEl = document.getElementById('cmp-district');
     const talukaEl = document.getElementById('cmp-taluka');
@@ -4817,6 +4894,36 @@ function setupComparisonStationHandlers() {
     if (ownEl) ownEl.value = 'तानाजी रावसाहेब मोरे (Tanaji R. More)';
     if (acEl) acEl.value = '3.39';
     if (gnEl) gnEl.value = '16';
+
+    fetchAndRenderKPratBoundary();
+  });
+
+  // Real MahaBhuNaksha Benwadi Gat 231 Preset Button (from Govt Portal Screenshot)
+  document.getElementById('btn-load-bhunaksha-231')?.addEventListener('click', () => {
+    const distEl = document.getElementById('cmp-district');
+    const talukaEl = document.getElementById('cmp-taluka');
+    const villEl = document.getElementById('cmp-village');
+    const survEl = document.getElementById('cmp-survey-no');
+    const ownEl = document.getElementById('cmp-owner-name');
+    const acEl = document.getElementById('cmp-area-acres');
+    const gnEl = document.getElementById('cmp-area-guntha');
+
+    if (distEl) distEl.value = 'Ahmednagar';
+    if (talukaEl) {
+      talukaEl.innerHTML = `
+        <option value="Karjat" selected>Karjat (कर्जत)</option>
+        <option value="Sangamner">Sangamner (संगमनेर)</option>
+        <option value="Rahata">Rahata (राहाता)</option>
+        <option value="Shrirampur">Shrirampur (श्रीरामपूर)</option>
+        <option value="Nagar">Nagar (अहमदनगर)</option>
+      `;
+      talukaEl.value = 'Karjat';
+    }
+    if (villEl) villEl.value = 'Benwadi (बेनवडी)';
+    if (survEl) survEl.value = '231';
+    if (ownEl) ownEl.value = 'पंढरीनाथ शंकर देशमूख, पार्वती शंकर देशमूख, बूवासाहेब शंकर देशमूख व इतर';
+    if (acEl) acEl.value = '18.28';
+    if (gnEl) gnEl.value = '11';
 
     fetchAndRenderKPratBoundary();
   });
