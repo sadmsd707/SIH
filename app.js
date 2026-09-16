@@ -1756,7 +1756,7 @@ function renderCadastralPolygons() {
     geojsonLayerGroup.addLayer(polygonLayer);
   });
 
-  if (filteredFeatures.length > 0 && mapInstance) {
+  if (featuresToRender.length > 0 && mapInstance) {
     try {
       mapInstance.fitBounds(geojsonLayerGroup.getBounds(), { padding: [40, 40] });
     } catch (e) {}
