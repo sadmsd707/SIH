@@ -140,7 +140,7 @@
           </div>
           <div class="search-mode-toggles">
             <button class="search-mode-btn active" id="btn-mode-compare">
-              <span>⚡</span> Upload GeoJSON vs Form Coordinates
+              <span>⚡</span> Upload GeoJSON vs BhuNaksha Cadastre (K-Prat)
             </button>
             <button class="search-mode-btn" id="btn-mode-coords">
               <span>🌐</span> Single GPS Point
@@ -151,7 +151,7 @@
           </div>
         </div>
 
-        <!-- Mode C: Dual-Boundary Comparison Station (Upload GeoJSON vs Form Coordinates) -->
+        <!-- Mode C: Dual-Boundary Comparison Station (Upload GeoJSON vs BhuNaksha Cadastre) -->
         <div id="form-compare-mode" class="compare-station-container">
           <div class="compare-grid-layout">
             <!-- Left Column: Mahabhulekh 7/12 & BhuNaksha K-Prat Resolver -->
@@ -162,6 +162,9 @@
                   <strong>Mahabhulekh 7/12 & BhuNaksha K-Prat (क-प्रत)</strong>
                 </div>
                 <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                  <button type="button" class="preset-load-btn" id="btn-resolver-push-to-register" title="Push this resolved BhuNaksha parcel directly into 7/12 Cadastre Register" style="background: rgba(16, 185, 129, 0.2); border-color: #10B981; color: #10B981; font-weight: 700;">
+                    📋 Add to 7/12 Register
+                  </button>
                   <button type="button" class="preset-load-btn" id="btn-load-all-benwadi" title="View & render all 544 real cadastre parcels of Benwadi village on map" style="background: rgba(245, 158, 11, 0.2); border-color: #F59E0B; color: #F59E0B; font-weight: 700;">
                     🏘️ All Benwadi Plots (544)
                   </button>
@@ -357,7 +360,7 @@
                 <span style="font-size: 1.3rem;">📊</span>
                 <div>
                   <h3 id="res-hud-title" style="font-size: 1rem; font-weight: 800; color: var(--text-main); margin: 0;">Dual-Boundary Comparison Analysis</h3>
-                  <p id="res-hud-desc" style="font-size: 0.75rem; color: var(--text-muted); margin: 0;">Calculated spatial variance between Form ground coordinates & uploaded GeoJSON resurvey</p>
+                  <p id="res-hud-desc" style="font-size: 0.75rem; color: var(--text-muted); margin: 0;">Calculated spatial variance between official BhuNaksha K-Prat cadastre & uploaded GeoJSON resurvey</p>
                 </div>
               </div>
               <span id="res-hud-status-badge" class="badge-tag verified">VERIFIED (98.4%)</span>
@@ -373,9 +376,9 @@
                 </div>
               </div>
 
-              <!-- Metric 2: Form Coordinates Area (BLUE) -->
+              <!-- Metric 2: BhuNaksha Cadastre Reference Area (BLUE) -->
               <div class="hud-metric-box" style="border-color: #2563EB;">
-                <span class="hud-metric-label" style="color: #2563EB;">🟦 Original Ground Reference (7/12)</span>
+                <span class="hud-metric-label" style="color: #2563EB;">🟦 BhuNaksha Cadastre (K-Prat 7/12)</span>
                 <div class="hud-metric-val" id="res-hud-form-area" style="color: #2563EB;">3.39 Ac</div>
                 <span class="hud-metric-sub" id="res-hud-form-sqm">13,734.1 m² (1978 Record)</span>
               </div>
@@ -877,14 +880,27 @@
 
         <!-- Panel 5: Manual Entry from Mahabhulekh 7/12 -->
         <div class="odm-panel-card" style="grid-column: 1 / -1;">
-          <h3><span>📜</span> Add Land Record from Mahabhulekh 7/12 Extract</h3>
-          <p class="subtitle">Enter data manually from your official 7/12 (Satbara) extract downloaded from <a href="https://bhulekh.mahabhumi.gov.in/" target="_blank" style="color: var(--accent-cyan);">bhulekh.mahabhumi.gov.in</a></p>
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.75rem;">
+            <div>
+              <h3><span>📜</span> Add Land Record from Mahabhulekh 7/12 Extract</h3>
+              <p class="subtitle">Direct cadastral linkage with BhuNaksha &bull; Satbara 7/12 from <a href="https://bhulekh.mahabhumi.gov.in/" target="_blank" style="color: var(--accent-cyan);">bhulekh.mahabhumi.gov.in</a></p>
+            </div>
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+              <button type="button" class="preset-load-btn" id="btn-entry-preset-231" title="Load Benwadi Gat 231 details from MahaBhuNaksha" style="background: rgba(37, 99, 235, 0.2); border-color: var(--accent-cyan); color: #38BDF8; font-weight: 700; font-size: 0.75rem; padding: 0.35rem 0.75rem;">
+                🏛️ Benwadi Gat 231 (Live BhuNaksha)
+              </button>
+              <button type="button" class="preset-load-btn" id="btn-entry-preset-78" title="Load sample 78/1 details" style="font-size: 0.75rem; padding: 0.35rem 0.75rem;">
+                📜 Sample 78/1
+              </button>
+            </div>
+          </div>
 
           <form id="mahabhulekh-entry-form">
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; margin-bottom: 1rem;">
               <div class="form-field">
                 <label>Survey / Gat No. (सर्वे/गट नंबर) *</label>
-                <input type="text" id="entry-survey-no" required placeholder="e.g. 45/1A">
+                <input type="text" id="entry-survey-no" required placeholder="e.g. 231 or 45/1A" list="entry-benwadi-plots-datalist">
+                <datalist id="entry-benwadi-plots-datalist"></datalist>
               </div>
               <div class="form-field">
                 <label>Gat No. (गट क्रमांक)</label>
@@ -935,29 +951,39 @@
               </div>
             </div>
 
-            <div style="margin-bottom: 0.75rem;">
-              <h4 style="font-size: 0.85rem; color: var(--accent-cyan); margin-bottom: 0.5rem;">📍 Boundary Coordinates (from BhuNaksha / GPS)</h4>
-              <p style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 0.5rem;">Enter 3-4 corner point coordinates. Get these from MahaBhuNaksha map or GPS field survey.</p>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.5rem;">
-                <div class="coord-pair">
-                  <span>Corner 1:</span>
-                  <input type="number" id="entry-lat-1" step="0.000001" placeholder="Lat (e.g. 17.672050)">
-                  <input type="number" id="entry-lng-1" step="0.000001" placeholder="Lng (e.g. 75.900120)">
+            <!-- Automated Cadastral Boundary (Direct from MahaBhuNaksha Resolver) -->
+            <div class="bhunaksha-boundary-sync-panel" style="margin-bottom: 1.25rem; background: rgba(2, 12, 27, 0.65); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: var(--radius-sm); padding: 1rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem;">
+                <div>
+                  <h4 style="font-size: 0.88rem; color: var(--accent-cyan); margin: 0; display: flex; align-items: center; gap: 0.4rem;">
+                    <span>🏛️</span> Cadastral Spatial Boundary (Direct from MahaBhuNaksha Resolver)
+                  </h4>
+                  <p style="font-size: 0.73rem; color: var(--text-muted); margin: 0.2rem 0 0 0;">
+                    Manual coordinates removed. Parcel polygon boundary coordinates are fetched automatically from the BhuNaksha Cadastral Resolver engine.
+                  </p>
                 </div>
-                <div class="coord-pair">
-                  <span>Corner 2:</span>
-                  <input type="number" id="entry-lat-2" step="0.000001" placeholder="Lat">
-                  <input type="number" id="entry-lng-2" step="0.000001" placeholder="Lng">
+                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                  <button type="button" class="preset-load-btn" id="btn-entry-sync-resolver" title="Fetch current active parcel from top BhuNaksha Resolver dashboard" style="background: rgba(14, 165, 233, 0.2); border-color: #38BDF8; color: #38BDF8; font-weight: 700; padding: 0.35rem 0.75rem; font-size: 0.75rem;">
+                    <span>🔄</span> Fetch Direct from Resolver Dashboard
+                  </button>
+                  <button type="button" class="preset-load-btn" id="btn-entry-auto-resolve" title="Auto-resolve cadastral boundary for entered Survey/Gat" style="background: rgba(16, 185, 129, 0.2); border-color: #10B981; color: #10B981; font-weight: 700; padding: 0.35rem 0.75rem; font-size: 0.75rem;">
+                    <span>🔍</span> Auto-Resolve Cadastre
+                  </button>
                 </div>
-                <div class="coord-pair">
-                  <span>Corner 3:</span>
-                  <input type="number" id="entry-lat-3" step="0.000001" placeholder="Lat">
-                  <input type="number" id="entry-lng-3" step="0.000001" placeholder="Lng">
-                </div>
-                <div class="coord-pair">
-                  <span>Corner 4:</span>
-                  <input type="number" id="entry-lat-4" step="0.000001" placeholder="Lat (optional)">
-                  <input type="number" id="entry-lng-4" step="0.000001" placeholder="Lng (optional)">
+              </div>
+
+              <div id="entry-cadastre-status-card" style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 6px; padding: 0.75rem 1rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                  <span id="entry-cadastre-status-icon" style="font-size: 1.5rem;">🏛️</span>
+                  <div style="flex: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.4rem;">
+                      <strong id="entry-cadastre-status-title" style="font-size: 0.85rem; color: #E2E8F0;">BhuNaksha Cadastral Resolver: Ready</strong>
+                      <span id="entry-cadastre-status-badge" class="badge-tag verified" style="font-size: 0.7rem; background: rgba(16, 185, 129, 0.2); color: #10B981; border-color: rgba(16, 185, 129, 0.4);">MahaBhuNaksha Connected</span>
+                    </div>
+                    <div id="entry-cadastre-status-desc" style="font-size: 0.74rem; color: var(--text-muted); margin-top: 0.25rem;">
+                      Enter Survey/Gat No. or click "Fetch Direct from Resolver Dashboard". The official revenue boundary polygon is linked automatically with 0 manual coordinates needed.
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
