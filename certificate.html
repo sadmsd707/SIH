@@ -483,9 +483,9 @@
         const oldSqm = parseFloat(p.old_survey_area_sqm || p.area_sqm || (oldAcres * 4046.86)) || 20032.0;
         
         // 2-3% calibrated discrepancy
-        const diffPct = p.area_diff_pct !== undefined ? p.area_diff_pct : 2.5;
-        const newAcres = parseFloat(p.new_survey_area_acres || (oldAcres * (1 + diffPct / 100)).toFixed(2)) || (oldAcres * (1 + diffPct / 100));
-        const newSqm = parseFloat(p.new_survey_area_sqm || (oldSqm * (1 + diffPct / 100)).toFixed(1)) || (oldSqm * (1 + diffPct / 100));
+        const diffPct = p.area_diff_pct !== undefined ? parseFloat(p.area_diff_pct) : 2.5;
+        const newAcres = parseFloat(p.new_survey_area_acres) || parseFloat((oldAcres * (1 + diffPct / 100)).toFixed(2));
+        const newSqm = parseFloat(p.new_survey_area_sqm) || parseFloat((oldSqm * (1 + diffPct / 100)).toFixed(1));
         const deltaAcres = Math.abs(newAcres - oldAcres).toFixed(2);
         const deltaSqm = Math.abs(newSqm - oldSqm).toFixed(1);
         const shiftM = p.mean_shift_m || 1.37;
@@ -497,7 +497,7 @@
         document.getElementById('comp-new-sqm').textContent = `${newSqm.toFixed(1)} m²`;
 
         // Confidence Score & Variance
-        const score = p.confidence_score || 94.4;
+        const score = p.confidence_score !== undefined ? parseFloat(p.confidence_score) : 85.0;
         const diffValEl = document.getElementById('comp-diff-val');
         if (diffValEl) {
           diffValEl.textContent = `${score}%`;
@@ -683,8 +683,8 @@
 
         // Update metrics on legend
         const oldAcres = parseFloat(p.old_survey_area_acres || p.area_acres || '4.95') || 4.95;
-        const newAcres = parseFloat(p.new_survey_area_acres || '5.08') || 5.08;
-        const diffPct = p.area_diff_pct !== undefined ? p.area_diff_pct : 2.5;
+        const diffPct = p.area_diff_pct !== undefined ? parseFloat(p.area_diff_pct) : 2.5;
+        const newAcres = parseFloat(p.new_survey_area_acres) || parseFloat((oldAcres * (1 + diffPct / 100)).toFixed(2));
         const shiftM = p.mean_shift_m || 1.37;
 
         const elOldLeg = document.getElementById('legend-old-area');

@@ -2884,7 +2884,7 @@ function openParcelModal(feature) {
   if (newAcEl) newAcEl.textContent = `${newAcres.toFixed(2)} Ac`;
   if (newSqmEl) newSqmEl.textContent = `${(newAcres * 4046.86).toFixed(1)} m²`;
 
-  const score = p.confidence_score || 98.6;
+  const score = p.confidence_score !== undefined ? parseFloat(p.confidence_score) : 85.0;
   const diffEl = document.getElementById('comp-diff-val');
   if (diffEl) {
     diffEl.textContent = `${score}%`;
@@ -2907,7 +2907,7 @@ function openParcelModal(feature) {
   const confGcpEl = document.getElementById('modal-conf-gcp');
   const confIouEl = document.getElementById('modal-conf-iou');
 
-  if (confTextEl) confTextEl.textContent = `${p.confidence_score || 98.6}%`;
+  if (confTextEl) confTextEl.textContent = `${score}%`;
   if (confRtkEl) confRtkEl.textContent = p.rtk_accuracy_cm ? `±${p.rtk_accuracy_cm} cm` : '±1.8 cm';
   if (confGcpEl) confGcpEl.textContent = `${p.gcp_count || 8} Fixed Targets`;
   if (confIouEl) confIouEl.textContent = p.iou_overlap_pct ? `${p.iou_overlap_pct}%` : '98.8%';
@@ -3367,9 +3367,8 @@ function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
   const village = p.village || 'Benwadi (बेनवडी)';
   const taluka = p.taluka || 'Karjat (कर्जत)';
   const dist = p.district || 'Ahmednagar (अहमदनगर)';
-  const landType = p.land_type || 'जिरायत शेती (Jirayat)';
-  const status = p.status || 'verified';
-  const score = p.confidence_score !== undefined ? p.confidence_score : '98.8';
+  const status = p.status || 'needs_review';
+  const score = p.confidence_score !== undefined ? p.confidence_score : '85.0';
   const oldArea = parseFloat(p.old_survey_area_acres !== undefined ? p.old_survey_area_acres : (p.area_acres || '0')) || 0;
   const oldSqm = Math.round(p.old_survey_area_sqm || (p.area_sqm || (oldArea * 4046.86)));
   const khata = p.khata_no || '—';
@@ -3384,7 +3383,7 @@ function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
 
   // 2. Official Digital Land Pass Text Payload — Plain-text verifiable record (compact)
   const shortOwner = owner ? owner.slice(0, 50) : 'नोंदणीकृत खातेदार';
-  const landPassPayload = `MAHARASHTRA 7/12 RECORD\nGat: ${gat} | Taluka: Karjat, Dist: Ahmednagar\nOwner: ${shortOwner}\nArea: ${oldArea} Ac (${oldSqm.toLocaleString()} m²)\nGPS: ${Number(cLat).toFixed(6)}, ${Number(cLng).toFixed(6)}\nVerify: https://sadmsd707.github.io/SIH/?gat=${encodeURIComponent(gat)}`;
+  const landPassPayload = `MAHARASHTRA 7/12 RECORD\nGat: ${gat} | Taluka: Karjat, Dist: Ahmednagar\nOwner: ${shortOwner}\nArea: ${oldArea} Ac (${oldSqm.toLocaleString()} m²)\nGPS: ${Number(cLat).toFixed(6)}, ${Number(cLng).toFixed(6)}\nVerify: ${baseOrigin}certificate.html?gat=${encodeURIComponent(gat)}`;
 
   // 3. Google Maps GPS Link
   const gpsPayload = `https://www.google.com/maps?q=${Number(cLat).toFixed(6)},${Number(cLng).toFixed(6)}&t=k`;
@@ -5309,41 +5308,6 @@ async function fetchAndRenderKPratBoundary() {
     }
   }
 
-  // Update Parcel Inspector immediately with the resolved K-Prat Cadastre
-  const kpratInspectorParcel = {
-    type: 'Feature',
-    properties: {
-      ...p,
-      parcel_id: p.parcel_id || `MH-BHK-${surveyNo}`,
-      survey_no: p.survey_no || surveyNo,
-      gat_no: p.gat_no || gatNo,
-      owner_name: p.owner_name || ownerName,
-      village: p.village || village,
-      taluka: p.taluka || taluka,
-      district: p.district || district,
-      status: p.status || 'verified',
-      confidence_score: parseFloat(p.confidence_score) || 98.8,
-      old_survey_area_acres: resolvedAcres,
-      old_survey_area_sqm: resolvedSqm,
-      new_survey_area_acres: resolvedAcres,
-      new_survey_area_sqm: resolvedSqm,
-      area_diff_pct: 0,
-      mean_shift_m: 0.35,
-      iou_overlap_pct: 99.2,
-      land_type: p.land_type || 'जिरायत व बागायत शेती (Jirayat/Bagayat)',
-      rtk_accuracy_cm: 1.2,
-      gcp_count: 8
-    },
-    geometry: kpratFeature.geometry
-  };
-  selectParcelForInspector(kpratInspectorParcel);
-  zoomToFeature(kpratFeature);
-
-  if (btn) {
-    btn.disabled = false;
-    btn.innerHTML = `<span>🏛️</span> Fetch & Render BhuNaksha K-Prat (क-प्रत) on Map`;
-  }
-
   // Auto-generate Step 2 drone resurvey with 2-3% realistic field bund discrepancy
   const droneResurvey = generateDroneResurveyFeature(kpratFeature);
   uploadedGeoJsonData = {
@@ -5356,6 +5320,46 @@ async function fetchAndRenderKPratBoundary() {
     badge.style.display = 'flex';
     filename.textContent = `gat_${p.survey_no || surveyNo}_drone_resurvey.geojson (Drone RTK · ${droneResurvey.properties.area_diff_pct}% Delta)`;
   }
+
+  // Update Parcel Inspector immediately with the resolved K-Prat & Resurvey Cadastre
+  const dp = droneResurvey.properties || {};
+  const kpratInspectorParcel = {
+    type: 'Feature',
+    properties: {
+      ...p,
+      ...dp,
+      parcel_id: p.parcel_id || dp.parcel_id || `MH-BHK-${surveyNo}`,
+      survey_no: p.survey_no || surveyNo,
+      gat_no: p.gat_no || gatNo,
+      owner_name: p.owner_name || ownerName,
+      village: p.village || village,
+      taluka: p.taluka || taluka,
+      district: p.district || district,
+      status: dp.status || p.status || 'needs_review',
+      confidence_score: dp.confidence_score !== undefined ? dp.confidence_score : 85.0,
+      old_survey_area_acres: dp.old_survey_area_acres || resolvedAcres,
+      old_survey_area_sqm: dp.old_survey_area_sqm || resolvedSqm,
+      new_survey_area_acres: dp.new_survey_area_acres,
+      new_survey_area_sqm: dp.new_survey_area_sqm,
+      area_diff_pct: dp.area_diff_pct,
+      mean_shift_m: dp.mean_shift_m,
+      iou_overlap_pct: dp.iou_overlap_pct,
+      land_type: p.land_type || 'जिरायत व बागायत शेती (Jirayat/Bagayat)',
+      rtk_accuracy_cm: dp.rtk_accuracy_cm || 1.4,
+      gcp_count: dp.gcp_count || 6,
+      review_reason: dp.review_reason
+    },
+    geometry: droneResurvey.geometry,
+    bhunaksha_geometry: kpratFeature.geometry
+  };
+  selectParcelForInspector(kpratInspectorParcel);
+  zoomToFeature(kpratFeature);
+
+  if (btn) {
+    btn.disabled = false;
+    btn.innerHTML = `<span>🏛️</span> Fetch & Render BhuNaksha K-Prat (क-प्रत) on Map`;
+  }
+
   executeDualBoundaryComparison(uploadedGeoJsonData);
 }
 
@@ -5611,7 +5615,21 @@ function selectBenwadiCadastreParcel(feat) {
   if (villEl) villEl.value = 'Benwadi (बेनवडी)';
   if (survEl) survEl.value = p.survey_no || '';
   if (ownEl) ownEl.value = p.owner_name || 'नोंदणीकृत खातेदार';
-  if (acEl) acEl.value = p.area_acres || '';
+  const oldAcres = parseFloat(p.old_survey_area_acres || p.area_acres || 0);
+  const gatNum = parseInt(p.gat_no || p.survey_no || '100', 10) || 100;
+  const h = ((gatNum * 19) + 7) % 100;
+  const defaultDiffPct = parseFloat((2.1 + ((h % 10) / 10.0)).toFixed(1));
+  const diffPct = p.area_diff_pct !== undefined ? parseFloat(p.area_diff_pct) : defaultDiffPct;
+  const oldSqm = parseFloat(p.old_survey_area_sqm || p.area_sqm || (oldAcres * 4046.86));
+  const newAcres = parseFloat(p.new_survey_area_acres || (oldAcres * (1 + diffPct / 100)).toFixed(2));
+  const newSqm = parseFloat(p.new_survey_area_sqm || (oldSqm * (1 + diffPct / 100)).toFixed(1));
+  const defaultScore = parseFloat((88.0 - (diffPct * 1.2)).toFixed(1));
+  const score = p.confidence_score !== undefined ? parseFloat(p.confidence_score) : defaultScore;
+  const status = p.status || (diffPct > 10 ? 'dispute' : (diffPct > 2 ? 'needs_review' : 'verified'));
+  const shiftM = p.mean_shift_m !== undefined ? parseFloat(p.mean_shift_m) : parseFloat((1.4 + ((h % 8) / 10.0)).toFixed(2));
+  const iou = p.iou_overlap_pct !== undefined ? parseFloat(p.iou_overlap_pct) : parseFloat((96.0 - diffPct).toFixed(1));
+
+  if (acEl) acEl.value = oldAcres || p.area_acres || '';
   if (gnEl) gnEl.value = p.area_guntha || 0;
 
   // 2. Set as active K-Prat reference
@@ -5631,8 +5649,8 @@ function selectBenwadiCadastreParcel(feat) {
     if (statusIcon) statusIcon.textContent = '✅';
     if (statusTitle) statusTitle.textContent = `BhuNaksha Plot Selected: Gat ${p.survey_no}, Benwadi`;
     if (statusDesc) {
-      const areaSqm = Math.round(p.area_sqm || (p.area_acres * 4046.86));
-      statusDesc.innerHTML = `<span style="color:var(--accent-cyan); font-weight:700;">🟦 Cadastral Boundary Active</span> &bull; ${p.area_acres} Acres (${areaSqm.toLocaleString()} m²) &bull; ${p.owner_name || 'बेनवडी'}`;
+      const areaSqm = Math.round(oldSqm);
+      statusDesc.innerHTML = `<span style="color:var(--accent-cyan); font-weight:700;">🟦 Cadastral Boundary Active</span> &bull; ${oldAcres} Acres (${areaSqm.toLocaleString()} m²) &bull; ${p.owner_name || 'बेनवडी'}`;
     }
   }
 
@@ -5641,33 +5659,35 @@ function selectBenwadiCadastreParcel(feat) {
     type: 'Feature',
     properties: {
       ...p,
-      parcel_id: p.parcel_id || `MH-AHM-KAR-BEN-${p.survey_no}`,
-      survey_no: p.survey_no,
-      gat_no: p.gat_no || p.survey_no,
+      parcel_id: p.parcel_id || `MH-AHM-KAR-BEN-${p.survey_no || gatNum}`,
+      survey_no: p.survey_no || String(gatNum),
+      gat_no: p.gat_no || p.survey_no || String(gatNum),
       owner_name: p.owner_name || 'नोंदणीकृत खातेदार',
       village: 'Benwadi (बेनवडी)',
       taluka: 'Karjat (कर्जत)',
       district: 'Ahmednagar (अहमदनगर)',
-      status: 'verified',
-      confidence_score: 98.8,
-      old_survey_area_acres: p.area_acres,
-      old_survey_area_sqm: p.area_sqm,
-      new_survey_area_acres: p.area_acres,
-      new_survey_area_sqm: p.area_sqm,
-      area_diff_pct: 0,
-      mean_shift_m: 0.35,
-      iou_overlap_pct: 99.2,
+      status: status,
+      confidence_score: score,
+      old_survey_area_acres: oldAcres,
+      old_survey_area_sqm: oldSqm,
+      new_survey_area_acres: newAcres,
+      new_survey_area_sqm: newSqm,
+      area_diff_pct: diffPct,
+      mean_shift_m: shiftM,
+      iou_overlap_pct: iou,
       land_type: p.land_type || 'जिरायत शेती (Jirayat)',
-      rtk_accuracy_cm: 1.2,
-      gcp_count: 8
+      rtk_accuracy_cm: p.rtk_accuracy_cm || 1.4,
+      gcp_count: p.gcp_count || 6,
+      review_reason: p.review_reason || `Drone RTK photogrammetry detects a ${diffPct}% area discrepancy (${Math.round(newSqm - oldSqm)} m²) with a mean bund shift of ${shiftM}m along the farm boundary. Verification recommended.`
     },
-    geometry: feat.geometry
+    geometry: feat.drone_geometry || feat.geometry,
+    bhunaksha_geometry: feat.bhunaksha_geometry || p.bhunaksha_geometry || feat.geometry
   };
 
   selectParcelForInspector(inspectorParcel);
   zoomToFeature(feat);
 
-  showVillageToast(`📍 Selected Gat ${p.survey_no} (${p.area_acres} Ac): Loaded into Parcel Inspector!`);
+  showVillageToast(`📍 Selected Gat ${p.survey_no} (${oldAcres} Ac • ${score}% Conf): Loaded into Parcel Inspector!`);
 
   // 6. Clear old comparison layers from previous Gat so map doesn't show stale polygons
   if (activeComparedParcel && String(activeComparedParcel.properties?.survey_no) !== String(p.survey_no)) {
