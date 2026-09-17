@@ -3133,6 +3133,8 @@ function initModalMiniMap(feature) {
     if (bounds && bounds.isValid()) {
       miniMapInstance.fitBounds(bounds, { padding: [25, 25] });
     }
+    setTimeout(() => { if (miniMapInstance) miniMapInstance.invalidateSize(); }, 80);
+    setTimeout(() => { if (miniMapInstance) miniMapInstance.invalidateSize(); }, 250);
   } catch (e) {}
 }
 
