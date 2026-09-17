@@ -570,11 +570,11 @@
         if (!qrContainer) return;
         qrContainer.innerHTML = '';
 
-        const currentUrl = window.location.href;
+        const globalCertUrl = `https://sadmsd707.github.io/SIH/certificate.html?gat=${encodeURIComponent(gat)}`;
         if (typeof QRCode !== 'undefined') {
           try {
             new QRCode(qrContainer, {
-              text: currentUrl,
+              text: globalCertUrl,
               width: 140,
               height: 140,
               colorDark: "#0A192F",
@@ -605,13 +605,13 @@
         if (copyBtn) {
           copyBtn.onclick = () => {
             if (navigator.clipboard) {
-              navigator.clipboard.writeText(currentUrl).then(() => {
+              navigator.clipboard.writeText(globalCertUrl).then(() => {
                 const orig = copyBtn.innerHTML;
                 copyBtn.innerHTML = '<span>✅</span> Link Copied!';
                 setTimeout(() => copyBtn.innerHTML = orig, 2000);
               });
             } else {
-              prompt('Verification Link:', currentUrl);
+              prompt('Verification Link:', globalCertUrl);
             }
           };
         }

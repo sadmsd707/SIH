@@ -3373,17 +3373,14 @@ function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
   const oldSqm = Math.round(p.old_survey_area_sqm || (p.area_sqm || (oldArea * 4046.86)));
   const khata = p.khata_no || '—';
 
-  // 1. Web URL Payload — Dedicated Standalone Certificate for this particular scanned Gat!
-  let baseOrigin = 'https://sadmsd707.github.io/SIH/';
-  if (typeof window !== 'undefined' && window.location && window.location.hostname && !window.location.hostname.includes('github.io') && window.location.protocol !== 'file:') {
-    baseOrigin = window.location.origin + window.location.pathname.replace(/index\.html$/, '');
-    if (!baseOrigin.endsWith('/')) baseOrigin += '/';
-  }
-  const webUrlPayload = `${baseOrigin}certificate.html?gat=${encodeURIComponent(gat)}`;
+  // 1. Web URL Payload — Dedicated Globally Hosted Live Cloud Certificate for this scanned Gat!
+  // Always use the global public production URL so anyone scanning the QR code redirects to browser globally!
+  const globalOrigin = 'https://sadmsd707.github.io/SIH/';
+  const webUrlPayload = `${globalOrigin}certificate.html?gat=${encodeURIComponent(gat)}`;
 
   // 2. Official Digital Land Pass Text Payload — Plain-text verifiable record (compact)
   const shortOwner = owner ? owner.slice(0, 50) : 'नोंदणीकृत खातेदार';
-  const landPassPayload = `MAHARASHTRA 7/12 RECORD\nGat: ${gat} | Taluka: Karjat, Dist: Ahmednagar\nOwner: ${shortOwner}\nArea: ${oldArea} Ac (${oldSqm.toLocaleString()} m²)\nGPS: ${Number(cLat).toFixed(6)}, ${Number(cLng).toFixed(6)}\nVerify: ${baseOrigin}certificate.html?gat=${encodeURIComponent(gat)}`;
+  const landPassPayload = `MAHARASHTRA 7/12 RECORD\nGat: ${gat} | Taluka: Karjat, Dist: Ahmednagar\nOwner: ${shortOwner}\nArea: ${oldArea} Ac (${oldSqm.toLocaleString()} m²)\nGPS: ${Number(cLat).toFixed(6)}, ${Number(cLng).toFixed(6)}\nVerify: ${globalOrigin}certificate.html?gat=${encodeURIComponent(gat)}`;
 
   // 3. Google Maps GPS Link
   const gpsPayload = `https://www.google.com/maps?q=${Number(cLat).toFixed(6)},${Number(cLng).toFixed(6)}&t=k`;
