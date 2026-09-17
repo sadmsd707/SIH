@@ -3367,20 +3367,66 @@ function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
   const village = p.village || 'Benwadi (बेनवडी)';
   const taluka = p.taluka || 'Karjat (कर्जत)';
   const dist = p.district || 'Ahmednagar (अहमदनगर)';
-  const status = p.status || 'needs_review';
-  const score = p.confidence_score !== undefined ? p.confidence_score : '85.0';
-  const oldArea = parseFloat(p.old_survey_area_acres !== undefined ? p.old_survey_area_acres : (p.area_acres || '0')) || 0;
+  let oldArea = parseFloat(p.old_survey_area_acres !== undefined ? p.old_survey_area_acres : (p.area_acres || 0)) || 0;
+  let newArea = parseFloat(p.new_survey_area_acres !== undefined ? p.new_survey_area_acres : (p.area_diff_pct !== undefined ? (oldArea * (1 + parseFloat(p.area_diff_pct) / 100)) : oldArea)) || oldArea;
+  let diffPctVal = p.area_diff_pct !== undefined ? parseFloat(p.area_diff_pct) : (oldArea > 0 ? parseFloat((Math.abs(newArea - oldArea) / oldArea * 100).toFixed(1)) : 2.5);
+  let scoreVal = p.confidence_score !== undefined ? parseFloat(p.confidence_score) : 85.0;
+  let statusVal = p.status || (diffPctVal > 8 ? 'dispute' : (diffPctVal > 2 ? 'needs_review' : 'verified'));
+  let shiftVal = p.mean_shift_m !== undefined ? parseFloat(p.mean_shift_m) : 1.4;
+  let iouVal = p.iou_overlap_pct !== undefined ? parseFloat(p.iou_overlap_pct) : 93.5;
+
+  // Cross-check live DOM display on laptop to guarantee 100% match with what user sees on screen
+  try {
+    const domOldAc = document.getElementById('comp-old-acres') || document.getElementById('insp-old-area');
+    if (domOldAc && domOldAc.textContent) {
+      const v = parseFloat(domOldAc.textContent.replace(/[^0-9.]/g, ''));
+      if (!isNaN(v) && v > 0) oldArea = v;
+    }
+    const domNewAc = document.getElementById('comp-new-acres') || document.getElementById('insp-new-area');
+    if (domNewAc && domNewAc.textContent) {
+      const v = parseFloat(domNewAc.textContent.replace(/[^0-9.]/g, ''));
+      if (!isNaN(v) && v > 0) newArea = v;
+    }
+    const domScore = document.getElementById('comp-diff-val') || document.getElementById('insp-conf-val');
+    if (domScore && domScore.textContent) {
+      const v = parseFloat(domScore.textContent.replace(/[^0-9.]/g, ''));
+      if (!isNaN(v) && v > 0) scoreVal = v;
+    }
+    const domDiff = document.getElementById('insp-area-diff');
+    if (domDiff && domDiff.textContent) {
+      const v = parseFloat(domDiff.textContent.replace(/[^0-9.]/g, ''));
+      if (!isNaN(v)) diffPctVal = v;
+    }
+    const domStatus = document.getElementById('modal-status-badge') || document.getElementById('insp-status-badge');
+    if (domStatus && domStatus.textContent) {
+      const txt = domStatus.textContent.toLowerCase().trim().replace(/[^a-z_]/g, '');
+      if (txt.includes('verif')) statusVal = 'verified';
+      else if (txt.includes('disp')) statusVal = 'dispute';
+      else if (txt.includes('review')) statusVal = 'needs_review';
+    }
+  } catch(e) {}
+
   const oldSqm = Math.round(p.old_survey_area_sqm || (p.area_sqm || (oldArea * 4046.86)));
   const khata = p.khata_no || '—';
 
   // 1. Web URL Payload — Dedicated Globally Hosted Live Cloud Certificate for this scanned Gat!
-  // Always use the global public production URL so anyone scanning the QR code redirects to browser globally!
+  // Encode all live laptop-calculated metrics into query parameters so mobile scanner gets 100% exact same data!
   const globalOrigin = 'https://sadmsd707.github.io/SIH/';
-  const webUrlPayload = `${globalOrigin}certificate.html?gat=${encodeURIComponent(gat)}`;
+  const qParams = new URLSearchParams({
+    gat: String(gat),
+    oldAc: oldArea.toFixed(2),
+    newAc: newArea.toFixed(2),
+    diff: diffPctVal.toFixed(1),
+    score: scoreVal.toFixed(1),
+    status: statusVal,
+    shift: shiftVal.toFixed(2),
+    iou: iouVal.toFixed(1)
+  });
+  const webUrlPayload = `${globalOrigin}certificate.html?${qParams.toString()}`;
 
   // 2. Official Digital Land Pass Text Payload — Plain-text verifiable record (compact)
   const shortOwner = owner ? owner.slice(0, 50) : 'नोंदणीकृत खातेदार';
-  const landPassPayload = `MAHARASHTRA 7/12 RECORD\nGat: ${gat} | Taluka: Karjat, Dist: Ahmednagar\nOwner: ${shortOwner}\nArea: ${oldArea} Ac (${oldSqm.toLocaleString()} m²)\nGPS: ${Number(cLat).toFixed(6)}, ${Number(cLng).toFixed(6)}\nVerify: ${globalOrigin}certificate.html?gat=${encodeURIComponent(gat)}`;
+  const landPassPayload = `MAHARASHTRA 7/12 RECORD\nGat: ${gat} | Taluka: Karjat, Dist: Ahmednagar\nOwner: ${shortOwner}\nOld Area: ${oldArea.toFixed(2)} Ac | New Area: ${newArea.toFixed(2)} Ac\nConfidence Score: ${scoreVal.toFixed(1)}% | Variance: ${diffPctVal.toFixed(1)}%\nGPS: ${Number(cLat).toFixed(6)}, ${Number(cLng).toFixed(6)}\nVerify: ${webUrlPayload}`;
 
   // 3. Google Maps GPS Link
   const gpsPayload = `https://www.google.com/maps?q=${Number(cLat).toFixed(6)},${Number(cLng).toFixed(6)}&t=k`;
@@ -3492,9 +3538,7 @@ function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
 
   // Connect Test Scan action
   const triggerModal = () => {
-    const f = activeFeature || currentSelectedFeature;
-    const currentGat = (f && f.properties && (f.properties.gat_no || f.properties.survey_no)) || gat || '1';
-    window.open(`certificate.html?gat=${encodeURIComponent(currentGat)}`, '_blank');
+    window.open(webUrlPayload, '_blank');
   };
 
   const testScanBtn = document.getElementById('btn-insp-open-cert');

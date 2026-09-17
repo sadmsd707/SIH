@@ -2,7 +2,7 @@
 <html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Cadastral Land Record Certificate | Maharashtra Land Records</title>
   
   <!-- Fonts -->
@@ -17,8 +17,33 @@
   <link rel="stylesheet" href="styles.css">
 
   <style>
+    :root {
+      --cert-bg: #F8FAFC;
+      --cert-card-bg: rgba(255, 255, 255, 0.96);
+      --cert-border: #E2E8F0;
+      --cert-border-subtle: #EDF2F7;
+      --cert-text-main: #0F172A;
+      --cert-text-muted: #64748B;
+      --cert-text-dark: #1E293B;
+      --cert-accent: #0284C7;
+      --cert-accent-hover: #0369A1;
+      --status-verified: #059669;
+      --status-verified-bg: #ECFDF5;
+      --status-verified-border: #A7F3D0;
+      --status-review: #D97706;
+      --status-review-bg: #FFFBEB;
+      --status-review-border: #FDE68A;
+      --status-dispute: #DC2626;
+      --status-dispute-bg: #FEF2F2;
+      --status-dispute-border: #FECACA;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      background: #111d33;
+      background: #F8FAFC;
       margin: 0;
       padding: 1.5rem 1rem 3rem 1rem;
       min-height: 100vh;
@@ -26,36 +51,404 @@
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
-      font-family: var(--font-sans);
+      font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
+      color: var(--cert-text-main);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Dynamic Moving Light Colors Background */
+    .ambient-bg-glow {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+      background: linear-gradient(135deg, #F0FDF4 0%, #F8FAFC 25%, #EFF6FF 50%, #FAF5FF 75%, #FFF7ED 100%);
+      background-size: 400% 400%;
+      animation: auraShift 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes auraShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .ambient-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.65;
+      mix-blend-mode: multiply;
+      will-change: transform;
+    }
+
+    .orb-1 {
+      width: 520px;
+      height: 520px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.45) 0%, rgba(14, 165, 233, 0.12) 60%, transparent 75%);
+      top: -120px;
+      left: -100px;
+      animation: floatOrb1 18s ease-in-out infinite alternate;
+    }
+
+    .orb-2 {
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, rgba(52, 211, 153, 0.42) 0%, rgba(16, 185, 129, 0.1) 60%, transparent 75%);
+      top: 28%;
+      right: -140px;
+      animation: floatOrb2 22s ease-in-out infinite alternate;
+    }
+
+    .orb-3 {
+      width: 440px;
+      height: 440px;
+      background: radial-gradient(circle, rgba(251, 146, 60, 0.38) 0%, rgba(249, 115, 22, 0.1) 60%, transparent 75%);
+      bottom: -100px;
+      left: 18%;
+      animation: floatOrb3 24s ease-in-out infinite alternate;
+    }
+
+    .orb-4 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(192, 132, 252, 0.36) 0%, rgba(168, 85, 247, 0.1) 60%, transparent 75%);
+      top: 58%;
+      right: 12%;
+      animation: floatOrb4 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes floatOrb1 {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(130px, 90px) scale(1.15); }
+      100% { transform: translate(-50px, 140px) scale(0.92); }
+    }
+
+    @keyframes floatOrb2 {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-120px, 110px) scale(1.12); }
+      100% { transform: translate(60px, -70px) scale(0.96); }
+    }
+
+    @keyframes floatOrb3 {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(90px, -120px) scale(1.14); }
+      100% { transform: translate(-90px, 50px) scale(0.9); }
+    }
+
+    @keyframes floatOrb4 {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(-100px, -80px) scale(1.16); }
+      100% { transform: translate(70px, 100px) scale(0.88); }
     }
 
     .cert-page-wrapper {
+      position: relative;
+      z-index: 1;
       width: 100%;
       max-width: 1180px;
       margin: 0 auto;
     }
 
+    /* Modal Certificate Container in Clean Light Theme */
     .modal-content-card {
+      background: var(--cert-card-bg) !important;
+      backdrop-filter: blur(24px) !important;
+      -webkit-backdrop-filter: blur(24px) !important;
+      border: 1px solid var(--cert-border) !important;
+      border-radius: 20px !important;
+      box-shadow: 0 20px 45px -12px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(15, 23, 42, 0.04) !important;
+      color: var(--cert-text-main) !important;
       max-height: none !important;
       overflow: visible !important;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5) !important;
-      border: 1px solid rgba(255, 255, 255, 0.15) !important;
     }
 
-    /* Single Map Comparison System */
+    .modal-header {
+      background: #FFFFFF !important;
+      border-bottom: 1px solid var(--cert-border) !important;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .modal-header-titles h2 {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--cert-text-main);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    /* Badges */
+    .badge-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .badge-tag.verified {
+      background: var(--status-verified-bg) !important;
+      color: var(--status-verified) !important;
+      border: 1.5px solid var(--status-verified-border) !important;
+    }
+    .badge-tag.needs_review {
+      background: var(--status-review-bg) !important;
+      color: var(--status-review) !important;
+      border: 1.5px solid var(--status-review-border) !important;
+    }
+    .badge-tag.dispute {
+      background: var(--status-dispute-bg) !important;
+      color: var(--status-dispute) !important;
+      border: 1.5px solid var(--status-dispute-border) !important;
+    }
+
+    .modal-body {
+      padding: 2rem !important;
+    }
+
+    /* Hero Layout */
+    .modal-hero-layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .hero-details-block {
+      background: #FFFFFF !important;
+      border: 1px solid var(--cert-border) !important;
+      border-radius: 14px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+    }
+
+    .owner-headline {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--cert-text-main) !important;
+      margin: 0 0 0.25rem 0;
+      line-height: 1.35;
+    }
+
+    .owner-sub {
+      font-size: 0.85rem;
+      color: var(--cert-text-muted) !important;
+      margin: 0 0 1.25rem 0;
+    }
+
+    .grid-key-values {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.85rem 1.5rem;
+    }
+
+    .kv-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .kv-label {
+      font-size: 0.72rem;
+      color: var(--cert-text-muted) !important;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .kv-value {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--cert-text-dark) !important;
+    }
+
+    /* Hero QR Block */
+    .hero-qr-block {
+      background: #FFFFFF !important;
+      border: 1px solid var(--cert-border) !important;
+      border-radius: 14px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+    }
+
+    #modal-qr-target {
+      background: #FFFFFF !important;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1.5px solid var(--cert-border);
+      margin-bottom: 0.75rem;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qr-caption {
+      font-size: 0.72rem;
+      color: var(--cert-text-muted) !important;
+      margin: 0 0 0.75rem 0;
+      line-height: 1.4;
+    }
+
+    .btn-qr-download {
+      width: 100%;
+      background: #0284C7 !important;
+      border: none !important;
+      color: #FFFFFF !important;
+      padding: 0.55rem 1rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+    }
+
+    .btn-qr-download:hover {
+      background: #0369A1 !important;
+      transform: translateY(-1px);
+    }
+
+    /* Comparison & Analytics Cards */
+    .comparison-section-box {
+      background: #FFFFFF !important;
+      border: 1px solid var(--cert-border) !important;
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1.75rem;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+    }
+
+    .section-subheading {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--cert-text-main) !important;
+      margin: 0 0 1rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    .comparison-column {
+      background: #F8FAFC !important;
+      border: 1.5px solid var(--cert-border) !important;
+      border-radius: 12px;
+      padding: 1.25rem 1rem;
+      text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    /* Old Survey Column - Sky Blue Pastel */
+    .comparison-column.col-old-survey {
+      background: #F0F9FF !important;
+      border-color: #BAE6FD !important;
+    }
+    .comparison-column.col-old-survey .comp-col-label {
+      color: #0369A1 !important;
+    }
+    .comparison-column.col-old-survey .comp-col-val {
+      color: #0284C7 !important;
+    }
+    .comparison-column.col-old-survey .comp-col-unit {
+      color: #0369A1 !important;
+    }
+
+    /* New Survey Column - Sunset Peach Pastel */
+    .comparison-column.highlight,
+    .comparison-column.col-new-survey {
+      background: #FFF7ED !important;
+      border-color: #FED7AA !important;
+    }
+    .comparison-column.col-new-survey .comp-col-label {
+      color: #C2410C !important;
+    }
+    .comparison-column.col-new-survey .comp-col-val {
+      color: #EA580C !important;
+    }
+    .comparison-column.col-new-survey .comp-col-unit {
+      color: #C2410C !important;
+    }
+
+    /* Confidence Score Column - Emerald Mint Pastel */
+    .comparison-column.col-score {
+      background: #F0FDF4 !important;
+      border-color: #BBF7D0 !important;
+    }
+    .comparison-column.col-score .comp-col-label {
+      color: #15803D !important;
+    }
+    .comparison-column.col-score .comp-col-val {
+      color: #16A34A !important;
+    }
+    .comparison-column.col-score .comp-col-unit {
+      color: #15803D !important;
+    }
+
+    .comp-col-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.4rem;
+    }
+
+    .comp-col-val {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 0.2rem;
+    }
+
+    .comp-col-unit {
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* Single Map Card in Light Theme */
     .single-map-card {
-      background: var(--tertiary-navy);
-      border-radius: 10px;
+      background: #FFFFFF !important;
+      border-radius: 12px;
       overflow: hidden;
-      border: 1.5px solid var(--surface-border);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      border: 1.5px solid var(--cert-border) !important;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
       position: relative;
     }
 
     .single-cadastral-map-canvas {
       height: 400px;
       width: 100%;
-      background: #0b1329;
+      background: #E2E8F0;
     }
 
     @media (max-width: 680px) {
@@ -67,20 +460,20 @@
     .map-layer-toggles {
       display: flex;
       gap: 0.35rem;
-      background: rgba(15, 23, 42, 0.7);
+      background: #F1F5F9 !important;
       padding: 0.25rem;
       border-radius: 8px;
-      border: 1px solid var(--surface-border);
+      border: 1px solid var(--cert-border) !important;
       flex-wrap: wrap;
     }
 
     .map-toggle-btn {
       background: transparent;
       border: none;
-      color: var(--text-muted);
+      color: var(--cert-text-muted) !important;
       padding: 0.35rem 0.75rem;
       font-size: 0.75rem;
-      font-weight: 600;
+      font-weight: 700;
       border-radius: 6px;
       cursor: pointer;
       display: flex;
@@ -90,31 +483,33 @@
     }
 
     .map-toggle-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--text-main);
+      background: rgba(15, 23, 42, 0.06);
+      color: var(--cert-text-main) !important;
     }
 
     .map-toggle-btn.active {
-      background: rgba(100, 255, 218, 0.15);
-      color: var(--accent-cyan);
-      border: 1px solid rgba(100, 255, 218, 0.4);
+      background: #0284C7 !important;
+      color: #FFFFFF !important;
+      border: 1px solid #0284C7 !important;
     }
 
     .single-map-legend-bar {
       padding: 0.75rem 1rem;
-      background: rgba(15, 23, 42, 0.95);
+      background: #FFFFFF !important;
       display: flex;
       flex-wrap: wrap;
       gap: 1.25rem;
       align-items: center;
       font-size: 0.75rem;
-      border-top: 1px solid var(--surface-border);
+      border-top: 1px solid var(--cert-border) !important;
+      color: var(--cert-text-dark) !important;
     }
 
     .legend-pill {
       display: flex;
       align-items: center;
       gap: 0.45rem;
+      font-weight: 600;
     }
 
     .legend-color-box {
@@ -124,8 +519,144 @@
       display: inline-block;
     }
 
+    .coords-table-box {
+      background: #F8FAFC !important;
+      border: 1px solid var(--cert-border) !important;
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      overflow-y: auto;
+    }
+
+    /* Vertex Table */
+    .vertex-table-wrap {
+      overflow-x: auto;
+      margin-top: 0.75rem;
+      border: 1px solid var(--cert-border);
+      border-radius: 10px;
+    }
+
+    .vertex-comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      background: #FFFFFF !important;
+    }
+
+    .vertex-comparison-table th {
+      background: #F1F5F9 !important;
+      color: var(--cert-text-muted) !important;
+      padding: 0.65rem 0.85rem;
+      text-align: left;
+      font-weight: 700;
+      border-bottom: 2px solid var(--cert-border);
+    }
+
+    .vertex-comparison-table td {
+      padding: 0.6rem 0.85rem;
+      border-bottom: 1px solid var(--cert-border);
+      color: var(--cert-text-main) !important;
+    }
+
+    .vertex-comparison-table tbody tr:nth-child(even) {
+      background: #F8FAFC !important;
+    }
+
+    /* Timeline */
+    .timeline-track {
+      position: relative;
+      padding-left: 1.75rem;
+      border-left: 2px solid #CBD5E1;
+      margin-left: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .timeline-node {
+      position: relative;
+      margin-bottom: 1.25rem;
+    }
+
+    .timeline-bullet {
+      position: absolute;
+      left: -2.35rem;
+      top: 2px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #0284C7;
+      border: 3px solid #E0F2FE;
+    }
+
+    .timeline-date {
+      font-size: 0.72rem;
+      color: var(--cert-text-muted);
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+
+    .timeline-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--cert-text-main);
+      margin-bottom: 0.2rem;
+    }
+
+    .timeline-desc {
+      font-size: 0.8rem;
+      color: var(--cert-text-dark);
+    }
+
+    /* Mobile Responsive Optimizations */
+    @media (max-width: 768px) {
+      body {
+        padding: 0.75rem 0.5rem 2rem 0.5rem;
+      }
+
+      .modal-body {
+        padding: 1rem !important;
+      }
+
+      .modal-header {
+        padding: 1rem !important;
+      }
+
+      .modal-hero-layout {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .comparison-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+
+      .grid-key-values {
+        grid-template-columns: 1fr;
+        gap: 0.65rem;
+      }
+
+      .single-map-legend-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.6rem;
+      }
+
+      .cert-footer-actions > div {
+        flex-direction: column !important;
+        width: 100% !important;
+      }
+
+      #btn-print-certificate,
+      #btn-cert-gmaps-bottom {
+        width: 100% !important;
+      }
+    }
+
     /* Print styling */
     @media print {
+      .ambient-bg-glow {
+        display: none !important;
+      }
       body {
         background: #ffffff !important;
         padding: 0 !important;
@@ -147,6 +678,14 @@
 </head>
 <body>
 
+  <!-- Ambient Animated Moving Light Colors in Background -->
+  <div class="ambient-bg-glow" aria-hidden="true">
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="ambient-orb orb-3"></div>
+    <div class="ambient-orb orb-4"></div>
+  </div>
+
   <div class="cert-page-wrapper">
     <!-- Cadastral Land Record Certificate Card (Exact Match to Inspection Modal) -->
     <div class="modal-content-card" id="cert-card">
@@ -154,7 +693,7 @@
       <!-- Modal Header -->
       <div class="modal-header">
         <div class="modal-header-titles">
-          <h2><span>🌱</span> Cadastral Land Record Certificate: <span id="modal-cert-pid" style="color: var(--accent-cyan);">COMP-MH-3-1436</span></h2>
+          <h2><span>🌱</span> Cadastral Land Record Certificate: <span id="modal-cert-pid" style="color: #0284C7;">COMP-MH-3-1436</span></h2>
         </div>
         <div style="display: flex; align-items: center; gap: 0.75rem;">
           <span class="badge-tag needs_review" id="modal-status-badge">NEEDS REVIEW</span>
@@ -198,7 +737,7 @@
               </div>
               <div class="kv-item">
                 <span class="kv-label">BhuNaksha Status</span>
-                <span class="kv-value" style="color: var(--accent-cyan);">Synced with NIC BhuNaksha</span>
+                <span class="kv-value" style="color: #0284C7; font-weight: 700;">Synced with NIC BhuNaksha</span>
               </div>
               <div class="kv-item">
                 <span class="kv-label">Aadhaar Verification</span>
@@ -214,10 +753,10 @@
             <button class="btn-qr-download" id="btn-download-qr">
               <span>⬇️</span> Download QR Code
             </button>
-            <button class="btn-qr-download" id="btn-copy-qr-link" style="margin-top: 0.4rem; background: transparent; border: 1px solid var(--surface-border); color: var(--accent-cyan);">
+            <button class="btn-qr-download" id="btn-copy-qr-link" style="margin-top: 0.4rem; background: #F8FAFC !important; border: 1px solid #CBD5E1 !important; color: #0284C7 !important; box-shadow: none;">
               <span>📋</span> Copy Verification Link
             </button>
-            <button class="btn-qr-download" id="modal-download-geojson-btn" style="margin-top: 0.4rem; background: rgba(16, 185, 129, 0.15); border: 1px solid #10B981; color: #10B981;">
+            <button class="btn-qr-download" id="modal-download-geojson-btn" style="margin-top: 0.4rem; background: #ECFDF5 !important; border: 1px solid #A7F3D0 !important; color: #047857 !important; box-shadow: none;">
               <span>📥</span> Download Gat GeoJSON
             </button>
           </div>
@@ -229,34 +768,34 @@
           
           <div class="comparison-grid">
             <!-- Old Survey Column -->
-            <div class="comparison-column">
+            <div class="comparison-column col-old-survey">
               <div class="comp-col-label">Previous BhuNaksha Record (1978)</div>
               <div class="comp-col-val" id="comp-old-acres">4.95 Ac</div>
               <div class="comp-col-unit" id="comp-old-sqm">20032.0 m²</div>
-              <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.35rem;">Method: Traditional Revenue Chain & Tippan</p>
+              <p style="font-size: 0.72rem; color: #0369A1; margin-top: 0.35rem; font-weight: 500;">Method: Traditional Revenue Chain &amp; Tippan</p>
             </div>
 
             <!-- New Survey Column -->
-            <div class="comparison-column highlight">
-              <div class="comp-col-label" style="color: var(--accent-cyan);">Modern Drone Resurvey (RTK GPS)</div>
-              <div class="comp-col-val" id="comp-new-acres" style="color: var(--accent-cyan);">5.08 Ac</div>
+            <div class="comparison-column highlight col-new-survey">
+              <div class="comp-col-label">Modern Drone Resurvey (RTK GPS)</div>
+              <div class="comp-col-val" id="comp-new-acres">5.08 Ac</div>
               <div class="comp-col-unit" id="comp-new-sqm">20558.0 m²</div>
-              <p style="font-size: 0.7rem; color: var(--accent-cyan); margin-top: 0.35rem;">Method: RTK Drone + DGPS (Accuracy: &plusmn;1.8 cm)</p>
+              <p style="font-size: 0.72rem; color: #C2410C; margin-top: 0.35rem; font-weight: 500;">Method: RTK Drone + DGPS (Accuracy: &plusmn;1.8 cm)</p>
             </div>
 
             <!-- Confidence Score Column -->
-            <div class="comparison-column">
+            <div class="comparison-column col-score">
               <div class="comp-col-label">Confidence Score</div>
-              <div class="comp-col-val" id="comp-diff-val" style="color: var(--status-verified);">94.4%</div>
+              <div class="comp-col-val" id="comp-diff-val">94.4%</div>
               <div class="comp-col-unit" id="comp-diff-sqm">Area Variance: 2.5% (Delta: 0.13 Ac)</div>
-              <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.35rem;" id="modal-review-note">Mean bund shift of 1.37m observed along northern farm bund. Recommended for joint verification.</p>
+              <p style="font-size: 0.72rem; color: #15803D; margin-top: 0.35rem; font-weight: 500;" id="modal-review-note">Mean bund shift of 1.37m observed along northern farm bund. Recommended for joint verification.</p>
             </div>
           </div>
         </div>
 
         <!-- Confidence Score Breakdown -->
         <div class="comparison-section-box">
-          <h4 class="section-subheading"><span>💯</span> Multi-Factor Land Confidence Score: <span id="modal-confidence-gauge-text" style="color: var(--accent-cyan);">94.4%</span></h4>
+          <h4 class="section-subheading"><span>💯</span> Multi-Factor Land Confidence Score: <span id="modal-confidence-gauge-text" style="color: #0284C7;">94.4%</span></h4>
           <div class="grid-key-values" style="margin-top: 0.75rem;">
             <div class="kv-item">
               <span class="kv-label">RTK Rover GPS Precision</span>
@@ -268,7 +807,7 @@
             </div>
             <div class="kv-item">
               <span class="kv-label">Spatial IoU Overlap</span>
-              <span class="kv-value" id="modal-conf-iou" style="color: var(--status-verified);">96.9%</span>
+              <span class="kv-value" id="modal-conf-iou" style="color: #059669;">96.9%</span>
             </div>
             <div class="kv-item">
               <span class="kv-label">Boundary Marker Status</span>
@@ -282,8 +821,8 @@
           <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.85rem;">
             <div>
               <h4 class="section-subheading" style="margin: 0;"><span>🗺️</span> Cadastral Boundary Map: Old BhuNaksha vs New Drone Survey</h4>
-              <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0.25rem 0 0 0;">
-                Single view comparing <strong style="color: #60A5FA;">Old 1978 BhuNaksha (Electric Blue)</strong> and <strong style="color: #FB923C;">Modern 2024 Drone RTK (Sunset Orange)</strong>.
+              <p style="font-size: 0.75rem; color: var(--cert-text-muted); margin: 0.25rem 0 0 0;">
+                Single view comparing <strong style="color: #2563EB;">Old 1978 BhuNaksha (Electric Blue)</strong> and <strong style="color: #EA580C;">Modern 2024 Drone RTK (Sunset Orange)</strong>.
               </p>
             </div>
             
@@ -293,10 +832,10 @@
                 <span>👁️</span> Both Maps (Overlay)
               </button>
               <button type="button" class="map-toggle-btn" data-layer="old" id="btn-toggle-old">
-                <span style="color:#60A5FA;">🟦</span> Old Map Only
+                <span style="color:#2563EB;">🟦</span> Old Map Only
               </button>
               <button type="button" class="map-toggle-btn" data-layer="new" id="btn-toggle-new">
-                <span style="color:#FB923C;">🟧</span> New Map Only
+                <span style="color:#EA580C;">🟧</span> New Map Only
               </button>
             </div>
           </div>
@@ -309,17 +848,17 @@
             <div class="single-map-legend-bar">
               <div class="legend-pill">
                 <span class="legend-color-box" style="background: #2563EB; border: 1.5px dashed #93C5FD;"></span>
-                <span><strong style="color: #60A5FA;">Old Map:</strong> 1978 BhuNaksha (<span id="legend-old-area">4.95 Ac</span>)</span>
+                <span><strong style="color: #2563EB;">Old Map:</strong> 1978 BhuNaksha (<span id="legend-old-area">4.95 Ac</span>)</span>
               </div>
               <div class="legend-pill">
-                <span class="legend-color-box" style="background: #F97316; border: 1.5px solid #FED7AA;"></span>
-                <span><strong style="color: #FB923C;">New Map:</strong> 2024 Drone RTK (<span id="legend-new-area">5.08 Ac</span>)</span>
+                <span class="legend-color-box" style="background: #EA580C; border: 1.5px solid #FED7AA;"></span>
+                <span><strong style="color: #EA580C;">New Map:</strong> 2024 Drone RTK (<span id="legend-new-area">5.08 Ac</span>)</span>
               </div>
               <div class="legend-pill">
-                <span class="legend-color-box" style="background: #9333EA; opacity: 0.85;"></span>
-                <span><strong style="color: #C084FC;">Variance / Shift:</strong> <span id="legend-diff-pct">2.5%</span> Bund Shift Zone</span>
+                <span class="legend-color-box" style="background: #7C3AED; opacity: 0.85;"></span>
+                <span><strong style="color: #7C3AED;">Variance / Shift:</strong> <span id="legend-diff-pct">2.5%</span> Bund Shift Zone</span>
               </div>
-              <a id="modal-gmaps-link" href="#" target="_blank" style="margin-left: auto; font-size: 0.75rem; color: var(--accent-cyan); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 0.3rem;">
+              <a id="modal-gmaps-link" href="#" target="_blank" style="margin-left: auto; font-size: 0.75rem; color: #0284C7; text-decoration: none; font-weight: 700; display: flex; align-items: center; gap: 0.3rem;">
                 <span>📍</span> Open Google Maps Navigation &rarr;
               </a>
             </div>
@@ -328,13 +867,13 @@
           <!-- Quick Vertex Coordinates Box -->
           <div style="margin-top: 1.25rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 0.5rem;">
-              <h5 style="font-size: 0.8rem; font-weight: 700; color: var(--text-main); margin: 0;">
+              <h5 style="font-size: 0.82rem; font-weight: 700; color: var(--cert-text-main); margin: 0;">
                 <span>📍</span> Boundary Corner Coordinates (WGS 84 Vertices)
               </h5>
-              <span style="font-size: 0.72rem; color: var(--text-muted);">
-                <span style="color: #60A5FA;">🟦 Blue = Old 1978 Record</span> &bull; 
-                <span style="color: #FB923C;">🟧 Orange = New 2024 Resurvey</span> &bull; 
-                <span style="color: #C084FC;">🟪 &Delta; = Shift</span>
+              <span style="font-size: 0.72rem; color: var(--cert-text-muted);">
+                <span style="color: #2563EB; font-weight: 600;">🟦 Blue = Old 1978 Record</span> &bull; 
+                <span style="color: #EA580C; font-weight: 600;">🟧 Orange = New 2024 Resurvey</span> &bull; 
+                <span style="color: #7C3AED; font-weight: 600;">🟪 &Delta; = Shift</span>
               </span>
             </div>
             <div class="coords-table-box" id="modal-coords-list" style="max-height: 180px;">
@@ -347,7 +886,7 @@
         <!-- Real Coordinates Comparison Table -->
         <div class="comparison-section-box" style="margin-top: 1.75rem;">
           <h4 class="section-subheading"><span>📍</span> Real Vertex Coordinates: Previous BhuNaksha vs Drone Resurvey</h4>
-          <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+          <p style="font-size: 0.75rem; color: var(--cert-text-muted); margin-bottom: 0.5rem;">
             Comparison of boundary corner vertices between traditional Revenue BhuNaksha map and high-precision RTK drone coordinates.
           </p>
           <div class="vertex-table-wrap">
@@ -377,18 +916,18 @@
         </div>
 
         <!-- Certificate Print & Verification Action Footer -->
-        <div class="cert-footer-actions" style="margin-top: 2rem; display: flex; flex-direction: column; align-items: center; gap: 0.85rem; border-top: 1px solid var(--surface-border); padding-top: 1.5rem;">
+        <div class="cert-footer-actions" style="margin-top: 2rem; display: flex; flex-direction: column; align-items: center; gap: 0.85rem; border-top: 1px solid var(--cert-border); padding-top: 1.5rem;">
           <div style="display: flex; gap: 0.85rem; width: 100%; max-width: 560px; justify-content: center; flex-wrap: wrap;">
             <button type="button" id="btn-print-certificate" onclick="window.print()" style="flex: 1; min-width: 240px; display: flex; align-items: center; justify-content: center; gap: 0.6rem; background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%); color: #ffffff; border: none; padding: 0.95rem 1.75rem; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 16px rgba(2, 132, 199, 0.4); transition: transform 0.15s ease, box-shadow 0.15s ease;">
               <span style="font-size: 1.25rem;">🖨️</span>
               <span>Print Official Certificate (PDF)</span>
             </button>
-            <a id="btn-cert-gmaps-bottom" href="#" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; justify-content: center; gap: 0.45rem; background: var(--tertiary-navy); color: var(--accent-cyan); border: 1px solid var(--surface-border); padding: 0.95rem 1.4rem; border-radius: 10px; font-weight: 600; font-size: 0.9rem; text-decoration: none; cursor: pointer; transition: background 0.15s ease;">
+            <a id="btn-cert-gmaps-bottom" href="#" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; justify-content: center; gap: 0.45rem; background: #F8FAFC; color: #0284C7; border: 1px solid #CBD5E1; padding: 0.95rem 1.4rem; border-radius: 10px; font-weight: 600; font-size: 0.9rem; text-decoration: none; cursor: pointer; transition: background 0.15s ease;">
               <span>📍</span>
               <span>Google Maps GPS</span>
             </a>
           </div>
-          <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; max-width: 540px; margin: 0; line-height: 1.45;">
+          <p style="font-size: 0.75rem; color: var(--cert-text-muted); text-align: center; max-width: 540px; margin: 0; line-height: 1.45;">
             Digital 7/12 RoR & Drone Cadastral Inspection Certificate &bull; Land Records Department, Government of Maharashtra.<br/>
             Click <strong>Print Official Certificate</strong> to save or download an A4-optimized digital record.
           </p>
@@ -405,10 +944,19 @@
 
   <script>
     (function() {
-      // 1. Get requested Gat number from URL
+      // 1. Get requested Gat number & live survey metrics from URL
       const params = new URLSearchParams(window.location.search);
       let gat = params.get('gat') || params.get('survey') || '3';
       gat = gat.replace(/[^0-9]/g, '') || '3';
+
+      // Read query parameters passed from laptop calculations to ensure 100% exact parity
+      const qOldAc = params.get('oldAc');
+      const qNewAc = params.get('newAc');
+      const qDiff = params.get('diff');
+      const qScore = params.get('score');
+      const qStatus = params.get('status');
+      const qShift = params.get('shift');
+      const qIou = params.get('iou');
 
       let currentParcelFeature = null;
 
@@ -446,13 +994,27 @@
         const pid = p.parcel_id || `COMP-MH-${gat}-${Math.floor(1000 + Math.random() * 9000)}`;
         document.getElementById('modal-cert-pid').textContent = pid;
 
-        // Status
-        const st = p.status || 'needs_review';
+        // 100% Exact Parity with Laptop Calculations: Prioritize URL Query Parameters
+        const oldAcres = (qOldAc !== null && !isNaN(parseFloat(qOldAc))) ? parseFloat(qOldAc) : (parseFloat(p.old_survey_area_acres || p.area_acres || '4.95') || 4.95);
+        const diffPct = (qDiff !== null && !isNaN(parseFloat(qDiff))) ? parseFloat(qDiff) : (p.area_diff_pct !== undefined ? parseFloat(p.area_diff_pct) : 2.5);
+        const newAcres = (qNewAc !== null && !isNaN(parseFloat(qNewAc))) ? parseFloat(qNewAc) : (parseFloat(p.new_survey_area_acres) || parseFloat((oldAcres * (1 + diffPct / 100)).toFixed(2)));
+        const score = (qScore !== null && !isNaN(parseFloat(qScore))) ? parseFloat(qScore) : (p.confidence_score !== undefined ? parseFloat(p.confidence_score) : 85.0);
+        const rawStatus = qStatus || p.status || (diffPct > 8 ? 'dispute' : (diffPct > 2 ? 'needs_review' : 'verified'));
+        const st = String(rawStatus).toLowerCase();
+        const shiftM = (qShift !== null && !isNaN(parseFloat(qShift))) ? parseFloat(qShift) : (p.mean_shift_m !== undefined ? parseFloat(p.mean_shift_m) : 1.37);
+        const iou = (qIou !== null && !isNaN(parseFloat(qIou))) ? parseFloat(qIou) : (p.iou_overlap_pct !== undefined ? parseFloat(p.iou_overlap_pct) : 96.9);
+
+        const oldSqm = parseFloat(p.old_survey_area_sqm) || parseFloat((oldAcres * 4046.86).toFixed(1));
+        const newSqm = parseFloat(p.new_survey_area_sqm) || parseFloat((newAcres * 4046.86).toFixed(1));
+        const deltaAcres = Math.abs(newAcres - oldAcres).toFixed(2);
+        const deltaSqm = Math.abs(newSqm - oldSqm).toFixed(1);
+
+        // Status Badge
         const stEl = document.getElementById('modal-status-badge');
-        if (st === 'verified') {
+        if (st.includes('verif')) {
           stEl.className = 'badge-tag verified';
           stEl.textContent = 'VERIFIED';
-        } else if (st === 'dispute') {
+        } else if (st.includes('disp')) {
           stEl.className = 'badge-tag dispute';
           stEl.textContent = 'DISPUTE';
         } else {
@@ -478,18 +1040,7 @@
         document.getElementById('modal-ror-no').textContent = p.ror_extract_no || `ROR-COMP-${gat}`;
         document.getElementById('modal-khata-no').textContent = `खाते क्र. ${p.khata_no || '2430, 2633, 2795'}`;
 
-        // Survey Comparison: Old vs New with 2-3% error
-        const oldAcres = parseFloat(p.old_survey_area_acres || p.area_acres || '4.95') || 4.95;
-        const oldSqm = parseFloat(p.old_survey_area_sqm || p.area_sqm || (oldAcres * 4046.86)) || 20032.0;
-        
-        // 2-3% calibrated discrepancy
-        const diffPct = p.area_diff_pct !== undefined ? parseFloat(p.area_diff_pct) : 2.5;
-        const newAcres = parseFloat(p.new_survey_area_acres) || parseFloat((oldAcres * (1 + diffPct / 100)).toFixed(2));
-        const newSqm = parseFloat(p.new_survey_area_sqm) || parseFloat((oldSqm * (1 + diffPct / 100)).toFixed(1));
-        const deltaAcres = Math.abs(newAcres - oldAcres).toFixed(2);
-        const deltaSqm = Math.abs(newSqm - oldSqm).toFixed(1);
-        const shiftM = p.mean_shift_m || 1.37;
-
+        // Populate Survey Comparison Elements
         document.getElementById('comp-old-acres').textContent = `${oldAcres.toFixed(2)} Ac`;
         document.getElementById('comp-old-sqm').textContent = `${oldSqm.toFixed(1)} m²`;
 
@@ -497,10 +1048,9 @@
         document.getElementById('comp-new-sqm').textContent = `${newSqm.toFixed(1)} m²`;
 
         // Confidence Score & Variance
-        const score = p.confidence_score !== undefined ? parseFloat(p.confidence_score) : 85.0;
         const diffValEl = document.getElementById('comp-diff-val');
         if (diffValEl) {
-          diffValEl.textContent = `${score}%`;
+          diffValEl.textContent = `${score.toFixed(1)}%`;
           diffValEl.style.color = score >= 90 ? 'var(--status-verified)' : (score >= 80 ? 'var(--status-review)' : 'var(--status-dispute)');
         }
 
@@ -510,10 +1060,10 @@
         }
         document.getElementById('modal-review-note').textContent = p.review_reason || `Mean bund shift of ${shiftM}m observed along northern farm bund. Recommended for joint verification.`;
 
-        document.getElementById('modal-confidence-gauge-text').textContent = `${score}%`;
+        document.getElementById('modal-confidence-gauge-text').textContent = `${score.toFixed(1)}%`;
         document.getElementById('modal-conf-rtk').textContent = p.rtk_accuracy_cm ? `±${p.rtk_accuracy_cm} cm` : '±1.4 cm';
         document.getElementById('modal-conf-gcp').textContent = `${p.gcp_count || 6} Fixed Targets`;
-        document.getElementById('modal-conf-iou').textContent = `${p.iou_overlap_pct || 96.9}%`;
+        document.getElementById('modal-conf-iou').textContent = `${iou}%`;
 
         // Centroid & Google Maps Link
         let cLat = 18.4919, cLng = 74.9812;
@@ -532,11 +1082,21 @@
           gmapsBottom.href = `https://www.google.com/maps/search/?api=1&query=${cLat.toFixed(6)},${cLng.toFixed(6)}`;
         }
 
-        // Render QR Code inside the card
-        renderCertificateQRCode(feature, cLat, cLng);
+        const calculatedMetrics = {
+          oldAcres,
+          newAcres,
+          diffPct,
+          score,
+          st,
+          shiftM,
+          iou
+        };
+
+        // Render QR Code inside the card (preserves all metrics)
+        renderCertificateQRCode(feature, cLat, cLng, calculatedMetrics);
 
         // Render Cadastral Comparison Maps (Both Old & New Maps with Distinct Colors)
-        renderCadastralComparisonMaps(feature);
+        renderCadastralComparisonMaps(feature, calculatedMetrics);
 
         // Render Geo-Coordinates List
         renderCoordinatesList(feature);
@@ -565,19 +1125,31 @@
         }
       }
 
-      function renderCertificateQRCode(feature, lat, lng) {
+      function renderCertificateQRCode(feature, lat, lng, metrics) {
         const qrContainer = document.getElementById('modal-qr-target');
         if (!qrContainer) return;
         qrContainer.innerHTML = '';
 
-        const globalCertUrl = `https://sadmsd707.github.io/SIH/certificate.html?gat=${encodeURIComponent(gat)}`;
+        const m = metrics || {};
+        const qParamsObj = new URLSearchParams({
+          gat: String(gat),
+          oldAc: (m.oldAcres !== undefined ? m.oldAcres : 4.95).toFixed(2),
+          newAc: (m.newAcres !== undefined ? m.newAcres : 5.08).toFixed(2),
+          diff: (m.diffPct !== undefined ? m.diffPct : 2.5).toFixed(1),
+          score: (m.score !== undefined ? m.score : 85.0).toFixed(1),
+          status: m.st || 'needs_review',
+          shift: (m.shiftM !== undefined ? m.shiftM : 1.37).toFixed(2),
+          iou: (m.iou !== undefined ? m.iou : 96.9).toFixed(1)
+        });
+        const globalCertUrl = `https://sadmsd707.github.io/SIH/certificate.html?${qParamsObj.toString()}`;
+
         if (typeof QRCode !== 'undefined') {
           try {
             new QRCode(qrContainer, {
               text: globalCertUrl,
               width: 140,
               height: 140,
-              colorDark: "#0A192F",
+              colorDark: "#0F172A",
               colorLight: "#FFFFFF",
               correctLevel: (QRCode.CorrectLevel && QRCode.CorrectLevel.M) || 0
             });
@@ -617,13 +1189,6 @@
         }
       }
 
-      let oldMapInstance = null;
-      let newMapInstance = null;
-      let oldFullMapInstance = null;
-      let newFullMapInstance = null;
-      let overlayMapInstance = null;
-      let isSyncingMaps = false;
-
       function getBhuNakshaGeometry(feature) {
         if (feature.bhunaksha_geometry) return feature.bhunaksha_geometry;
         if (feature.properties && feature.properties.bhunaksha_geometry) return feature.properties.bhunaksha_geometry;
@@ -647,33 +1212,12 @@
         }
       }
 
-      function addCornerMarkers(map, geom, color, labelPrefix) {
-        const points = (geom?.type === 'MultiPolygon' ? geom.coordinates[0][0] : geom?.coordinates[0]) || [];
-        const markers = [];
-        points.forEach((pt, idx) => {
-          if (idx < points.length - 1) {
-            const marker = L.circleMarker([pt[1], pt[0]], {
-              radius: 6,
-              fillColor: color,
-              color: '#ffffff',
-              weight: 2,
-              opacity: 1,
-              fillOpacity: 0.95
-            });
-            marker.bindPopup(`<strong>${labelPrefix} Corner #${idx + 1}</strong><br>Lat: ${Number(pt[1]).toFixed(6)}<br>Lng: ${Number(pt[0]).toFixed(6)}`);
-            marker.addTo(map);
-            markers.push(marker);
-          }
-        });
-        return markers;
-      }
-
       let singleMapInstance = null;
       let oldLayerGroup = null;
       let newLayerGroup = null;
       let diffLayerGroup = null;
 
-      function renderCadastralComparisonMaps(feature) {
+      function renderCadastralComparisonMaps(feature, metrics) {
         const container = document.getElementById('modal-mini-map-canvas');
         if (!container || typeof L === 'undefined') return;
 
@@ -681,11 +1225,12 @@
         const bhuGeom = getBhuNakshaGeometry(feature);
         const p = feature.properties || {};
 
-        // Update metrics on legend
-        const oldAcres = parseFloat(p.old_survey_area_acres || p.area_acres || '4.95') || 4.95;
-        const diffPct = p.area_diff_pct !== undefined ? parseFloat(p.area_diff_pct) : 2.5;
-        const newAcres = parseFloat(p.new_survey_area_acres) || parseFloat((oldAcres * (1 + diffPct / 100)).toFixed(2));
-        const shiftM = p.mean_shift_m || 1.37;
+        // Update metrics on legend from exact calculated metrics
+        const m = metrics || {};
+        const oldAcres = m.oldAcres !== undefined ? m.oldAcres : (parseFloat(p.old_survey_area_acres || p.area_acres || '4.95') || 4.95);
+        const diffPct = m.diffPct !== undefined ? m.diffPct : (p.area_diff_pct !== undefined ? parseFloat(p.area_diff_pct) : 2.5);
+        const newAcres = m.newAcres !== undefined ? m.newAcres : (parseFloat(p.new_survey_area_acres) || parseFloat((oldAcres * (1 + diffPct / 100)).toFixed(2)));
+        const shiftM = m.shiftM !== undefined ? m.shiftM : (p.mean_shift_m || 1.37);
 
         const elOldLeg = document.getElementById('legend-old-area');
         if (elOldLeg) elOldLeg.textContent = `${oldAcres.toFixed(2)} Ac`;
@@ -727,7 +1272,7 @@
         const bhuPoints = (bhuGeom?.type === 'MultiPolygon' ? bhuGeom.coordinates[0][0] : bhuGeom?.coordinates[0]) || [];
         const oldMarkers = [];
         bhuPoints.slice(0, -1).forEach((pt, idx) => {
-          const m = L.circleMarker([pt[1], pt[0]], {
+          const mk = L.circleMarker([pt[1], pt[0]], {
             radius: 6,
             fillColor: '#2563EB',
             color: '#ffffff',
@@ -735,8 +1280,8 @@
             opacity: 1,
             fillOpacity: 0.95
           });
-          m.bindPopup(`<strong>🟦 Old BhuNaksha Corner #${idx + 1}</strong><br>Lat: ${Number(pt[1]).toFixed(6)}<br>Lng: ${Number(pt[0]).toFixed(6)}`);
-          oldMarkers.push(m);
+          mk.bindPopup(`<strong>🟦 Old BhuNaksha Corner #${idx + 1}</strong><br>Lat: ${Number(pt[1]).toFixed(6)}<br>Lng: ${Number(pt[0]).toFixed(6)}`);
+          oldMarkers.push(mk);
         });
         oldLayerGroup = L.layerGroup([oldPoly, ...oldMarkers]).addTo(singleMapInstance);
 
@@ -748,7 +1293,7 @@
           if (diff) {
             const diffPoly = L.geoJSON(diff, {
               style: {
-                color: '#9333EA',
+                color: '#7C3AED',
                 weight: 2,
                 dashArray: '4, 4',
                 fillColor: '#A855F7',
@@ -764,7 +1309,7 @@
         // 3. NEW MAP LAYER: 2024 Modern Drone RTK in High-Contrast Sunset Orange
         const newPoly = L.geoJSON(droneGeom, {
           style: {
-            color: '#F97316',
+            color: '#EA580C',
             weight: 4,
             fillColor: '#FB923C',
             fillOpacity: 0.22
@@ -774,16 +1319,16 @@
         const dronePoints = (droneGeom?.type === 'MultiPolygon' ? droneGeom.coordinates[0][0] : droneGeom?.coordinates[0]) || [];
         const newMarkers = [];
         dronePoints.slice(0, -1).forEach((pt, idx) => {
-          const m = L.circleMarker([pt[1], pt[0]], {
+          const mk = L.circleMarker([pt[1], pt[0]], {
             radius: 6,
-            fillColor: '#F97316',
+            fillColor: '#EA580C',
             color: '#ffffff',
             weight: 2,
             opacity: 1,
             fillOpacity: 0.95
           });
-          m.bindPopup(`<strong>🟧 Drone RTK Resurvey Corner #${idx + 1}</strong><br>Lat: ${Number(pt[1]).toFixed(6)}<br>Lng: ${Number(pt[0]).toFixed(6)}`);
-          newMarkers.push(m);
+          mk.bindPopup(`<strong>🟧 Drone RTK Resurvey Corner #${idx + 1}</strong><br>Lat: ${Number(pt[1]).toFixed(6)}<br>Lng: ${Number(pt[0]).toFixed(6)}`);
+          newMarkers.push(mk);
         });
         newLayerGroup = L.layerGroup([newPoly, ...newMarkers]).addTo(singleMapInstance);
 
@@ -851,15 +1396,15 @@
           row.style.justifyContent = 'space-between';
           row.style.alignItems = 'center';
           row.style.padding = '6px 0';
-          row.style.borderBottom = '1px solid var(--surface-border)';
+          row.style.borderBottom = '1px solid #E2E8F0';
           row.style.flexWrap = 'wrap';
           row.style.gap = '6px';
           row.innerHTML = `
-            <span style="font-weight: 700; color: var(--text-main);">Corner Point #${idx + 1}</span>
+            <span style="font-weight: 700; color: #0F172A;">Corner Point #${idx + 1}</span>
             <div style="display: flex; gap: 10px; flex-wrap: wrap; font-size: 0.72rem; font-family: var(--font-mono);">
-              <span style="color: #60A5FA;">🟦 Old: ${Number(bp[1]).toFixed(6)}, ${Number(bp[0]).toFixed(6)}</span>
-              <span style="color: #FB923C;">🟧 New: ${Number(dp[1]).toFixed(6)}, ${Number(dp[0]).toFixed(6)}</span>
-              <span style="color: #C084FC; font-weight: 700;">&Delta; ${dist}m</span>
+              <span style="color: #2563EB; font-weight: 600;">🟦 Old: ${Number(bp[1]).toFixed(6)}, ${Number(bp[0]).toFixed(6)}</span>
+              <span style="color: #EA580C; font-weight: 600;">🟧 New: ${Number(dp[1]).toFixed(6)}, ${Number(dp[0]).toFixed(6)}</span>
+              <span style="color: #7C3AED; font-weight: 700;">&Delta; ${dist}m</span>
             </div>
           `;
           box.appendChild(row);
@@ -889,18 +1434,18 @@
           } catch(e) {}
 
           const numShift = parseFloat(shiftMeters) || 0;
-          let assessment = '<span style="color:var(--status-verified); font-weight:700;">Optimal (&le;2.0m)</span>';
+          let assessment = '<span style="color:#059669; font-weight:700;">Optimal (&le;2.0m)</span>';
           if (numShift > 5.0) {
-            assessment = '<span style="color:var(--status-dispute); font-weight:700;">Encroachment Alert (&gt;5m)</span>';
+            assessment = '<span style="color:#DC2626; font-weight:700;">Encroachment Alert (&gt;5m)</span>';
           } else if (numShift > 2.0) {
-            assessment = '<span style="color:var(--status-review); font-weight:700;">Review Needed (2-5m)</span>';
+            assessment = '<span style="color:#D97706; font-weight:700;">Review Needed (2-5m)</span>';
           }
 
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td><strong>Corner #${i + 1}</strong></td>
-            <td><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#2563EB; margin-right:5px;"></span><span style="color:#60A5FA;">${Number(bp[1]).toFixed(6)}, ${Number(bp[0]).toFixed(6)}</span></td>
-            <td><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#F97316; margin-right:5px;"></span><span style="color:#FB923C;">${Number(dp[1]).toFixed(6)}, ${Number(dp[0]).toFixed(6)}</span></td>
+            <td><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#2563EB; margin-right:5px;"></span><span style="color:#2563EB; font-weight:600;">${Number(bp[1]).toFixed(6)}, ${Number(bp[0]).toFixed(6)}</span></td>
+            <td><span style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#EA580C; margin-right:5px;"></span><span style="color:#EA580C; font-weight:600;">${Number(dp[1]).toFixed(6)}, ${Number(dp[0]).toFixed(6)}</span></td>
             <td><strong>${shiftMeters} m</strong></td>
             <td>${assessment}</td>
           `;
