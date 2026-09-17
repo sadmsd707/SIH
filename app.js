@@ -2723,7 +2723,17 @@ function selectParcelForInspector(feature) {
   const qrBlock = document.getElementById('insp-qr-card-block');
   if (qrBlock) qrBlock.style.display = 'block';
 
-  generateParcelQRCode(feature);
+  generateParcelQRCode(feature, {
+    oldArea: oldAcres,
+    newArea: areaAcres,
+    diffPct: diffPct,
+    confidenceScore: confidenceScore,
+    status: status,
+    shiftM: shiftM,
+    iou: iou,
+    owner: ownerName,
+    village: village
+  });
 }
 
 function updateDashboardMetrics() {
@@ -2972,8 +2982,20 @@ function openParcelModal(feature) {
     });
   }
 
-  // Generate Real Dynamic QR Code (Unique to this parcel)
-  generateParcelQRCode(feature, centroidLat, centroidLng);
+  // Generate Real Dynamic QR Code (Unique to this parcel with exact parity)
+  generateParcelQRCode(feature, {
+    oldArea: oldAcres,
+    newArea: newAcres,
+    diffPct: diffPct,
+    confidenceScore: score,
+    status: status,
+    shiftM: p.mean_shift_m || 1.37,
+    iou: p.iou_overlap_pct || 96.9,
+    cLat: centroidLat,
+    cLng: centroidLng,
+    owner: p.owner_name,
+    village: p.village
+  });
 
   // Initialize or re-render Mini-Map with Dual Boundaries
   modal.classList.add('active');
@@ -3341,14 +3363,20 @@ function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
       activeFeature = match;
       p = match.properties || {};
     } else {
-      p = { parcel_id: pid, survey_no: arg2 || '—', owner_name: arg3 || 'Landholder' };
+      p = { parcel_id: pid, survey_no: (typeof arg2 === 'string' ? arg2 : '—'), owner_name: (typeof arg3 === 'string' ? arg3 : 'Landholder') };
     }
   }
 
-  // Robust Centroid Calculation: Priority to passed centroid args, then feature geometry
+  // Options object can be passed as arg2
+  const opts = (arg2 && typeof arg2 === 'object') ? arg2 : {};
+
+  // Robust Centroid Calculation
   let cLat = 18.492518;
   let cLng = 74.977294;
-  if (typeof arg2 === 'number' && typeof arg3 === 'number' && !isNaN(arg2) && !isNaN(arg3)) {
+  if (typeof opts.cLat === 'number' && typeof opts.cLng === 'number') {
+    cLat = opts.cLat;
+    cLng = opts.cLng;
+  } else if (typeof arg2 === 'number' && typeof arg3 === 'number' && !isNaN(arg2) && !isNaN(arg3)) {
     cLat = arg2;
     cLng = arg3;
   } else if (typeof arg4 === 'number' && typeof arg5 === 'number' && !isNaN(arg4) && !isNaN(arg5)) {
@@ -3363,48 +3391,59 @@ function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
   const survey = p.survey_no || p.gat_no || '1';
   const gat = p.gat_no || survey;
   const pid = p.parcel_id || `MH-AHM-KAR-BEN-${gat}`;
-  const owner = p.owner_name || 'नोंदणीकृत खातेदार';
-  const village = p.village || 'Benwadi (बेनवडी)';
+  const owner = opts.owner || p.owner_name || 'नोंदणीकृत खातेदार';
+  const village = opts.village || p.village || 'Benwadi (बेनवडी)';
   const taluka = p.taluka || 'Karjat (कर्जत)';
   const dist = p.district || 'Ahmednagar (अहमदनगर)';
-  let oldArea = parseFloat(p.old_survey_area_acres !== undefined ? p.old_survey_area_acres : (p.area_acres || 0)) || 0;
-  let newArea = parseFloat(p.new_survey_area_acres !== undefined ? p.new_survey_area_acres : (p.area_diff_pct !== undefined ? (oldArea * (1 + parseFloat(p.area_diff_pct) / 100)) : oldArea)) || oldArea;
-  let diffPctVal = p.area_diff_pct !== undefined ? parseFloat(p.area_diff_pct) : (oldArea > 0 ? parseFloat((Math.abs(newArea - oldArea) / oldArea * 100).toFixed(1)) : 2.5);
-  let scoreVal = p.confidence_score !== undefined ? parseFloat(p.confidence_score) : 85.0;
-  let statusVal = p.status || (diffPctVal > 8 ? 'dispute' : (diffPctVal > 2 ? 'needs_review' : 'verified'));
-  let shiftVal = p.mean_shift_m !== undefined ? parseFloat(p.mean_shift_m) : 1.4;
-  let iouVal = p.iou_overlap_pct !== undefined ? parseFloat(p.iou_overlap_pct) : 93.5;
 
-  // Cross-check live DOM display on laptop to guarantee 100% match with what user sees on screen
-  try {
-    const domOldAc = document.getElementById('comp-old-acres') || document.getElementById('insp-old-area');
-    if (domOldAc && domOldAc.textContent) {
-      const v = parseFloat(domOldAc.textContent.replace(/[^0-9.]/g, ''));
+  // Prioritize values passed directly from options
+  let oldArea = (opts.oldArea !== undefined && !isNaN(opts.oldArea)) ? opts.oldArea :
+                (parseFloat(p.old_survey_area_acres !== undefined ? p.old_survey_area_acres : (p.area_acres || 0)) || 0);
+
+  let newArea = (opts.newArea !== undefined && !isNaN(opts.newArea)) ? opts.newArea :
+                (parseFloat(p.new_survey_area_acres !== undefined ? p.new_survey_area_acres : (p.area_diff_pct !== undefined ? (oldArea * (1 + parseFloat(p.area_diff_pct) / 100)) : oldArea)) || oldArea);
+
+  let diffPctVal = (opts.diffPct !== undefined && !isNaN(opts.diffPct)) ? opts.diffPct :
+                   (p.area_diff_pct !== undefined ? parseFloat(p.area_diff_pct) : (oldArea > 0 ? parseFloat((Math.abs(newArea - oldArea) / oldArea * 100).toFixed(1)) : 2.5));
+
+  let scoreVal = (opts.confidenceScore !== undefined && !isNaN(opts.confidenceScore)) ? opts.confidenceScore :
+                 (p.confidence_score !== undefined ? parseFloat(p.confidence_score) : 85.0);
+
+  let statusVal = opts.status || p.status || (diffPctVal > 8 ? 'dispute' : (diffPctVal > 2 ? 'needs_review' : 'verified'));
+  let shiftVal = (opts.shiftM !== undefined && !isNaN(opts.shiftM)) ? opts.shiftM :
+                 (p.mean_shift_m !== undefined ? parseFloat(p.mean_shift_m) : 1.4);
+  let iouVal = (opts.iou !== undefined && !isNaN(opts.iou)) ? opts.iou :
+               (p.iou_overlap_pct !== undefined ? parseFloat(p.iou_overlap_pct) : 93.5);
+
+  // If options were not passed, check the active visible sidebar inspector on laptop
+  if (opts.oldArea === undefined) {
+    const domOld = document.getElementById('insp-old-area');
+    if (domOld && domOld.textContent && domOld.textContent.trim() !== '—' && domOld.textContent.trim() !== '-') {
+      const v = parseFloat(domOld.textContent.replace(/[^0-9.]/g, ''));
       if (!isNaN(v) && v > 0) oldArea = v;
     }
-    const domNewAc = document.getElementById('comp-new-acres') || document.getElementById('insp-new-area');
-    if (domNewAc && domNewAc.textContent) {
-      const v = parseFloat(domNewAc.textContent.replace(/[^0-9.]/g, ''));
+  }
+  if (opts.newArea === undefined) {
+    const domNew = document.getElementById('insp-new-area');
+    if (domNew && domNew.textContent && domNew.textContent.trim() !== '—' && domNew.textContent.trim() !== '-') {
+      const v = parseFloat(domNew.textContent.replace(/[^0-9.]/g, ''));
       if (!isNaN(v) && v > 0) newArea = v;
     }
-    const domScore = document.getElementById('comp-diff-val') || document.getElementById('insp-conf-val');
-    if (domScore && domScore.textContent) {
+  }
+  if (opts.confidenceScore === undefined) {
+    const domScore = document.getElementById('insp-conf-val');
+    if (domScore && domScore.textContent && domScore.textContent.trim() !== '—' && domScore.textContent.trim() !== '-') {
       const v = parseFloat(domScore.textContent.replace(/[^0-9.]/g, ''));
       if (!isNaN(v) && v > 0) scoreVal = v;
     }
+  }
+  if (opts.diffPct === undefined) {
     const domDiff = document.getElementById('insp-area-diff');
-    if (domDiff && domDiff.textContent) {
+    if (domDiff && domDiff.textContent && domDiff.textContent.trim() !== '—' && domDiff.textContent.trim() !== '-') {
       const v = parseFloat(domDiff.textContent.replace(/[^0-9.]/g, ''));
       if (!isNaN(v)) diffPctVal = v;
     }
-    const domStatus = document.getElementById('modal-status-badge') || document.getElementById('insp-status-badge');
-    if (domStatus && domStatus.textContent) {
-      const txt = domStatus.textContent.toLowerCase().trim().replace(/[^a-z_]/g, '');
-      if (txt.includes('verif')) statusVal = 'verified';
-      else if (txt.includes('disp')) statusVal = 'dispute';
-      else if (txt.includes('review')) statusVal = 'needs_review';
-    }
-  } catch(e) {}
+  }
 
   const oldSqm = Math.round(p.old_survey_area_sqm || (p.area_sqm || (oldArea * 4046.86)));
   const khata = p.khata_no || '—';
@@ -3422,6 +3461,9 @@ function generateParcelQRCode(featureOrId, arg2, arg3, arg4, arg5) {
     shift: shiftVal.toFixed(2),
     iou: iouVal.toFixed(1)
   });
+  if (owner && owner !== 'नोंदणीकृत खातेदार' && owner !== 'Landholder') {
+    qParams.set('owner', owner.slice(0, 40));
+  }
   const webUrlPayload = `${globalOrigin}certificate.html?${qParams.toString()}`;
 
   // 2. Official Digital Land Pass Text Payload — Plain-text verifiable record (compact)

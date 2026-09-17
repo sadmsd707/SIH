@@ -770,25 +770,25 @@
             <!-- Old Survey Column -->
             <div class="comparison-column col-old-survey">
               <div class="comp-col-label">Previous BhuNaksha Record (1978)</div>
-              <div class="comp-col-val" id="comp-old-acres">4.95 Ac</div>
-              <div class="comp-col-unit" id="comp-old-sqm">20032.0 m²</div>
+              <div class="comp-col-val" id="comp-old-acres">—</div>
+              <div class="comp-col-unit" id="comp-old-sqm">Loading record...</div>
               <p style="font-size: 0.72rem; color: #0369A1; margin-top: 0.35rem; font-weight: 500;">Method: Traditional Revenue Chain &amp; Tippan</p>
             </div>
 
             <!-- New Survey Column -->
             <div class="comparison-column highlight col-new-survey">
               <div class="comp-col-label">Modern Drone Resurvey (RTK GPS)</div>
-              <div class="comp-col-val" id="comp-new-acres">5.08 Ac</div>
-              <div class="comp-col-unit" id="comp-new-sqm">20558.0 m²</div>
+              <div class="comp-col-val" id="comp-new-acres">—</div>
+              <div class="comp-col-unit" id="comp-new-sqm">Loading resurvey...</div>
               <p style="font-size: 0.72rem; color: #C2410C; margin-top: 0.35rem; font-weight: 500;">Method: RTK Drone + DGPS (Accuracy: &plusmn;1.8 cm)</p>
             </div>
 
             <!-- Confidence Score Column -->
             <div class="comparison-column col-score">
               <div class="comp-col-label">Confidence Score</div>
-              <div class="comp-col-val" id="comp-diff-val">94.4%</div>
-              <div class="comp-col-unit" id="comp-diff-sqm">Area Variance: 2.5% (Delta: 0.13 Ac)</div>
-              <p style="font-size: 0.72rem; color: #15803D; margin-top: 0.35rem; font-weight: 500;" id="modal-review-note">Mean bund shift of 1.37m observed along northern farm bund. Recommended for joint verification.</p>
+              <div class="comp-col-val" id="comp-diff-val">—</div>
+              <div class="comp-col-unit" id="comp-diff-sqm">Calibrating...</div>
+              <p style="font-size: 0.72rem; color: #15803D; margin-top: 0.35rem; font-weight: 500;" id="modal-review-note">Verification status</p>
             </div>
           </div>
         </div>
@@ -957,6 +957,80 @@
       const qStatus = params.get('status');
       const qShift = params.get('shift');
       const qIou = params.get('iou');
+      const qOwner = params.get('owner');
+
+      // SYNCHRONOUS DOM BINDING (Instant 0ms display on mobile phone scan, 100% exact match with laptop!)
+      if (document.getElementById('modal-survey-no')) document.getElementById('modal-survey-no').textContent = gat;
+      if (document.getElementById('modal-gat-no')) document.getElementById('modal-gat-no').textContent = gat;
+      if (document.getElementById('modal-cert-pid')) document.getElementById('modal-cert-pid').textContent = `COMP-MH-${gat}-712`;
+      if (qOwner && document.getElementById('modal-owner-name')) document.getElementById('modal-owner-name').textContent = decodeURIComponent(qOwner);
+
+      if (qOldAc !== null && !isNaN(parseFloat(qOldAc))) {
+        const val = parseFloat(qOldAc);
+        const elOld = document.getElementById('comp-old-acres');
+        if (elOld) elOld.textContent = `${val.toFixed(2)} Ac`;
+        const elOldSqm = document.getElementById('comp-old-sqm');
+        if (elOldSqm) elOldSqm.textContent = `${(val * 4046.86).toFixed(1)} m²`;
+        const legOld = document.getElementById('legend-old-area');
+        if (legOld) legOld.textContent = `${val.toFixed(2)} Ac`;
+      }
+
+      if (qNewAc !== null && !isNaN(parseFloat(qNewAc))) {
+        const val = parseFloat(qNewAc);
+        const elNew = document.getElementById('comp-new-acres');
+        if (elNew) elNew.textContent = `${val.toFixed(2)} Ac`;
+        const elNewSqm = document.getElementById('comp-new-sqm');
+        if (elNewSqm) elNewSqm.textContent = `${(val * 4046.86).toFixed(1)} m²`;
+        const legNew = document.getElementById('legend-new-area');
+        if (legNew) legNew.textContent = `${val.toFixed(2)} Ac`;
+      }
+
+      if (qScore !== null && !isNaN(parseFloat(qScore))) {
+        const s = parseFloat(qScore);
+        const diffEl = document.getElementById('comp-diff-val');
+        if (diffEl) {
+          diffEl.textContent = `${s.toFixed(1)}%`;
+          diffEl.style.color = s >= 90 ? '#16A34A' : (s >= 80 ? '#D97706' : '#DC2626');
+        }
+        const gEl = document.getElementById('modal-confidence-gauge-text');
+        if (gEl) gEl.textContent = `${s.toFixed(1)}%`;
+      }
+
+      if (qDiff !== null && !isNaN(parseFloat(qDiff))) {
+        const d = parseFloat(qDiff);
+        const dEl = document.getElementById('comp-diff-sqm');
+        if (dEl) {
+          const delta = (qOldAc && qNewAc) ? Math.abs(parseFloat(qNewAc) - parseFloat(qOldAc)).toFixed(2) : '—';
+          dEl.textContent = `Area Variance: ${d.toFixed(1)}% (Delta: ${delta} Ac)`;
+        }
+        const legDiff = document.getElementById('legend-diff-pct');
+        if (legDiff) legDiff.textContent = `${d.toFixed(1)}%`;
+      }
+
+      if (qStatus) {
+        const stEl = document.getElementById('modal-status-badge');
+        if (stEl) {
+          const st = qStatus.toLowerCase();
+          if (st.includes('verif')) {
+            stEl.className = 'badge-tag verified';
+            stEl.textContent = 'VERIFIED';
+          } else if (st.includes('disp')) {
+            stEl.className = 'badge-tag dispute';
+            stEl.textContent = 'DISPUTE';
+          } else {
+            stEl.className = 'badge-tag needs_review';
+            stEl.textContent = 'NEEDS REVIEW';
+          }
+        }
+      }
+
+      if (qShift && document.getElementById('modal-review-note')) {
+        document.getElementById('modal-review-note').textContent = `Mean bund shift of ${parseFloat(qShift).toFixed(2)}m observed along farm bund.`;
+      }
+
+      if (qIou && document.getElementById('modal-conf-iou')) {
+        document.getElementById('modal-conf-iou').textContent = `${parseFloat(qIou).toFixed(1)}%`;
+      }
 
       let currentParcelFeature = null;
 
