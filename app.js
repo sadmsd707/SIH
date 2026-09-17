@@ -2884,15 +2884,16 @@ function openParcelModal(feature) {
   if (newAcEl) newAcEl.textContent = `${newAcres.toFixed(2)} Ac`;
   if (newSqmEl) newSqmEl.textContent = `${(newAcres * 4046.86).toFixed(1)} m²`;
 
+  const score = p.confidence_score || 98.6;
   const diffEl = document.getElementById('comp-diff-val');
   if (diffEl) {
-    diffEl.textContent = `${diffPct}%`;
-    diffEl.style.color = diffPct > 10 ? 'var(--status-dispute)' : (diffPct > 3 ? 'var(--status-review)' : 'var(--status-verified)');
+    diffEl.textContent = `${score}%`;
+    diffEl.style.color = score >= 90 ? 'var(--status-verified)' : (score >= 80 ? 'var(--status-review)' : 'var(--status-dispute)');
   }
 
   const deltaSqm = Math.abs((newAcres - oldAcres) * 4046.86).toFixed(1);
   const diffSqmEl = document.getElementById('comp-diff-sqm');
-  if (diffSqmEl) diffSqmEl.textContent = `Delta: ${Math.abs(newAcres - oldAcres).toFixed(2)} Acres (${deltaSqm} m²)`;
+  if (diffSqmEl) diffSqmEl.textContent = `Area Variance: ${diffPct}% (Delta: ${Math.abs(newAcres - oldAcres).toFixed(2)} Ac)`;
 
   const reviewEl = document.getElementById('modal-review-note');
   if (reviewEl) reviewEl.textContent = p.review_reason || 'Verified within centimeter-grade precision tolerances.';

@@ -244,11 +244,11 @@
               <p style="font-size: 0.7rem; color: var(--accent-cyan); margin-top: 0.35rem;">Method: RTK Drone + DGPS (Accuracy: &plusmn;1.8 cm)</p>
             </div>
 
-            <!-- Difference Column -->
+            <!-- Confidence Score Column -->
             <div class="comparison-column">
-              <div class="comp-col-label">Area Variance / Difference</div>
-              <div class="comp-col-val" id="comp-diff-val" style="color: var(--status-review);">2.5%</div>
-              <div class="comp-col-unit" id="comp-diff-sqm">Delta: 0.13 Acres (526.1 m²)</div>
+              <div class="comp-col-label">Confidence Score</div>
+              <div class="comp-col-val" id="comp-diff-val" style="color: var(--status-verified);">94.4%</div>
+              <div class="comp-col-unit" id="comp-diff-sqm">Area Variance: 2.5% (Delta: 0.13 Ac)</div>
               <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.35rem;" id="modal-review-note">Mean bund shift of 1.37m observed along northern farm bund. Recommended for joint verification.</p>
             </div>
           </div>
@@ -496,15 +496,20 @@
         document.getElementById('comp-new-acres').textContent = `${newAcres.toFixed(2)} Ac`;
         document.getElementById('comp-new-sqm').textContent = `${newSqm.toFixed(1)} m²`;
 
+        // Confidence Score & Variance
+        const score = p.confidence_score || 94.4;
         const diffValEl = document.getElementById('comp-diff-val');
-        diffValEl.textContent = `${diffPct}%`;
-        diffValEl.style.color = st === 'verified' ? 'var(--status-verified)' : (st === 'dispute' ? 'var(--status-dispute)' : 'var(--status-review)');
+        if (diffValEl) {
+          diffValEl.textContent = `${score}%`;
+          diffValEl.style.color = score >= 90 ? 'var(--status-verified)' : (score >= 80 ? 'var(--status-review)' : 'var(--status-dispute)');
+        }
 
-        document.getElementById('comp-diff-sqm').textContent = `Delta: ${deltaAcres} Acres (${deltaSqm} m²)`;
+        const diffSqmEl = document.getElementById('comp-diff-sqm');
+        if (diffSqmEl) {
+          diffSqmEl.textContent = `Area Variance: ${diffPct}% (Delta: ${deltaAcres} Ac)`;
+        }
         document.getElementById('modal-review-note').textContent = p.review_reason || `Mean bund shift of ${shiftM}m observed along northern farm bund. Recommended for joint verification.`;
 
-        // Confidence Score
-        const score = p.confidence_score || 94.4;
         document.getElementById('modal-confidence-gauge-text').textContent = `${score}%`;
         document.getElementById('modal-conf-rtk').textContent = p.rtk_accuracy_cm ? `±${p.rtk_accuracy_cm} cm` : '±1.4 cm';
         document.getElementById('modal-conf-gcp').textContent = `${p.gcp_count || 6} Fixed Targets`;
